@@ -11,18 +11,24 @@
   </div>
 </template>
 <script>
+const wx = require("weixin-js-sdk");
 export default {
   methods: {
     addImage: function() {
-      console.log(`上传图片`);
-      wx.chooseImage({count:9})
+      console.log(`上传图片`,wx);
+      alert(wx);
+      wx.ready(function(){
+        console.log(123)
+      })
+      // wx.chooseImage({ count: 9 });
     }
   },
   data: function() {
     return {
       maxWordsLength: 300
     };
-  }
+  },
+  components: {}
 };
 </script>
 <style lang="less" scoped>
@@ -50,7 +56,7 @@ export default {
   padding-left: 6vw;
   position: fixed;
   bottom: 0;
-  border: 1px solid black;
+  border: 0px solid black;
   justify-content: space-between;
   align-items: center;
   .functions {
@@ -72,7 +78,7 @@ export default {
     font-size: 4vw;
     color: #32a8fc;
     margin-left: 6vw;
-    border: 1px solid #32a8fc;
+    border: 0px solid #32a8fc;
     width: 12vw;
     border-radius: 3.5vw;
   }
