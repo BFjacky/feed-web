@@ -20,5 +20,9 @@ div {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
+  position: absolute;
+  height:100vh;
+  width:100vw;
+  overflow-x:hidden;
 }
 </style>

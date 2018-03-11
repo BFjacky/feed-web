@@ -3,7 +3,7 @@
       <textarea class="text-area" :maxlength="maxWordsLength" placeholder="说点什么吧..."></textarea>
       <div class="bottom-bar">
           <div class="functions">
-            <div class="function-button photo-button"></div>
+            <div class="function-button photo-button" @click="addImage"></div>
             <div class="function-button theme-button">主题</div>
           </div>
           <div class="function-button send-button">发送</div>
@@ -12,6 +12,12 @@
 </template>
 <script>
 export default {
+  methods: {
+    addImage: function() {
+      console.log(`上传图片`);
+      wx.chooseImage({count:9})
+    }
+  },
   data: function() {
     return {
       maxWordsLength: 300
@@ -29,7 +35,7 @@ export default {
 .text-area {
   box-sizing: boder-box;
   border-width: 0;
-  height: 25%;
+  height: 25vh;
   padding: 5vw;
   overflow-y: auto;
   box-shadow: 0 0.5vw 0.5vw 0.5vw rgb(180, 178, 178);
@@ -41,6 +47,7 @@ export default {
   height: 5%;
   width: 100%;
   padding: 3vw;
+  padding-left: 6vw;
   position: fixed;
   bottom: 0;
   border: 1px solid black;
@@ -51,7 +58,6 @@ export default {
   }
   .function-button {
     height: 10vw;
-    margin-left: 3vw;
   }
   .photo-button {
     background-image: url(../../assets/photo.png);
@@ -60,9 +66,15 @@ export default {
     height: 10vw;
   }
   .theme-button {
-    line-height: 10vw;
-    font-size: 5vw;
+    line-height: 7vw;
+    height: 7vw;
+    margin: auto auto;
+    font-size: 4vw;
     color: #32a8fc;
+    margin-left: 6vw;
+    border: 1px solid #32a8fc;
+    width: 12vw;
+    border-radius: 3.5vw;
   }
   .send-button {
     width: 25vw;
@@ -72,7 +84,7 @@ export default {
     color: white;
     text-align: center;
     line-height: 10vw;
-    margin-right: 7vw;
+    margin-right: 10vw;
   }
 }
 </style>
