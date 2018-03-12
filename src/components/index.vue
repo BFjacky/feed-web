@@ -25,7 +25,7 @@
 import { Tabbar, TabItem, TabContainer, TabContainerItem } from "mint-ui";
 import home from "@/components/home/home";
 import person from "@/components/person/person";
-import helper from "@/components/helper/helper"
+import helper from "@/components/helper/helper";
 export default {
   data: function() {
     return {
@@ -38,8 +38,9 @@ export default {
       realTrue: true
     };
   },
-  created:async function(){
-    await helper.wxConfig();
+  created: async function() {
+    const res = await helper.wxinit();
+    console.log(this.$route)
   },
   watch: {
     itemSelect: function() {

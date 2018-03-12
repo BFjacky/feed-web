@@ -92,7 +92,7 @@ export default {
     border-bottom: 5px solid #32a8fc;
     position: absolute;
     width: 10.33vw;
-    left: 12.25vw;
+    left: 11.5vw;
     top: 8%;
     transform: translateY(-100%);
   }

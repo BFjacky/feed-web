@@ -1,34 +1,66 @@
 <template>
   <div class="container">
       <textarea class="text-area" :maxlength="maxWordsLength" placeholder="说点什么吧..."></textarea>
+      <div class="imgs-area">
+        <img-view-box v-for="img in imgs" :img="img" :key="index" v-on:uploadImg="uploadHandler"></img-view-box>
+      </div>
       <div class="bottom-bar">
           <div class="functions">
             <div class="function-button photo-button" @click="addImage"></div>
             <div class="function-button theme-button">主题</div>
           </div>
-          <div class="function-button send-button">发送</div>
+          <div class="function-button send-button" @click="confirmToSend">发送</div>
       </div>
+      <input class="hide-button" ref="filesButton" type="file" multiple="multiple" accept="image/*" @change="chooseFile($event)"></input>
   </div>
 </template>
 <script>
-const wx = require("weixin-js-sdk");
+import { MessageBox, Spinner } from "mint-ui";
+import imgViewBox from "./imgViewBox";
+import helper from "../helper/helper";
 export default {
   methods: {
     addImage: function() {
-      console.log(`上传图片`,wx);
-      alert(wx);
-      wx.ready(function(){
-        console.log(123)
-      })
-      // wx.chooseImage({ count: 9 });
+      this.$refs.filesButton.click();
+    },
+    chooseFile: async function(event) {
+      const newFiles = [];
+      for (let i = 0; i < event.target.files.length; i++) {
+        newFiles.push(event.target.files[i]);
+      }
+      this.imgs = this.imgs.concat(newFiles);
+      if (this.imgs.length > this.maxImgNumbers) {
+        MessageBox.alert(`最多选择${this.maxImgNumbers}张图片`, "提示");
+        this.imgs = this.imgs.slice(0, 9);
+      }
+    },
+    uploadHandler: function(img) {
+      this.finalImgs.push(img);
+    },
+    confirmToSend: function() {
+      if (this.finalImgs.length !== this.imgs.length) {
+        MessageBox.alert(
+          `还差${this.imgs.length - this.finalImgs.length}张图片没有上传完`,
+          "提示"
+        );
+      }
     }
   },
+
+  created: function() {},
   data: function() {
     return {
-      maxWordsLength: 300
+      maxWordsLength: 300,
+      imgs: [],
+      finalImgs: [],
+      maxImgNumbers: 9
     };
   },
-  components: {}
+  components: {
+    MessageBox,
+    spinner: Spinner,
+    imgViewBox
+  }
 };
 </script>
 <style lang="less" scoped>
@@ -39,14 +71,32 @@ export default {
   flex-direction: column;
 }
 .text-area {
+  resize: none;
   box-sizing: boder-box;
   border-width: 0;
   height: 25vh;
   padding: 5vw;
   overflow-y: auto;
-  box-shadow: 0 0.5vw 0.5vw 0.5vw rgb(180, 178, 178);
-  width: 100%;
+  // box-shadow: 0 0.5vw 0.5vw 0.5vw rgb(180, 178, 178);
+  width: 90vw;
   font-size: 4vw;
+}
+.hide-button {
+  position: fixed;
+  left: -200vw;
+}
+.imgs-area {
+  width: 100%;
+  border: 0px solid black;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 3vw;
+  .img {
+    width: 25vw;
+    height: 25vw;
+    background-size: 100% 100%;
+    background-position: center center;
+  }
 }
 .bottom-bar {
   display: flex;
@@ -57,7 +107,9 @@ export default {
   position: fixed;
   bottom: 0;
   border: 0px solid black;
+  background-color: rgb(245, 245, 245);
   justify-content: space-between;
+  opacity: 0.9;
   align-items: center;
   .functions {
     display: flex;
