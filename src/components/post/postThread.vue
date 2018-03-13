@@ -2,20 +2,26 @@
   <div class="container">
       <textarea class="text-area" :maxlength="maxWordsLength" placeholder="说点什么吧..."></textarea>
       <div class="imgs-area">
-        <img-view-box v-for="img in imgs" :img="img" :key="index" v-on:uploadImg="uploadHandler" v-on:deleteImg="deleteHandler"></img-view-box>
+        <img-view-box v-for="img in imgs" :img="img" :key="index" v-on:uploadImg="uploadHandler" v-on:deleteImg="deleteHandler" v-on:viewImage="viewImageHandler"></img-view-box>
       </div>
       <div class="bottom-bar">
           <div class="functions">
             <div class="function-button photo-button" @click="addImage"></div>
-            <div class="function-button theme-button">主题</div>
+            <div class="function-button theme-button" @click="showThemes">主题</div>
           </div>
           <div class="function-button send-button" @click="confirmToSend">发送</div>
       </div>
       <input class="hide-button" ref="filesButton" type="file" multiple="multiple" accept="image/*" @change="chooseFile($event)"></input>
+      <popup v-model="popupVisible" position="right" class="popup-area">
+        <div class="popup-item" v-for="theme in themes" @click="chooseTheme(theme.text)">
+          <div class="item-icon" :style="{backgroundImage:`url(${theme.icon})`}"></div>
+          <div class="item-text">{{theme.text}}</div>
+        </div>
+      </popup>
   </div>
 </template>
 <script>
-import { MessageBox, Spinner } from "mint-ui";
+import { MessageBox, Spinner, Popup } from "mint-ui";
 import imgViewBox from "./imgViewBox";
 import helper from "../helper/helper";
 export default {
@@ -65,6 +71,21 @@ export default {
           "提示"
         );
       }
+    },
+    showThemes: function() {
+      this.popupVisible = true;
+    },
+    chooseTheme: function(themeText) {
+      console.log(`你选择了${themeText}`);
+      this.popupVisible = false;
+    },
+    viewImageHandler: function(img) {
+      const urls = [];
+      const current = img.sourceUrl;
+      for (const img of this.imgs) {
+        urls.push(img.sourceUrl);
+      }
+      wx.previewImage({ current, urls });
     }
   },
 
@@ -74,13 +95,27 @@ export default {
       maxWordsLength: 300,
       imgs: [],
       finalImgs: [],
-      maxImgNumbers: 9
+      maxImgNumbers: 9,
+      popupVisible: false,
+      themes: [
+        { icon: require("../../assets/lost.png"), text: "失物招领" },
+        { icon: require("../../assets/lost.png"), text: "失物招领" },
+        { icon: require("../../assets/lost.png"), text: "失物招领" },
+        { icon: require("../../assets/lost.png"), text: "失物招领" },
+        { icon: require("../../assets/lost.png"), text: "失物招领" },
+        { icon: require("../../assets/lost.png"), text: "失物招领" },
+        { icon: require("../../assets/lost.png"), text: "失物招领" },
+        { icon: require("../../assets/lost.png"), text: "失物招领" },
+        { icon: require("../../assets/lost.png"), text: "失物招领" },
+        { icon: require("../../assets/lost.png"), text: "失物招领" }
+      ]
     };
   },
   components: {
     MessageBox,
     spinner: Spinner,
-    imgViewBox
+    imgViewBox,
+    popup: Popup
   }
 };
 </script>
@@ -164,6 +199,39 @@ export default {
     text-align: center;
     line-height: 10vw;
     margin-right: 10vw;
+  }
+}
+.popup-area {
+  height: 100vh;
+  width: 50vw;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  .popup-item {
+    margin: 0;
+    height: 10vh;
+    width: 50vw;
+    display: flex;
+    justify-content: space-between;
+    padding: 1vh;
+    border-bottom: 1px solid rgb(223, 223, 223);
+    box-sizing: border-box;
+    .item-icon {
+      height: 8vh;
+      width: 8vh;
+      background-size: 100% 100%;
+      border: 0px solid black;
+    }
+    .item-text {
+      flex-grow: 1;
+      line-height: 8vh;
+      font-size: 6vw;
+    }
+  }
+  .popup-item:active {
+    background-color: #e2e2e2;
   }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container"  @click="viewImage">
     <spinner :type="3" v-if="!finalImg.hasUploaded" class="spinPosition"></spinner>
     <div class="delete-button" v-on:click="deleteImg"></div>
     <div v-if="finalImg.hasUploaded" class="img-container" v-bind:style="{backgroundImage:`url(${finalImg.url})`}"></div>
@@ -21,6 +21,9 @@ export default {
   methods: {
     deleteImg: function() {
       this.$emit("deleteImg", this.img);
+    },
+    viewImage: function() {
+      this.$emit("viewImage", this.img);
     }
   },
   mounted: async function() {

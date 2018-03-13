@@ -32,7 +32,7 @@ export default {
                 timestamp, // 必填，生成签名的时间戳
                 nonceStr, // 必填，生成签名的随机串
                 signature,// 必填，签名
-                jsApiList: ['chooseImage', 'stopRecord'] // 必填，需要使用的JS接口列表
+                jsApiList: ['chooseImage', 'previewImage'] // 必填，需要使用的JS接口列表
             });
             wx.ready(function () {
                 resolve('ok')
@@ -57,7 +57,7 @@ export default {
             var observable = qiniu.upload(file, key, token, {}, config)
             var subscription = observable.subscribe({
                 next(res) {
-            
+
                 },
                 error(err) {
                     reject(err);
