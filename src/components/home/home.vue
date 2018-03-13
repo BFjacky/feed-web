@@ -89,12 +89,14 @@ export default {
     padding-top: 10px;
   }
   .moving-bottom-line {
-    border-bottom: 5px solid #32a8fc;
+    border: 0px solid #32a8fc;
+    height: 5px;
+    background-color: #32a8fc;
     position: absolute;
     width: 10.33vw;
     left: 11.5vw;
     top: 8%;
-    transform: translateY(-100%);
+    transform: translateY(-200%);
   }
 }
 .itemChosen {
@@ -112,13 +114,13 @@ export default {
 // 0-1
 @keyframes move-0-1 {
   0% {
-    transform: translateY(-100%) translateX(0) scaleX(1);
+    transform: translateY(-200%) translateX(0) scaleX(1);
   }
   50% {
-    transform: translateY(-100%) translateX(16.65vw) scaleX(3);
+    transform: translateY(-200%) translateX(calc(100vw/6)) scaleX(3);
   }
   100% {
-    transform: translateY(-100%) translateX(33.33vw) scaleX(1);
+    transform: translateY(-200%) translateX(calc(100vw/3)) scaleX(1);
   }
 }
 .move-0-1 {
@@ -127,13 +129,13 @@ export default {
 // 1-2
 @keyframes move-1-2 {
   0% {
-    transform: translateY(-100%) translateX(33.33vw) scaleX(1);
+    transform: translateY(-200%) translateX(calc(100vw/3)) scaleX(1);
   }
   50% {
-    transform: translateY(-100%) translateX(50vw) scaleX(3);
+    transform: translateY(-200%) translateX(50vw) scaleX(3);
   }
   100% {
-    transform: translateY(-100%) translateX(66.66vw) scaleX(1);
+    transform: translateY(-200%) translateX(calc(100vw*2/3)) scaleX(1);
   }
 }
 .move-1-2 {
@@ -142,13 +144,13 @@ export default {
 // 0-2
 @keyframes move-0-2 {
   0% {
-    transform: translateY(-100%) translateX(0) scaleX(1);
+    transform: translateY(-200%) translateX(0) scaleX(1);
   }
   50% {
-    transform: translateY(-100%) translateX(33.33vw) scaleX(3);
+    transform: translateY(-200%) translateX(calc(100vw/3)) scaleX(3);
   }
   100% {
-    transform: translateY(-100%) translateX(66.66vw) scaleX(1);
+    transform: translateY(-200%) translateX(calc(100vw*2/3)) scaleX(1);
   }
 }
 .move-0-2 {
@@ -157,13 +159,13 @@ export default {
 // 1-0
 @keyframes move-1-0 {
   0% {
-    transform: translateY(-100%) translateX(33.33vw) scaleX(1);
+    transform: translateY(-200%) translateX(calc(100vw/3)) scaleX(1);
   }
   50% {
-    transform: translateY(-100%) translateX(16.65vw) scaleX(3);
+    transform: translateY(-200%) translateX(calc(100vw/6)) scaleX(3);
   }
   100% {
-    transform: translateY(-100%) translateX(0vw) scaleX(1);
+    transform: translateY(-200%) translateX(0vw) scaleX(1);
   }
 }
 .move-1-0 {
@@ -172,13 +174,13 @@ export default {
 // 2-0
 @keyframes move-2-0 {
   0% {
-    transform: translateY(-100%) translateX(66.66vw) scaleX(1);
+    transform: translateY(-200%) translateX(calc(100vw*2/3)) scaleX(1);
   }
   50% {
-    transform: translateY(-100%) translateX(33.33vw) scaleX(3);
+    transform: translateY(-200%) translateX(calc(100vw/3)) scaleX(3);
   }
   100% {
-    transform: translateY(-100%) translateX(0vw) scaleX(1);
+    transform: translateY(-200%) translateX(0vw) scaleX(1);
   }
 }
 .move-2-0 {
@@ -187,13 +189,13 @@ export default {
 // 2-1
 @keyframes move-2-1 {
   0% {
-    transform: translateY(-100%) translateX(66.66vw) scaleX(1);
+    transform: translateY(-200%) translateX(calc(100vw*2/3)) scaleX(1);
   }
   50% {
-    transform: translateY(-100%) translateX(50vw) scaleX(3);
+    transform: translateY(-200%) translateX(50vw) scaleX(3);
   }
   100% {
-    transform: translateY(-100%) translateX(33.33vw) scaleX(1);
+    transform: translateY(-200%) translateX(calc(100vw/3)) scaleX(1);
   }
 }
 .move-2-1 {
