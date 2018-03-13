@@ -2,7 +2,7 @@
   <div class="container">
       <textarea class="text-area" :maxlength="maxWordsLength" placeholder="说点什么吧..."></textarea>
       <div class="imgs-area">
-        <img-view-box v-for="img in imgs" :img="img" :key="index" v-on:uploadImg="uploadHandler"></img-view-box>
+        <img-view-box v-for="img in imgs" :img="img" :key="index" v-on:uploadImg="uploadHandler" v-on:deleteImg="deleteHandler"></img-view-box>
       </div>
       <div class="bottom-bar">
           <div class="functions">
@@ -36,6 +36,27 @@ export default {
     },
     uploadHandler: function(img) {
       this.finalImgs.push(img);
+    },
+    deleteHandler: async function(img) {
+      async function wait(time) {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve("ok");
+          }, time);
+        });
+      }
+
+      for (let i = 0; i < this.imgs.length; i++) {
+        if (this.imgs[i].sourceUrl === img.sourceUrl) {
+          this.imgs.splice(i, 1);
+          break;
+        }
+      }
+      //FIXED ME
+      const imgs = this.imgs;
+      this.imgs = [];
+      await wait(10);
+      this.imgs = imgs;
     },
     confirmToSend: function() {
       if (this.finalImgs.length !== this.imgs.length) {
