@@ -1,7 +1,9 @@
 <template>
   <div class="container">
-      <textarea class="text-area" :maxlength="maxWordsLength" placeholder="说点什么吧..." v-model:value="content">
-      </textarea>
+    <div class="text-area">
+      <textarea class="content-area" :maxlength="maxWordsLength" placeholder="说点什么吧..." v-model:value="content"></textarea>
+      <div class="number-remind">{{content.length}}/{{maxWordsLength}}</div>
+    </div>
       <div class="imgs-area">
         <img-view-box v-for="img in imgs" :img="img" :key="index" v-on:uploadImg="uploadHandler" v-on:deleteImg="deleteHandler" v-on:viewImage="viewImageHandler"></img-view-box>
       </div>
@@ -22,10 +24,11 @@
   </div>
 </template>
 <script>
-import { MessageBox, Spinner, Popup } from "mint-ui";
+import { MessageBox, Spinner, Popup, Toast } from "mint-ui";
 import imgViewBox from "./imgViewBox";
 import helper from "../helper/helper";
 import config from "../helper/config";
+import axios from "axios";
 export default {
   watch: {
     content: function() {
@@ -79,18 +82,35 @@ export default {
         );
         return;
       }
-      console.log("我要发送了!");
       const _this = this;
       const sendRes = await axios({
         method: "post",
-        url: `${config.url.feedServerUrl}`,
+        url: `${config.url.feedUrl}/thread/newThread`,
         data: {
           thread: {
-            img: _this.finalImgs,
-            theme: _this.themeText
+            imgs: _this.finalImgs,
+            themeText: _this.themeText,
+            content: _this.content
           }
-        }
+        },
+        withCredentials: true
       });
+      if (sendRes.data.success) {
+        Toast({
+          message: "发送成功",
+          position: "middle",
+          duration: 2000
+        });
+        setTimeout(() => {
+          this.$router.push({ name: "index", params: { allowBack: true } });
+        }, 2000);
+      } else {
+        Toast({
+          message: "发送失败",
+          position: "middle",
+          duration: 2000
+        });
+      }
     },
     showThemes: function() {
       this.popupVisible = true;
@@ -110,14 +130,16 @@ export default {
     //提示用户是否要回退
     showBackModal: function() {
       return new Promise((resolve, reject) => {
-        MessageBox.confirm("确定要退出此次编辑吗").then(action => {
-          if (action === "confirm") {
-            resolve("ok");
-          } else {
-            //i love this!
+        MessageBox.confirm("确定要退出此次编辑吗")
+          .then(action => {
+            if (action === "confirm") {
+              resolve("ok");
+            }
+          })
+          .catch(() => {
+            console.log(123);
             window.history.forward(1);
-          }
-        });
+          });
       });
     }
   },
@@ -150,7 +172,8 @@ export default {
     MessageBox,
     spinner: Spinner,
     imgViewBox,
-    popup: Popup
+    popup: Popup,
+    Toast
   }
 };
 </script>
@@ -167,11 +190,29 @@ export default {
   border-width: 0;
   height: 25vh;
   padding: 5vw;
-  overflow-y: auto;
+  padding-top: 2vw;
+  overflow-x: hidden;
+  overflow-y: hidden;
   // box-shadow: 0 0.5vw 0.5vw 0.5vw rgb(180, 178, 178);
   width: 90vw;
   font-size: 4vw;
+  .content-area {
+    resize: none;
+    box-sizing: boder-box;
+    border-width: 0;
+    height: 100%;
+    // box-shadow: 0 0.5vw 0.5vw 0.5vw rgb(180, 178, 178);
+    width: 90vw;
+    font-size: 4vw;
+  }
+  .number-remind {
+    position: absolute;
+    right: 5vw;
+    top: 28vh;
+    opacity: 0.5;
+  }
 }
+
 .hide-button {
   position: fixed;
   left: -200vw;

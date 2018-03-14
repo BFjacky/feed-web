@@ -5,7 +5,7 @@ import postThread from '@/components/post/postThread'
 Vue.use(Router)
 
 const router = new Router({
-  mode:'history',
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -20,12 +20,10 @@ const router = new Router({
     }
   ]
 })
+//编辑页面的lock，禁止随意退出
+
 router.beforeEach(async (to, from, next) => {
-  const oldFrom = from;
-  const oldTo = to;
-  console.log('from:', from);
-  console.log('to', to)
-  if (from.name === 'postThread') {
+  if (from.name === 'postThread' && !to.params.allowBack) {
     const res = await postThread.methods.showBackModal();
     if (res === 'ok') {
       next();
