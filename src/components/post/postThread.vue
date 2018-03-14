@@ -1,6 +1,7 @@
 <template>
   <div class="container">
-      <textarea class="text-area" :maxlength="maxWordsLength" placeholder="说点什么吧..."></textarea>
+      <textarea class="text-area" :maxlength="maxWordsLength" placeholder="说点什么吧..." v-model:value="content">
+      </textarea>
       <div class="imgs-area">
         <img-view-box v-for="img in imgs" :img="img" :key="index" v-on:uploadImg="uploadHandler" v-on:deleteImg="deleteHandler" v-on:viewImage="viewImageHandler"></img-view-box>
       </div>
@@ -24,7 +25,13 @@
 import { MessageBox, Spinner, Popup } from "mint-ui";
 import imgViewBox from "./imgViewBox";
 import helper from "../helper/helper";
+import config from "../helper/config";
 export default {
+  watch: {
+    content: function() {
+      console.log(this.content.length);
+    }
+  },
   methods: {
     addImage: function() {
       this.$refs.filesButton.click();
@@ -64,19 +71,32 @@ export default {
       await wait(10);
       this.imgs = imgs;
     },
-    confirmToSend: function() {
+    confirmToSend: async function() {
       if (this.finalImgs.length !== this.imgs.length) {
         MessageBox.alert(
           `还差${this.imgs.length - this.finalImgs.length}张图片没有上传完`,
           "提示"
         );
+        return;
       }
+      console.log("我要发送了!");
+      const _this = this;
+      const sendRes = await axios({
+        method: "post",
+        url: `${config.url.feedServerUrl}`,
+        data: {
+          thread: {
+            img: _this.finalImgs,
+            theme: _this.themeText
+          }
+        }
+      });
     },
     showThemes: function() {
       this.popupVisible = true;
     },
     chooseTheme: function(themeText) {
-      console.log(`你选择了${themeText}`);
+      this.themeText = themeText;
       this.popupVisible = false;
     },
     viewImageHandler: function(img) {
@@ -86,6 +106,19 @@ export default {
         urls.push(img.sourceUrl);
       }
       wx.previewImage({ current, urls });
+    },
+    //提示用户是否要回退
+    showBackModal: function() {
+      return new Promise((resolve, reject) => {
+        MessageBox.confirm("确定要退出此次编辑吗").then(action => {
+          if (action === "confirm") {
+            resolve("ok");
+          } else {
+            //i love this!
+            window.history.forward(1);
+          }
+        });
+      });
     }
   },
 
@@ -97,6 +130,7 @@ export default {
       finalImgs: [],
       maxImgNumbers: 9,
       popupVisible: false,
+      themeText: "未选择主题",
       themes: [
         { icon: require("../../assets/lost.png"), text: "失物招领" },
         { icon: require("../../assets/lost.png"), text: "失物招领" },
@@ -108,7 +142,8 @@ export default {
         { icon: require("../../assets/lost.png"), text: "失物招领" },
         { icon: require("../../assets/lost.png"), text: "失物招领" },
         { icon: require("../../assets/lost.png"), text: "失物招领" }
-      ]
+      ],
+      content: ""
     };
   },
   components: {
