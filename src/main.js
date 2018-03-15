@@ -4,9 +4,9 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import lodash from './lodash'
-import infiniteScroll from 'vue-infinite-scroll'
+import { InfiniteScroll } from 'mint-ui';
 Vue.use(lodash)
-Vue.use(infiniteScroll)
+Vue.use(InfiniteScroll)
 // import ElementUI from 'element-ui';
 // import 'element-ui/lib/theme-chalk/index.css';
 // import 'mint-ui/lib/style.css'
