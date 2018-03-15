@@ -1,24 +1,24 @@
-<template>
-  <div class="container" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="5">
+<template>      
+  <div class="container" v-infinite-scroll="loadBottom" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+    <!-- <load-more :top-method="loadTop"  ref="loadmore"> -->
       <div class="threadBox" v-for="thread in threads">
         <thread-box :thread="thread"></thread-box>
       </div>
-      <div class="spinner-box" v-if="busy">
-        <spinner type="triple-bounce" v-if="!nomore"></spinner>
-        <div class="text-line" v-if="nomore">没有更多了...</div>
-      </div>
+      <div class="bottom-remind-box" v-if="allLoaded">没有更多了...</div>
+    <!-- </load-more> -->
   </div>
 </template>
 <script>
 import threadBox from "./threadBox";
 import config from "../helper/config";
 import axios from "axios";
-import { Spinner } from "mint-ui";
+import { Spinner, Loadmore } from "mint-ui";
 export default {
   props: ["type"],
   components: {
     threadBox,
-    spinner: Spinner
+    spinner: Spinner,
+    loadMore: Loadmore
   },
   created: async function() {
     switch (this.type) {
@@ -31,19 +31,31 @@ export default {
         console.log(this.threads);
         break;
     }
-    this.busy = false;
   },
   data: function() {
     return {
       threads: [],
-      busy: true,
       //没有更多了
-      nomore: false
+      allLoaded: false,
+      busy: false
     };
   },
   methods: {
-    loadMore: async function() {
-      console.log("loadmore");
+    loadTop: async function() {
+      switch (this.type) {
+        case "热门":
+          const threads = await axios({
+            url: `${config.url.feedUrl}/thread/getThread`,
+            withCredentials: true
+          });
+          this.threads = threads.data.threads;
+          break;
+      }
+      this.allLoaded = false;
+      this.$refs.loadmore.onTopLoaded();
+    },
+    loadBottom: async function() {
+      console.log(`loadBottom`);
       this.busy = true;
       const threads = await axios({
         url: `${config.url.feedUrl}/thread/getThread`,
@@ -54,9 +66,7 @@ export default {
       });
       this.threads = this.threads.concat(threads.data.threads);
       if (threads.data.threads.length === 0) {
-        this.busy = true;
-        this.nomore = true;
-        return;
+        this.allLoaded = true;
       }
       this.busy = false;
     }
@@ -72,14 +82,10 @@ export default {
 .threadBox {
   width: 100vw;
 }
-.spinner-box {
-  height: 10vh;
-
+.bottom-remind-box {
+  border: 0px solid black;
+  height: 9vh;
   width: 100vw;
-  .text-line {
-    color: #888888;
-    text-align: center;
-    width: 100vw;
-  }
+  color: #888888;
 }
 </style>

@@ -540,4 +540,33 @@ div {
 .mint-toast-pop-leave-active {
   opacity: 0;
 }
+/* loadmore --------------------------------------------------------------------------------------------------- */
+
+.mint-loadmore {
+    overflow: hidden
+}
+.mint-loadmore-content {}
+.mint-loadmore-content.is-dropped {
+    -webkit-transition: .2s;
+    transition: .2s
+}
+.mint-loadmore-top, .mint-loadmore-bottom {
+    text-align: center;
+    height: 50px;
+    line-height: 50px
+}
+.mint-loadmore-top {
+    margin-top: -50px
+}
+.mint-loadmore-bottom {
+    margin-bottom: -50px
+}
+.mint-loadmore-spinner {
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: middle
+}
+.mint-loadmore-text {
+    vertical-align: middle
+}
 </style>
