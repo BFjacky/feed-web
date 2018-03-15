@@ -1,11 +1,18 @@
-<template>      
-  <div class="container" v-infinite-scroll="loadBottom" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
-    <!-- <load-more :top-method="loadTop"  ref="loadmore"> -->
+<template>
+  <div class="container" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="100">
+    <load-more :top-method="refresh" ref="loadmore" v-on:top-status-change="topStatusChange">
+      <div slot="top" class="mint-loadmore-top">
+        <span v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }">↓</span>
+        <spinner v-show="topStatus === 'loading'" color="#32a8fc" type="triple-bounce"></spinner>
+      </div>
       <div class="threadBox" v-for="thread in threads">
         <thread-box :thread="thread"></thread-box>
       </div>
-      <div class="bottom-remind-box" v-if="allLoaded">没有更多了...</div>
-    <!-- </load-more> -->
+    </load-more>
+      <div class="spinner-box" v-if="busy">
+        <spinner type="triple-bounce" color="#32a8fc" v-if="!nomore"></spinner>
+        <div class="text-line" v-if="nomore">没有更多了...</div>
+      </div>
   </div>
 </template>
 <script>
@@ -27,7 +34,7 @@ export default {
           url: `${config.url.feedUrl}/thread/getThread`,
           withCredentials: true
         });
-        this.threads = this.threads.concat(threads.data.threads);
+        this.threads = threads.data.threads;
         console.log(this.threads);
         break;
     }
@@ -35,27 +42,18 @@ export default {
   data: function() {
     return {
       threads: [],
+      busy: false,
       //没有更多了
-      allLoaded: false,
-      busy: false
+      nomore: false,
+      topStatus: ""
     };
   },
   methods: {
-    loadTop: async function() {
-      switch (this.type) {
-        case "热门":
-          const threads = await axios({
-            url: `${config.url.feedUrl}/thread/getThread`,
-            withCredentials: true
-          });
-          this.threads = threads.data.threads;
-          break;
+    loadMore: async function() {
+      if (this.threads.length === 0) {
+        return;
       }
-      this.allLoaded = false;
-      this.$refs.loadmore.onTopLoaded();
-    },
-    loadBottom: async function() {
-      console.log(`loadBottom`);
+
       this.busy = true;
       const threads = await axios({
         url: `${config.url.feedUrl}/thread/getThread`,
@@ -69,6 +67,24 @@ export default {
         this.allLoaded = true;
       }
       this.busy = false;
+    },
+    refresh: async function() {
+      switch (this.type) {
+        case "热门":
+          const threads = await axios({
+            url: `${config.url.feedUrl}/thread/getThread`,
+            withCredentials: true
+          });
+          this.threads = threads.data.threads;
+          console.log(this.threads);
+          break;
+      }
+      this.nomore = false;
+      this.busy = false;
+      this.$refs.loadmore.onTopLoaded();
+    },
+    topStatusChange: function(e) {
+      this.topStatus = e;
     }
   }
 };
@@ -82,10 +98,25 @@ export default {
 .threadBox {
   width: 100vw;
 }
-.bottom-remind-box {
-  border: 0px solid black;
-  height: 9vh;
+.spinner-box {
+  height: 10vh;
   width: 100vw;
-  color: #888888;
+  .text-line {
+    color: #0e6dda;
+    text-align: center;
+    width: 100vw;
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(180deg);
+  }
+}
+.rotate {
+  animation: rotate 0.1s ease-in-out forwards;
 }
 </style>

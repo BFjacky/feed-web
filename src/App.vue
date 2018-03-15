@@ -540,8 +540,7 @@ div {
 .mint-toast-pop-leave-active {
   opacity: 0;
 }
-/* loadmore --------------------------------------------------------------------------------------------------- */
-
+/*loadmore*/
 .mint-loadmore {
     overflow: hidden
 }
