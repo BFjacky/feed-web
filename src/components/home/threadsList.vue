@@ -2,7 +2,7 @@
   <div class="container" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="100">
     <load-more :top-method="refresh" ref="loadmore" v-on:top-status-change="topStatusChange">
       <div slot="top" class="mint-loadmore-top">
-        <span v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }">↓</span>
+        <span class="down-arrow" v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }">↓</span>
         <spinner v-show="topStatus === 'loading'" color="#32a8fc" type="triple-bounce"></spinner>
       </div>
       <div class="threadBox" v-for="thread in threads">
@@ -65,6 +65,8 @@ export default {
       this.threads = this.threads.concat(threads.data.threads);
       if (threads.data.threads.length === 0) {
         this.allLoaded = true;
+        this.busy = true;
+        return;
       }
       this.busy = false;
     },
@@ -97,6 +99,9 @@ export default {
 }
 .threadBox {
   width: 100vw;
+}
+.down-arrow {
+  color: #32a8fc;
 }
 .spinner-box {
   height: 10vh;
