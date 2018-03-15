@@ -18,7 +18,8 @@ export default {
                     },
                     headers: {
                         'content-type': 'application/json'
-                    }
+                    },
+                    withCredentials:true,
                 })
                 return signatureRes.data.signature;
             }
@@ -47,7 +48,8 @@ export default {
                 data: {
                     from: 'cyf',
                     filename: file.name
-                }
+                },
+                withCredentials:true
             })
             const { key, token } = tokenRes.data;
             const config = {

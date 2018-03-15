@@ -10,7 +10,7 @@
       <div class="bottom-bar">
           <div class="functions">
             <div class="function-button photo-button" @click="addImage"></div>
-            <div class="function-button theme-button" @click="showThemes">主题</div>
+            <div class="function-button theme-button" @click="showThemes">{{themeText==='无主题'?'主题':themeText}}</div>
           </div>
           <div class="function-button send-button" @click="confirmToSend">发送</div>
       </div>
@@ -105,6 +105,7 @@ export default {
           this.$router.push({ name: "index", params: { allowBack: true } });
         }, 2000);
       } else {
+        console.log(sendRes.data)
         Toast({
           message: "发送失败",
           position: "middle",
@@ -152,7 +153,7 @@ export default {
       finalImgs: [],
       maxImgNumbers: 9,
       popupVisible: false,
-      themeText: "未选择主题",
+      themeText: "无主题",
       themes: [
         { icon: require("../../assets/lost.png"), text: "失物招领" },
         { icon: require("../../assets/lost.png"), text: "失物招领" },
@@ -263,7 +264,7 @@ export default {
     color: #32a8fc;
     margin-left: 6vw;
     border: 0px solid #32a8fc;
-    width: 12vw;
+    width: 20vw;
     border-radius: 3.5vw;
   }
   .send-button {

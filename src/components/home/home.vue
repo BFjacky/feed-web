@@ -8,19 +8,21 @@
     </nav-bar>
     <tab-container v-model="selectItem" class="tab-container">
       <tab-container-item class="tab-container-item" id="0">
-        <threads-list :message='1'></threads-list>
+        <threads-list  type="热门"></threads-list>
       </tab-container-item>
       <tab-container-item class="tab-container-item" id="1">
-          <threads-list :message='2'></threads-list>
+          <threads-list ></threads-list>
       </tab-container-item>
       <tab-container-item class="tab-container-item" id="2">
-          <threads-list :message='3'></threads-list>
+          <threads-list ></threads-list>
       </tab-container-item>
     </tab-container>
   </div>
 </template>
 <script>
 import { Navbar, TabItem, TabContainer, TabContainerItem } from "mint-ui";
+import axios from "axios";
+import config from "../helper/config";
 import threadsList from "./threadsList";
 export default {
   components: {
@@ -30,6 +32,7 @@ export default {
     tabContainerItem: TabContainerItem,
     threadsList
   },
+  created: async function() {},
   watch: {
     selectItem: function() {
       switch (this.selectItem) {
@@ -76,13 +79,16 @@ export default {
 </script>
 <style lang="less" scoped>
 .container {
-  height: 100%;
+  height: 92vh;
   width: 100%;
+  overflow-y: hidden;
 }
 .nav-bar {
-  height: 8%;
+  height: 7vh;
   width: 100%;
   display: flex;
+  box-shadow: 0px 1px 1px 1px #d6d6d6;
+  z-index: 2000;
   .tab-item {
     flex-grow: 1;
     text-align: center;
@@ -104,10 +110,15 @@ export default {
   color: #32a8fc;
 }
 .tab-container {
-  height: 92%;
+  height: 85vh;
   width: 100%;
+  overflow-y: auto;
+
+  /*避免遮挡nav-bar的box-shadow*/
+  margin-top: 1px;
+
   .tab-container-item {
-    height: 100%;
+    height: 85vh;
     width: 100%;
   }
 }

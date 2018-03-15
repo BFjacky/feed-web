@@ -40,7 +40,7 @@ export default {
   },
   created: async function() {
     const res = await helper.wxinit();
-    console.log(this.$route)
+    console.log(this.$route);
   },
   watch: {
     itemSelect: function() {
@@ -95,6 +95,7 @@ div {
   width: 100vw;
   display: flex;
   justify-content: space-between;
+  box-shadow: 0 -1px 1px 1px rgb(201, 201, 201);
   align-items: center;
   .one-item {
     padding: 5px;
@@ -104,6 +105,7 @@ div {
   }
 }
 .send-button {
+  box-shadow: 0 -1px 1px 1px rgb(201, 201, 201);
   background-color: #32a8fc;
   background-image: url(../assets/send.png);
   background-size: 75% 75%;
