@@ -19,21 +19,98 @@
       </div>
       <div class="footer">
           <div class="buttons">
-              <div class="button-praise">
-                  <div class="icon"></div>
+              <div class="button-praise" @click="praise">
+                  <div v-bind:class="{icon:!hasPraised,'icon-praised':hasPraised}"></div>
                   <div class="text">{{thread.praises}}</div>
               </div>
-              <div class="button-comment">
-                   <div class="icon"></div>
+              <div class="button-comment" @click="gotoComment">
+                  <div class="icon"></div>
                   <div class="text">{{thread.comments}}</div>
               </div>
               <div class="button-share">
-                      <div class="icon"></div>
+                  <div class="icon"></div>
               </div>
           </div>
       </div>
+
+      <!-- 评论页 -->
+
+
   </div>
 </template>
+<script>
+import axios from "axios";
+import config from "../helper/config";
+
+export default {
+  props: ["thread"],
+  created: async function() {
+    for (const praise of this.thread.praiseInfo) {
+      if (praise.openid === config.user.openid) {
+        this.hasPraised = true;
+        break;
+      }
+    }
+    // console.log(this.thread);
+  },
+  components: {},
+  data: function() {
+    return {
+      hasPraised: false,
+      popupVisible: false,
+      //此条thread的comments
+      comments: [],
+      //用户评论的内容
+      content: "",
+      //评论最大字数
+      maxWordsLength: 150,
+      //进行评论时的对象: thread||comment
+      sourse: "thread"
+    };
+  },
+  methods: {
+    praise: async function() {
+      if (this.hasPraised) {
+        //如果已经点赞,则取消点赞
+        const cancelRes = await axios({
+          url: `${config.url.feedUrl}/thread/cancelPraise`,
+          method: "post",
+          data: {
+            _id: this.thread._id
+          },
+          withCredentials: true
+        });
+        this.hasPraised = false;
+
+        //FiX ME 点赞之后不去查询该条说说最新的点赞总数，只是单纯在客户端将点赞数减一
+        this.thread.praises = this.thread.praises - 1;
+        return;
+      }
+      const praiseRes = await axios({
+        url: `${config.url.feedUrl}/thread/praise`,
+        method: "post",
+        data: {
+          _id: this.thread._id
+        },
+        withCredentials: true
+      });
+      this.hasPraised = true;
+
+      //FiX ME 点赞之后不去查询该条说说最新的点赞总数，只是单纯在客户端将点赞数加一
+      this.thread.praises = this.thread.praises + 1;
+    },
+    gotoComment: async function() {
+      this.$router.push({
+        path: "/commentPage",
+        query: {
+          thread: this.thread
+        }
+      });
+    }
+  }
+};
+</script>
+
 <style lang="less" scoped>
 div {
   border: 0px solid black;
@@ -83,7 +160,7 @@ div {
 .main {
   width: 100%;
   overflow: hidden;
-  margin-top:2vh;
+  margin-top: 2vh;
   .content-text {
     text-align: left;
   }
@@ -91,7 +168,7 @@ div {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    margin-top:2vh;
+    margin-top: 2vh;
     .img {
       height: 28vw;
       width: 28vw;
@@ -125,6 +202,13 @@ div {
         height: 3vh;
         width: 3vh;
         background-image: url("../../assets/like.png");
+        background-size: 100% 100%;
+      }
+      //已经点过赞
+      .icon-praised {
+        height: 3vh;
+        width: 3vh;
+        background-image: url("../../assets/like-after.png");
         background-size: 100% 100%;
       }
       .text {
@@ -176,11 +260,3 @@ div {
   }
 }
 </style>
-<script>
-export default {
-  props: ["thread"],
-  created: async function() {
-    console.log(this.thread);
-  }
-};
-</script>
