@@ -19,7 +19,7 @@ export default {
                     headers: {
                         'content-type': 'application/json'
                     },
-                    withCredentials:true,
+                    withCredentials: true,
                 })
                 return signatureRes.data.signature;
             }
@@ -49,7 +49,7 @@ export default {
                     from: 'cyf',
                     filename: file.name
                 },
-                withCredentials:true
+                withCredentials: true
             })
             const { key, token } = tokenRes.data;
             const config = {
@@ -69,5 +69,18 @@ export default {
                 }
             })
         })
+    },
+    async checkOauth() {
+        if (!myconfig.user) {
+            //如果没有oauth,则发起oauth登陆请求
+            window.location.href = myconfig.url.oauthUrl;
+            return false;
+        }
+        if (myconfig.user.oauth) {
+            return true;
+        }
+        //如果没有oauth,则发起oauth登陆请求
+        window.location.href = myconfig.url.oauthUrl;
+        return false;
     }
 }

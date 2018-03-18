@@ -41,11 +41,14 @@ export default {
     };
   },
   created: async function() {
-    const res = await helper.wxinit();
     const { code } = this.$route.query;
     if (!code) {
+      const res = await helper.wxinit();
       return;
     }
+    // 告诉整个页面，该用户正在鉴权中
+    config.user.updating = true;
+    const res = await helper.wxinit();
     const oauthRes = await axios({
       url: `${config.url.feedUrl}/oauth`,
       method: "post",
@@ -55,6 +58,7 @@ export default {
       withCredentials: true
     });
     console.log(oauthRes);
+    config.user.updating = false;
     //在这里获得用户跳转到此页面的参数,将code传到后端进行鉴权
   },
   watch: {
@@ -80,7 +84,11 @@ export default {
     }
   },
   methods: {
-    gotoPostPage: function() {
+    gotoPostPage: async function() {
+      const res = await helper.checkOauth();
+      if (!res) {
+        return;
+      }
       this.$router.push({ path: "/postThread" });
     }
   },

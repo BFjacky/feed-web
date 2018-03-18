@@ -32,11 +32,14 @@
 <script>
 import axios from "axios";
 import config from "../helper/config";
+import {Toast} from "mint-ui";
 export default {
   created: async function() {
     await this.initComments();
   },
-
+  components: {
+    Toast
+  },
   data: function() {
     return {
       thread: {},
@@ -47,7 +50,9 @@ export default {
       //评论最大字数
       maxWordsLength: 150,
       //进行评论时的对象: thread||comment
-      sourse: "thread"
+      sourse: "thread",
+      //防止用户过度点赞
+      praiseLock: false
     };
   },
   methods: {
@@ -96,6 +101,16 @@ export default {
       await this.initComments();
     },
     praise: async function(comment) {
+      if (this.praiseLock) {
+        Toast({
+          message: "操作太快了...",
+          position: "middle",
+          duration: 700
+        });
+        return;
+      }
+      this.praiseLock = true;
+      const time = 1000;
       //如果已经点过赞了则 取消点赞
       if (comment.hasPraised) {
         const praiseRes = await axios({
@@ -106,6 +121,8 @@ export default {
             _id: comment._id
           }
         });
+        comment.hasPraised = false;
+        comment.praises--;
       } else {
         const praiseRes = await axios({
           url: `${config.url.feedUrl}/comment/praise`,
@@ -115,9 +132,15 @@ export default {
             _id: comment._id
           }
         });
+        comment.hasPraised = true;
+        comment.praises++;
       }
-      //send comment后重新获取最新的评论信息
-      await this.initComments();
+
+      setTimeout(() => {
+        this.praiseLock = false;
+      }, time);
+      // //send comment后重新获取最新的评论信息
+      // await this.initComments();
     }
   }
 };
@@ -251,7 +274,6 @@ div {
     font-size: 4vw;
     border-width: 0;
     box-sizing: border-box;
-
   }
   .send-button {
     margin-top: 5px;

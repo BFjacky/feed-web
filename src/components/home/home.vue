@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <nav-bar v-model="selectItem" class="nav-bar">
-      <tab-item class="tab-item" :class="itemChosenClass[0]" id="0">热门</tab-item>
-      <tab-item class="tab-item" :class="itemChosenClass[1]" id="1">关注</tab-item>
+      <tab-item class="tab-item" :class="itemChosenClass[0]" id="0">最新</tab-item>
+      <tab-item class="tab-item" :class="itemChosenClass[1]" id="1">热门</tab-item>
       <tab-item class="tab-item" :class="itemChosenClass[2]" id="2">主题</tab-item>   
       <div class="moving-bottom-line" :class="moveAnimation"></div>   
     </nav-bar>

@@ -31,8 +31,21 @@
 <script>
 import axios from "axios";
 import config from "../helper/config";
+async function checkUpdating(){
+  return new Promise((resolve,reject)=>{
+  const intervalId = setInterval(()=>{
+    console.log('check...')
+    if(!config.user.updating){
+      resolve(intervalId)
+    }
+  },100)
+  })
+}
 export default {
-  created: async function() {
+  mounted: async function() {
+    const intervalId = await checkUpdating();
+    clearInterval(intervalId);
+    console.log('person')
     const userGet = await axios({
       url: `${config.url.feedUrl}/user/get`,
       withCredentials: true
@@ -46,6 +59,7 @@ export default {
     this.avatarUrl = avatarUrl;
     this.nickName = nickName;
     this.gender = gender;
+    config.user.oauth = true;
   },
   data: function() {
     return {
@@ -56,8 +70,7 @@ export default {
   },
   methods: {
     wechatLogin: function() {
-      window.location.href =
-        "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx9fd6bbc89436a5ee&redirect_uri=http%3a%2f%2fmyccc.feit.me%2f&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+      window.location.href =config.url.oauthUrl;
     }
   }
 };

@@ -41,7 +41,8 @@
 <script>
 import axios from "axios";
 import config from "../helper/config";
-
+import helper from "../helper/helper";
+import { Toast } from "mint-ui";
 export default {
   props: ["thread"],
   created: async function() {
@@ -53,15 +54,34 @@ export default {
     }
     // console.log(this.thread);
   },
-  components: {},
+  components: {
+    Toast
+  },
+
   data: function() {
     return {
       hasPraised: false,
-      popupVisible: false
+      popupVisible: false,
+      //避免用户频繁点赞，过度消耗资源
+      praiseLock: false
     };
   },
   methods: {
     praise: async function() {
+      const res = await helper.checkOauth();
+      if(!res){
+        return;
+      }
+      if (this.praiseLock) {
+        Toast({
+          message: "操作太快了...",
+          position: "middle",
+          duration: 700
+        });
+        return;
+      }
+      const time = 1000;
+      this.praiseLock = true;
       if (this.hasPraised) {
         //如果已经点赞,则取消点赞
         const cancelRes = await axios({
@@ -76,22 +96,29 @@ export default {
 
         //FiX ME 点赞之后不去查询该条说说最新的点赞总数，只是单纯在客户端将点赞数减一
         this.thread.praises = this.thread.praises - 1;
-        return;
-      }
-      const praiseRes = await axios({
-        url: `${config.url.feedUrl}/thread/praise`,
-        method: "post",
-        data: {
-          _id: this.thread._id
-        },
-        withCredentials: true
-      });
-      this.hasPraised = true;
+      } else {
+        const praiseRes = await axios({
+          url: `${config.url.feedUrl}/thread/praise`,
+          method: "post",
+          data: {
+            _id: this.thread._id
+          },
+          withCredentials: true
+        });
+        this.hasPraised = true;
 
-      //FiX ME 点赞之后不去查询该条说说最新的点赞总数，只是单纯在客户端将点赞数加一
-      this.thread.praises = this.thread.praises + 1;
+        //FiX ME 点赞之后不去查询该条说说最新的点赞总数，只是单纯在客户端将点赞数加一
+        this.thread.praises = this.thread.praises + 1;
+      }
+      setTimeout(() => {
+        this.praiseLock = false;
+      }, time);
     },
     gotoComment: async function() {
+      const res = await helper.checkOauth();
+      if(!res){
+        return;
+      }
       this.$router.push({
         path: "/commentPage",
         query: {

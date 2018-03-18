@@ -35,7 +35,6 @@ export default {
           withCredentials: true
         });
         this.threads = threads.data.threads;
-        config.user = threads.data.user;
         break;
     }
   },
