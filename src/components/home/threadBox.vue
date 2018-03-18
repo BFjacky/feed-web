@@ -46,7 +46,7 @@ export default {
   props: ["thread"],
   created: async function() {
     for (const praise of this.thread.praiseInfo) {
-      if (praise.openid === config.user.openid) {
+      if (praise.uid === config.user._id) {
         this.hasPraised = true;
         break;
       }
@@ -57,15 +57,7 @@ export default {
   data: function() {
     return {
       hasPraised: false,
-      popupVisible: false,
-      //此条thread的comments
-      comments: [],
-      //用户评论的内容
-      content: "",
-      //评论最大字数
-      maxWordsLength: 150,
-      //进行评论时的对象: thread||comment
-      sourse: "thread"
+      popupVisible: false
     };
   },
   methods: {

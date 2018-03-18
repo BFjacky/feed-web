@@ -73,7 +73,7 @@ export default {
       }
       for (const comment of this.comments) {
         for (const praise of comment.praiseInfo) {
-          if (praise.openid === config.user.openid) {
+          if (praise.uid === config.user._id) {
             comment.hasPraised = true;
             break;
           }

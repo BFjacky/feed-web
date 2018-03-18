@@ -26,6 +26,8 @@ import { Tabbar, TabItem, TabContainer, TabContainerItem } from "mint-ui";
 import home from "@/components/home/home";
 import person from "@/components/person/person";
 import helper from "@/components/helper/helper";
+import config from "@/components/helper/config";
+import axios from "axios";
 export default {
   data: function() {
     return {
@@ -40,7 +42,20 @@ export default {
   },
   created: async function() {
     const res = await helper.wxinit();
-    console.log(this.$route);
+    const { code } = this.$route.query;
+    if (!code) {
+      return;
+    }
+    const oauthRes = await axios({
+      url: `${config.url.feedUrl}/oauth`,
+      method: "post",
+      data: {
+        code
+      },
+      withCredentials: true
+    });
+    console.log(oauthRes);
+    //在这里获得用户跳转到此页面的参数,将code传到后端进行鉴权
   },
   watch: {
     itemSelect: function() {
