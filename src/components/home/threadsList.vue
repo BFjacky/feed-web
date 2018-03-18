@@ -35,7 +35,7 @@ export default {
           withCredentials: true
         });
         this.threads = threads.data.threads;
-        console.log(this.threads);
+        config.user = threads.data.user;
         break;
     }
   },
@@ -45,7 +45,8 @@ export default {
       busy: false,
       //没有更多了
       nomore: false,
-      topStatus: ""
+      topStatus: "",
+      forbidLoadmore: false
     };
   },
   methods: {
@@ -78,7 +79,6 @@ export default {
             withCredentials: true
           });
           this.threads = threads.data.threads;
-          console.log(this.threads);
           break;
       }
       this.nomore = false;
@@ -107,7 +107,7 @@ export default {
   height: 10vh;
   width: 100vw;
   .text-line {
-    color: #0e6dda;
+    color: #888888;
     text-align: center;
     width: 100vw;
   }

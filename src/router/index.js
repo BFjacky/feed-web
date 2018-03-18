@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import index from '@/components/index'
 import postThread from '@/components/post/postThread'
+import commentPage from '@/components/home/commentPage'
 Vue.use(Router)
 
 const router = new Router({
@@ -16,7 +17,11 @@ const router = new Router({
       path: '/postThread',
       name: 'postThread',
       component: postThread,
-      meta: { allowBack: false },
+    },
+    {
+      path: '/commentPage',
+      name: 'commentPage',
+      component: commentPage,
     }
   ]
 })
