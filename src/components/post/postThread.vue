@@ -31,8 +31,7 @@ import config from "../helper/config";
 import axios from "axios";
 export default {
   watch: {
-    content: function() {
-    }
+    content: function() {}
   },
   methods: {
     addImage: function() {
@@ -74,6 +73,11 @@ export default {
       this.imgs = imgs;
     },
     confirmToSend: async function() {
+      if (this.hasSent) {
+        return;
+      }
+      this.hasSent = true;
+
       if (this.finalImgs.length !== this.imgs.length) {
         MessageBox.alert(
           `还差${this.imgs.length - this.finalImgs.length}张图片没有上传完`,
@@ -104,7 +108,8 @@ export default {
           this.$router.push({ name: "index", params: { allowBack: true } });
         }, 500);
       } else {
-        Toast({
+        hasSent = false;
+        this.Toast({
           message: "发送失败",
           position: "middle",
           duration: 2000
@@ -153,18 +158,14 @@ export default {
       popupVisible: false,
       themeText: "无主题",
       themes: [
-        { icon: require("../../assets/lost.png"), text: "失物招领" },
-        { icon: require("../../assets/lost.png"), text: "失物招领" },
-        { icon: require("../../assets/lost.png"), text: "失物招领" },
-        { icon: require("../../assets/lost.png"), text: "失物招领" },
-        { icon: require("../../assets/lost.png"), text: "失物招领" },
-        { icon: require("../../assets/lost.png"), text: "失物招领" },
-        { icon: require("../../assets/lost.png"), text: "失物招领" },
-        { icon: require("../../assets/lost.png"), text: "失物招领" },
-        { icon: require("../../assets/lost.png"), text: "失物招领" },
-        { icon: require("../../assets/lost.png"), text: "失物招领" }
+        { icon: require("../../assets/search.png"), text: "失物招领" },
+        { icon: require("../../assets/cardiogram.png"), text: "表白墙  " },
+        { icon: require("../../assets/money-bag.png"), text: "二手交易" },
+        { icon: require("../../assets/car.png"), text: "拼车出行" },
+        { icon: require("../../assets/learning.png"), text: "寻找研友" }
       ],
-      content: ""
+      content: "",
+      hasSent: false
     };
   },
   components: {

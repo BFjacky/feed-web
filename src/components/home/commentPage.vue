@@ -1,8 +1,26 @@
 <template>
   <div class="container">
-    <div class="comment-container ">
-        <div class="comment-show">
-            <div class="content-box-title">热门评论</div>
+        <div class="comment-show"  v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="100">
+            <div class="content-box-title">热门评论({{hotComments.length}})</div>
+            <div class="content-box" v-for="comment in hotComments">
+               <div class="left" v-bind:style="{backgroundImage:`url(${comment.avatarUrl})`}"></div>
+               <div class="right">
+                    <div class="header">
+                      <div class="header-left">
+                        <div class="name">{{comment.nickName}}</div>
+                        <div class="time">{{comment.createdAt}}</div>
+                      </div>
+                      <div class="header-right">
+                        <div v-bind:class="{praise:!comment.hasPraised,'praise-after':comment.hasPraised}" @click="praise(comment)"></div>
+                        <div class="number">{{comment.praises}}</div>
+                      </div>
+                    </div>
+                    <div class="main">{{comment.content}}</div>
+                    <div class="footer"></div>
+                </div>
+            </div>
+            <div class="divide-line"></div>
+            <div class="content-box-title">最新评论({{comments.length}})</div>
             <div class="content-box" v-for="comment in comments">
                <div class="left" v-bind:style="{backgroundImage:`url(${comment.avatarUrl})`}"></div>
                <div class="right">
@@ -26,13 +44,12 @@
             <textarea class="content-area" :maxlength="maxWordsLength" placeholder="友善的发言更容易获得朋友" v-model:value="content"></textarea> 
             <div class="send-button" @click="sendAcomment">发送</div>
         </div>
-    </div>
   </div>
 </template>
 <script>
 import axios from "axios";
 import config from "../helper/config";
-import {Toast} from "mint-ui";
+import { Toast } from "mint-ui";
 export default {
   created: async function() {
     await this.initComments();
@@ -52,12 +69,34 @@ export default {
       //进行评论时的对象: thread||comment
       sourse: "thread",
       //防止用户过度点赞
-      praiseLock: false
+      praiseLock: false,
+      busy: false,
+      nomore: false,
+      hotComments: []
     };
   },
   methods: {
     initComments: async function() {
+      this.busy = true;
+
       this.thread = this.$route.query.thread;
+      //获得此条thread的热门评论(点赞量前三)
+      const hotCommentRes = await axios({
+        url: `${config.url.feedUrl}/comment/getHotComment`,
+        method: "get",
+        withCredentials: true,
+        params: {
+          _id: this.thread._id,
+          sourse: "thread"
+        }
+      });
+      if (!hotCommentRes.data.success) {
+        alert("未能获取到评论信息!");
+        return;
+      }
+      if (hotCommentRes.data.success) {
+        this.hotComments = hotCommentRes.data.comments;
+      }
       //获得此条thread的评论
       const commentRes = await axios({
         url: `${config.url.feedUrl}/comment/getComment`,
@@ -83,8 +122,55 @@ export default {
           }
         }
       }
+      for (const comment of this.hotComments) {
+        for (const praise of comment.praiseInfo) {
+          if (praise.uid === config.user._id) {
+            comment.hasPraised = true;
+            break;
+          }
+        }
+      }
+
+      this.busy = false;
+    },
+    loadMore: async function() {
+      if (this.nomore) {
+        return;
+      }
+      this.busy = true;
+      //获得此条thread的评论
+      const commentRes = await axios({
+        url: `${config.url.feedUrl}/comment/getComment`,
+        method: "get",
+        withCredentials: true,
+        params: {
+          _id: this.thread._id,
+          sourse: "thread",
+          commentId: this.comments[this.comments.length - 1]._id
+        }
+      });
+      if (!commentRes.data.success) {
+        alert("未能获取到评论信息!");
+        return;
+      }
+      if (commentRes.data.success) {
+        this.comments = this.comments.concat(commentRes.data.comments);
+      }
+      if (commentRes.data.comments.length < 10) {
+        this.nomore = true;
+      }
+      this.busy = false;
+      console.log(`loadmore: ${this.comments.length}`);
     },
     sendAcomment: async function() {
+      if (this.content.length === 0 || this.content == "") {
+        Toast({
+          message: "评论内容不得为空",
+          position: "middle",
+          duration: 1000
+        });
+        return;
+      }
       const sendCommentRes = await axios({
         url: `${config.url.feedUrl}/thread/newComment`,
         method: "post",
@@ -95,6 +181,19 @@ export default {
           sourse: this.sourse
         }
       });
+      if (sendCommentRes.data.success) {
+        Toast({
+          message: "评论成功",
+          position: "middle",
+          duration: 500
+        });
+      } else {
+        Toast({
+          message: "评论失败",
+          position: "middle",
+          duration: 1000
+        });
+      }
       //send comment后重新获取最新的评论信息
       await this.initComments();
     },
@@ -146,6 +245,7 @@ export default {
 
 <style lang="less" scoped>
 .container {
+  justify-content: space-between;
   height: 100vh;
   width: 100vw;
   display: flex;
@@ -160,10 +260,9 @@ div {
   border-top: 7px solid rgb(241, 241, 241);
 }
 .comment-show {
-  flex-grow: 1;
-  flex-shrink: 1;
   overflow-y: auto;
-  margin-bottom: 100px;
+  flex-grow: 1;
+  margin-bottom: 3px;
   .content-box-title {
     height: 10vw;
     text-align: left;
@@ -255,8 +354,8 @@ div {
 }
 .comment-make {
   box-shadow: 0 -1px 1px 1px rgb(180, 178, 178);
+  flex-shrink: 0;
   background-color: white;
-  position: fixed;
   height: 80px;
   bottom: 0;
   display: flex;
