@@ -19,6 +19,7 @@
 import threadBox from "./threadBox";
 import config from "../helper/config";
 import axios from "axios";
+import helper from "../helper/helper";
 import { Spinner, Loadmore } from "mint-ui";
 export default {
   props: ["type"],
@@ -88,7 +89,6 @@ export default {
           for (const thread of this.threads) {
             objectIds.push(thread._id);
           }
-          console.log(objectIds);
           const threads = await axios({
             url: `${config.url.feedUrl}/thread/getHotThread`,
             method: "post",
@@ -109,12 +109,15 @@ export default {
       }
     },
     refresh: async function() {
+      console.log("refresh", this.type);
       switch (this.type) {
         case "最新":
           const threads = await axios({
             url: `${config.url.feedUrl}/thread/getThread`,
             withCredentials: true
           });
+          this.threads = [];
+          await helper.wait(10);
           this.threads = threads.data.threads;
           break;
         case "热门":
@@ -124,6 +127,8 @@ export default {
             withCredentials: true,
             data: {}
           });
+          this.threads = [];
+          await helper.wait(10);
           this.threads = hotThreads.data.threads;
           break;
       }

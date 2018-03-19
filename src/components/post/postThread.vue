@@ -32,7 +32,6 @@ import axios from "axios";
 export default {
   watch: {
     content: function() {
-      console.log(this.content.length);
     }
   },
   methods: {
@@ -105,7 +104,6 @@ export default {
           this.$router.push({ name: "index", params: { allowBack: true } });
         }, 500);
       } else {
-        console.log(sendRes.data);
         Toast({
           message: "发送失败",
           position: "middle",

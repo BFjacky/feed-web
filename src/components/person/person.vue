@@ -34,7 +34,6 @@ import config from "../helper/config";
 async function checkUpdating() {
   return new Promise((resolve, reject) => {
     const intervalId = setInterval(() => {
-      console.log("check...");
       if (!config.user.updating) {
         resolve(intervalId);
       }
@@ -45,12 +44,10 @@ export default {
   mounted: async function() {
     const intervalId = await checkUpdating();
     clearInterval(intervalId);
-    console.log("person");
     const userGet = await axios({
       url: `${config.url.feedUrl}/user/get`,
       withCredentials: true
     });
-    console.log(userGet);
     if (!userGet.data) {
       //未能获取到用户信息
       return;

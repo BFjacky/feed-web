@@ -46,6 +46,7 @@ import { Toast } from "mint-ui";
 export default {
   props: ["thread"],
   created: async function() {
+    console.log('box...')
     for (const praise of this.thread.praiseInfo) {
       console.log(praise.uid, config.user._id);
       if (praise.uid === config.user._id) {

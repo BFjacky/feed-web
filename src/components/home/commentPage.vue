@@ -74,7 +74,6 @@ export default {
       }
       if (commentRes.data.success) {
         this.comments = commentRes.data.comments;
-        console.log(this.comments);
       }
       for (const comment of this.comments) {
         for (const praise of comment.praiseInfo) {
@@ -84,7 +83,6 @@ export default {
           }
         }
       }
-      console.log(this.comments[0].hasPraised);
     },
     sendAcomment: async function() {
       const sendCommentRes = await axios({

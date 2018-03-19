@@ -82,5 +82,12 @@ export default {
         //如果没有oauth,则发起oauth登陆请求
         window.location.href = myconfig.url.oauthUrl;
         return false;
+    },
+    async  wait(time) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve("ok");
+            }, time);
+        });
     }
 }

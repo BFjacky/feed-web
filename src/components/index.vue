@@ -57,7 +57,7 @@ export default {
       },
       withCredentials: true
     });
-    console.log(oauthRes);
+
     config.user.updating = false;
     //在这里获得用户跳转到此页面的参数,将code传到后端进行鉴权
   },
