@@ -50,10 +50,11 @@ export default {
       withCredentials: true
     });
     config.user.fetching = false;
-    if (!userGet.data) {
+    if (!userGet.data || !userGet.data._id) {
       //未能获取到用户信息
       return;
     }
+    console.log("判断一下nickName:");
     const { avatarUrl, nickName, gender, _id } = userGet.data;
     this.avatarUrl = avatarUrl;
     this.nickName = nickName;

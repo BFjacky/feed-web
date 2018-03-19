@@ -71,7 +71,7 @@ export default {
         })
     },
     async checkOauth() {
-        if (!myconfig.user) {
+        if (!myconfig.user._id) {
             //如果没有oauth,则发起oauth登陆请求
             window.location.href = myconfig.url.oauthUrl;
             return false;
