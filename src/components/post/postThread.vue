@@ -108,8 +108,8 @@ export default {
           this.$router.push({ name: "index", params: { allowBack: true } });
         }, 500);
       } else {
-        hasSent = false;
-        this.Toast({
+        this.hasSent = false;
+        Toast({
           message: "发送失败",
           position: "middle",
           duration: 2000

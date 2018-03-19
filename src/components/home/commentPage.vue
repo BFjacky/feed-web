@@ -114,22 +114,6 @@ export default {
       if (commentRes.data.success) {
         this.comments = commentRes.data.comments;
       }
-      for (const comment of this.comments) {
-        for (const praise of comment.praiseInfo) {
-          if (praise.uid === config.user._id) {
-            comment.hasPraised = true;
-            break;
-          }
-        }
-      }
-      for (const comment of this.hotComments) {
-        for (const praise of comment.praiseInfo) {
-          if (praise.uid === config.user._id) {
-            comment.hasPraised = true;
-            break;
-          }
-        }
-      }
 
       this.busy = false;
     },

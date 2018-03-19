@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <indicator-modal></indicator-modal>
     <tab-container class="tab-container" v-model="itemSelect" :swipeable=false>
       <tab-container-item class="item" id="0">
         <home-page></home-page>
@@ -27,6 +28,7 @@ import home from "@/components/home/home";
 import person from "@/components/person/person";
 import helper from "@/components/helper/helper";
 import config from "@/components/helper/config";
+import indicatorModal from '@/components/commonVue/indicatorModal';
 import axios from "axios";
 export default {
   data: function() {
@@ -48,6 +50,8 @@ export default {
     }
     // 告诉整个页面，该用户正在鉴权中
     config.user.updating = true;
+    //提示全局正在登陆
+
     const res = await helper.wxinit();
     const oauthRes = await axios({
       url: `${config.url.feedUrl}/oauth`,
@@ -98,7 +102,8 @@ export default {
     tabContainer: TabContainer,
     tabContainerItem: TabContainerItem,
     homePage: home,
-    personPage: person
+    personPage: person,
+    indicatorModal,
   }
 };
 </script>

@@ -44,10 +44,12 @@ export default {
   mounted: async function() {
     const intervalId = await checkUpdating();
     clearInterval(intervalId);
+    config.user.fetching = true;
     const userGet = await axios({
       url: `${config.url.feedUrl}/user/get`,
       withCredentials: true
     });
+    config.user.fetching = false;
     if (!userGet.data) {
       //未能获取到用户信息
       return;

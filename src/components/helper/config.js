@@ -6,7 +6,10 @@ export default {
     //全局user
     user: {
         oauth: false,
+        //后台服务正在获取此微信用户信息
         updating: false,
+        //前端页面正在从后台服务器获取用户信息
+        fetching:false,
         _id: '',
     }
 }

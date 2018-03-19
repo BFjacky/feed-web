@@ -14,13 +14,13 @@
           <div class="content-text">{{thread.content}}</div>
           <div class="content-buttons"></div>
           <div class="imgs-part">
-            <div class="img" :class="{singleImg:thread.imgs.length===1}" v-for="img in thread.imgs" v-bind:style="{backgroundImage:`url(${img.url})`}"></div>
+            <div @click="previewImage(img)" class="img" :class="{singleImg:thread.imgs.length===1}" v-for="img in thread.imgs" v-bind:style="{backgroundImage:`url(${img.url})`}"></div>
           </div>
       </div>
       <div class="footer">
           <div class="buttons">
               <div class="button-praise" @click="praise">
-                  <div v-bind:class="{icon:!hasPraised,'icon-praised':hasPraised}"></div>
+                  <div v-bind:class="{icon:!thread.hasPraised,'icon-praised':thread.hasPraised}"></div>
                   <div class="text">{{thread.praises}}</div>
               </div>
               <div class="button-comment" @click="gotoComment">
@@ -45,22 +45,13 @@ import helper from "../helper/helper";
 import { Toast } from "mint-ui";
 export default {
   props: ["thread"],
-  created: async function() {
-    for (const praise of this.thread.praiseInfo) {
-      if (praise.uid === config.user._id) {
-        this.hasPraised = true;
-        break;
-      }
-    }
-    // console.log(this.thread);
-  },
+  created: async function() {},
   components: {
     Toast
   },
 
   data: function() {
     return {
-      hasPraised: false,
       popupVisible: false,
       //避免用户频繁点赞，过度消耗资源
       praiseLock: false
@@ -82,7 +73,7 @@ export default {
       }
       const time = 1000;
       this.praiseLock = true;
-      if (this.hasPraised) {
+      if (this.thread.hasPraised) {
         //如果已经点赞,则取消点赞
         const cancelRes = await axios({
           url: `${config.url.feedUrl}/thread/cancelPraise`,
@@ -92,7 +83,7 @@ export default {
           },
           withCredentials: true
         });
-        this.hasPraised = false;
+        this.thread.hasPraised = false;
 
         //FiX ME 点赞之后不去查询该条说说最新的点赞总数，只是单纯在客户端将点赞数减一
         this.thread.praises = this.thread.praises - 1;
@@ -105,7 +96,7 @@ export default {
           },
           withCredentials: true
         });
-        this.hasPraised = true;
+        this.thread.hasPraised = true;
 
         //FiX ME 点赞之后不去查询该条说说最新的点赞总数，只是单纯在客户端将点赞数加一
         this.thread.praises = this.thread.praises + 1;
@@ -125,6 +116,14 @@ export default {
           thread: this.thread
         }
       });
+    },
+    previewImage: async function(img) {
+      const urls = [];
+      const current = img.sourceUrl;
+      for (const tempImg of this.thread.imgs) {
+        urls.push(tempImg.sourceUrl);
+      }
+      wx.previewImage({ current, urls });
     }
   }
 };
