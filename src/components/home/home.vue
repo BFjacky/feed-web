@@ -22,7 +22,7 @@
           <threads-list type="热门"></threads-list>
       </tab-container-item>
       <tab-container-item class="tab-container-item" id="2">
-          <threads-list ></threads-list>
+          <threads-list :type="nowTheme"></threads-list>
       </tab-container-item>
     </tab-container>
   </div>
@@ -227,6 +227,7 @@ export default {
   height: calc(25vh/3);
   border: 1px solid rgb(238, 238, 238);
   box-sizing: border-box;
+  background-color: white;
   display: flex;
   align-items: center;
   flex-grow: 0;
@@ -244,10 +245,9 @@ export default {
 }
 .themeList {
   width: 100vw;
-  background-color: white;
   position: relative;
   top: 0vh;
-  z-index: 1000;
+  z-index: 1500;
   display: flex;
   right: 33.33vw;
   top: 1px;

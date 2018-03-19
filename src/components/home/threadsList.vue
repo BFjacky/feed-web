@@ -28,6 +28,45 @@ export default {
     spinner: Spinner,
     loadMore: Loadmore
   },
+  watch: {
+    type: async function() {
+      switch (this.type) {
+        case "最新":
+          const threads = await axios({
+            url: `${config.url.feedUrl}/thread/getThread`,
+            withCredentials: true
+          });
+          this.threads = threads.data.threads;
+          break;
+        case "热门":
+          const hotThreads = await axios({
+            url: `${config.url.feedUrl}/thread/getHotThread`,
+            method: "post",
+            withCredentials: true,
+            data: {}
+          });
+          this.threads = hotThreads.data.threads;
+          break;
+        default:
+          //根据主题获得thread
+          if (this.type === "") {
+            return;
+          } else {
+            console.log("here");
+            const typeThreads = await axios({
+              url: `${config.url.feedUrl}/thread/getThreadByType`,
+              method: "post",
+              withCredentials: true,
+              data: {
+                themeText: this.type
+              }
+            });
+            this.threads = typeThreads.data.threads;
+            break;
+          }
+      }
+    }
+  },
   created: async function() {
     switch (this.type) {
       case "最新":
@@ -46,6 +85,23 @@ export default {
         });
         this.threads = hotThreads.data.threads;
         break;
+      default:
+        //根据主题获得thread
+        if (this.type === "") {
+          return;
+        } else {
+          console.log("here");
+          const typeThreads = await axios({
+            url: `${config.url.feedUrl}/thread/getThreadByType`,
+            method: "post",
+            withCredentials: true,
+            data: {
+              themeText: this.type
+            }
+          });
+          this.threads = typeThreads.data.threads;
+          break;
+        }
     }
   },
   data: function() {
@@ -109,7 +165,6 @@ export default {
       }
     },
     refresh: async function() {
-      console.log("refresh", this.type);
       switch (this.type) {
         case "最新":
           const threads = await axios({
