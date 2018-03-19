@@ -47,6 +47,7 @@ export default {
   props: ["thread"],
   created: async function() {
     for (const praise of this.thread.praiseInfo) {
+      console.log(praise.uid, config.user._id);
       if (praise.uid === config.user._id) {
         this.hasPraised = true;
         break;
@@ -69,7 +70,7 @@ export default {
   methods: {
     praise: async function() {
       const res = await helper.checkOauth();
-      if(!res){
+      if (!res) {
         return;
       }
       if (this.praiseLock) {
@@ -116,7 +117,7 @@ export default {
     },
     gotoComment: async function() {
       const res = await helper.checkOauth();
-      if(!res){
+      if (!res) {
         return;
       }
       this.$router.push({

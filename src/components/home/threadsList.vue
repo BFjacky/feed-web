@@ -29,12 +29,21 @@ export default {
   },
   created: async function() {
     switch (this.type) {
-      case "热门":
+      case "最新":
         const threads = await axios({
           url: `${config.url.feedUrl}/thread/getThread`,
           withCredentials: true
         });
         this.threads = threads.data.threads;
+        break;
+      case "热门":
+        const hotThreads = await axios({
+          url: `${config.url.feedUrl}/thread/getHotThread`,
+          method: "post",
+          withCredentials: true,
+          data: {}
+        });
+        this.threads = hotThreads.data.threads;
         break;
     }
   },
@@ -53,31 +62,69 @@ export default {
       if (this.threads.length === 0) {
         return;
       }
-
-      this.busy = true;
-      const threads = await axios({
-        url: `${config.url.feedUrl}/thread/getThread`,
-        withCredentials: true,
-        params: {
-          objectId: this.threads[this.threads.length - 1]._id
+      switch (this.type) {
+        case "最新": {
+          this.busy = true;
+          const threads = await axios({
+            url: `${config.url.feedUrl}/thread/getThread`,
+            withCredentials: true,
+            params: {
+              objectId: this.threads[this.threads.length - 1]._id
+            }
+          });
+          this.threads = this.threads.concat(threads.data.threads);
+          if (threads.data.threads.length < 5) {
+            this.nomore = true;
+            this.busy = true;
+            return;
+          }
+          this.busy = false;
+          break;
         }
-      });
-      this.threads = this.threads.concat(threads.data.threads);
-      if (threads.data.threads.length === 0) {
-        this.allLoaded = true;
-        this.busy = true;
-        return;
+        case "热门": {
+          this.busy = true;
+          const objectIds = [];
+          //获得所有已经在客户端的threadsId
+          for (const thread of this.threads) {
+            objectIds.push(thread._id);
+          }
+          console.log(objectIds);
+          const threads = await axios({
+            url: `${config.url.feedUrl}/thread/getHotThread`,
+            method: "post",
+            withCredentials: true,
+            data: {
+              objectIds
+            }
+          });
+          this.threads = this.threads.concat(threads.data.threads);
+          if (threads.data.threads.length < 5) {
+            this.nomore = true;
+            this.busy = true;
+            return;
+          }
+          this.busy = false;
+          break;
+        }
       }
-      this.busy = false;
     },
     refresh: async function() {
       switch (this.type) {
-        case "热门":
+        case "最新":
           const threads = await axios({
             url: `${config.url.feedUrl}/thread/getThread`,
             withCredentials: true
           });
           this.threads = threads.data.threads;
+          break;
+        case "热门":
+          const hotThreads = await axios({
+            url: `${config.url.feedUrl}/thread/getHotThread`,
+            method: "post",
+            withCredentials: true,
+            data: {}
+          });
+          this.threads = hotThreads.data.threads;
           break;
       }
       this.nomore = false;

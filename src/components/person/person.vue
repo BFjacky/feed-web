@@ -31,21 +31,21 @@
 <script>
 import axios from "axios";
 import config from "../helper/config";
-async function checkUpdating(){
-  return new Promise((resolve,reject)=>{
-  const intervalId = setInterval(()=>{
-    console.log('check...')
-    if(!config.user.updating){
-      resolve(intervalId)
-    }
-  },100)
-  })
+async function checkUpdating() {
+  return new Promise((resolve, reject) => {
+    const intervalId = setInterval(() => {
+      console.log("check...");
+      if (!config.user.updating) {
+        resolve(intervalId);
+      }
+    }, 100);
+  });
 }
 export default {
   mounted: async function() {
     const intervalId = await checkUpdating();
     clearInterval(intervalId);
-    console.log('person')
+    console.log("person");
     const userGet = await axios({
       url: `${config.url.feedUrl}/user/get`,
       withCredentials: true
@@ -55,11 +55,12 @@ export default {
       //未能获取到用户信息
       return;
     }
-    const { avatarUrl, nickName, gender } = userGet.data;
+    const { avatarUrl, nickName, gender, _id } = userGet.data;
     this.avatarUrl = avatarUrl;
     this.nickName = nickName;
     this.gender = gender;
     config.user.oauth = true;
+    config.user._id = _id;
   },
   data: function() {
     return {
@@ -70,7 +71,7 @@ export default {
   },
   methods: {
     wechatLogin: function() {
-      window.location.href =config.url.oauthUrl;
+      window.location.href = config.url.oauthUrl;
     }
   }
 };

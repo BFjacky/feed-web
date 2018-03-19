@@ -542,30 +542,32 @@ div {
 }
 /*loadmore*/
 .mint-loadmore {
-    overflow: hidden
+  overflow: hidden;
 }
-.mint-loadmore-content {}
+.mint-loadmore-content {
+}
 .mint-loadmore-content.is-dropped {
-    -webkit-transition: .2s;
-    transition: .2s
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
 }
-.mint-loadmore-top, .mint-loadmore-bottom {
-    text-align: center;
-    height: 50px;
-    line-height: 50px
+.mint-loadmore-top,
+.mint-loadmore-bottom {
+  text-align: center;
+  height: 50px;
+  line-height: 50px;
 }
 .mint-loadmore-top {
-    margin-top: -50px
+  margin-top: -50px;
 }
 .mint-loadmore-bottom {
-    margin-bottom: -50px
+  margin-bottom: -50px;
 }
 .mint-loadmore-spinner {
-    display: inline-block;
-    margin-right: 5px;
-    vertical-align: middle
+  display: inline-block;
+  margin-right: 5px;
+  vertical-align: middle;
 }
 .mint-loadmore-text {
-    vertical-align: middle
+  vertical-align: middle;
 }
 </style>

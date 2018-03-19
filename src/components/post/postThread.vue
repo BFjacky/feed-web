@@ -68,7 +68,7 @@ export default {
           break;
         }
       }
-      //FIXED ME
+      //FIX ME
       const imgs = this.imgs;
       this.imgs = [];
       await wait(10);
@@ -99,13 +99,13 @@ export default {
         Toast({
           message: "发送成功",
           position: "middle",
-          duration: 2000
+          duration: 500
         });
         setTimeout(() => {
           this.$router.push({ name: "index", params: { allowBack: true } });
-        }, 2000);
+        }, 500);
       } else {
-        console.log(sendRes.data)
+        console.log(sendRes.data);
         Toast({
           message: "发送失败",
           position: "middle",

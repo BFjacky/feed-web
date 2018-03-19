@@ -6,6 +6,7 @@ export default {
     //全局user
     user: {
         oauth: false,
-        updating:false,
+        updating: false,
+        _id: '',
     }
 }
