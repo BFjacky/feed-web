@@ -13,6 +13,7 @@ export default {
 <style>
 div {
   -moz-user-select: none;
+  word-wrap: break-word;
   padding: 0;
   margin: 0;
 }
@@ -572,15 +573,15 @@ div {
 }
 /* indicator------------------------------- */
 .mint-indicator {
-  -webkit-transition: opacity .2s linear;
-  transition: opacity .2s linear;
+  -webkit-transition: opacity 0.2s linear;
+  transition: opacity 0.2s linear;
 }
 .mint-indicator-wrapper {
   top: 50%;
   left: 50%;
   position: fixed;
   -webkit-transform: translate(-50%, -50%);
-          transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
   border-radius: 5px;
   background: rgba(0, 0, 0, 0.7);
   color: white;
@@ -607,7 +608,8 @@ div {
   opacity: 0;
   background: transparent;
 }
-.mint-indicator-enter, .mint-indicator-leave-active {
+.mint-indicator-enter,
+.mint-indicator-leave-active {
   opacity: 0;
 }
 </style>

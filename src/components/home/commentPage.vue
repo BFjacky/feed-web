@@ -2,7 +2,7 @@
   <div class="container">
         <div class="comment-show"  v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="100">
             <div class="content-box-title">热门评论({{hotComments.length}})</div>
-            <div class="content-box" v-for="comment in hotComments">
+            <div class="content-box" v-for="comment in hotComments" @click="replyComment(comment)">
                <div class="left" v-bind:style="{backgroundImage:`url(${comment.avatarUrl})`}"></div>
                <div class="right">
                     <div class="header">
@@ -16,12 +16,19 @@
                       </div>
                     </div>
                     <div class="main">{{comment.content}}</div>
-                    <div class="footer"></div>
+                    <div class="footer"  v-if="comment.commentInfo.length>0">
+                      <div class="footer-comment" v-for="(subComment,index) in comment.commentInfo"  v-if="index<comment.maxNumber">
+                        <div class="name">{{subComment.nickName}}:</div>
+                        <div class="content">{{subComment.content}}</div>
+                      </div>
+                      <div class="open-button" @click="showComments(comment,'hot')" v-if="comment.commentInfo.length>=3 && comment.maxNumber<=2">还有{{comment.commentInfo.length-2}}条评论&nbsp&nbsp&nbsp>></div>
+                      <div class="open-button" @click="showComments(comment,'hot')" v-if="comment.commentInfo.length>=3 && comment.maxNumber>3">收起评论&nbsp&nbsp&nbsp>></div>
+                    </div>
                 </div>
             </div>
             <div class="divide-line"></div>
             <div class="content-box-title">最新评论({{comments.length}})</div>
-            <div class="content-box" v-for="comment in comments">
+            <div class="content-box" v-for="comment in comments" @click="replyComment(comment)">
                <div class="left" v-bind:style="{backgroundImage:`url(${comment.avatarUrl})`}"></div>
                <div class="right">
                     <div class="header">
@@ -35,13 +42,20 @@
                       </div>
                     </div>
                     <div class="main">{{comment.content}}</div>
-                    <div class="footer"></div>
+                    <div class="footer"  v-if="comment.commentInfo.length>0">
+                      <div class="footer-comment" v-for="(subComment,index) in comment.commentInfo"  v-if="index<comment.maxNumber">
+                        <div class="name">{{subComment.nickName}}:</div>
+                        <div class="content">{{subComment.content}}</div>
+                      </div>
+                      <div class="open-button" @click="showComments(comment,'')" v-if="comment.commentInfo.length>=3 && comment.maxNumber<=2">还有{{comment.commentInfo.length-2}}条评论&nbsp&nbsp&nbsp>></div>
+                      <div class="open-button" @click="showComments(comment,'')" v-if="comment.commentInfo.length>=3 && comment.maxNumber>3">收起评论&nbsp&nbsp&nbsp>></div>
+                    </div>
                 </div>
             </div>
             <div class="divide-line"></div>
         </div>
         <div class="comment-make">
-            <textarea class="content-area" :maxlength="maxWordsLength" placeholder="友善的发言更容易获得朋友" v-model:value="content"></textarea> 
+            <textarea class="content-area" :maxlength="maxWordsLength" :placeholder="commentPlaceHolder" v-model:value="content"></textarea> 
             <div class="send-button" @click="sendAcomment">发送</div>
         </div>
   </div>
@@ -49,6 +63,7 @@
 <script>
 import axios from "axios";
 import config from "../helper/config";
+import helper from "../helper/helper";
 import { Toast } from "mint-ui";
 export default {
   created: async function() {
@@ -64,6 +79,10 @@ export default {
       comments: [],
       //用户评论的内容
       content: "",
+      //当前选中的commentId
+      commentId: "",
+      //评论区placeholder
+      commentPlaceHolder: "友善的发言更容易获得朋友",
       //评论最大字数
       maxWordsLength: 150,
       //进行评论时的对象: thread||comment
@@ -74,6 +93,22 @@ export default {
       nomore: false,
       hotComments: []
     };
+  },
+  watch: {
+    comments: function() {
+      for (let comment of this.comments) {
+        //每条comment的最大显示评论的数量
+        comment.maxNumber = 2;
+      }
+      this.comments = helper.parseDate(this.comments);
+    },
+    hotComments: function() {
+      for (let comment of this.hotComments) {
+        //每条comment的最大显示评论的数量
+        comment.maxNumber = 2;
+      }
+      this.hotComments = helper.parseDate(this.hotComments);
+    }
   },
   methods: {
     initComments: async function() {
@@ -91,7 +126,7 @@ export default {
         }
       });
       if (!hotCommentRes.data.success) {
-        alert("未能获取到评论信息!");
+        alert("未能获取到热门评论信息!");
         return;
       }
       if (hotCommentRes.data.success) {
@@ -144,7 +179,6 @@ export default {
         this.nomore = true;
       }
       this.busy = false;
-      console.log(`loadmore: ${this.comments.length}`);
     },
     sendAcomment: async function() {
       if (this.content.length === 0 || this.content == "") {
@@ -160,12 +194,13 @@ export default {
         method: "post",
         withCredentials: true,
         data: {
-          _id: this.thread._id,
+          _id: this.sourse === "thread" ? this.thread._id : this.commentId,
           comment: { content: this.content },
           sourse: this.sourse
         }
       });
       if (sendCommentRes.data.success) {
+        this.content = "";
         Toast({
           message: "评论成功",
           position: "middle",
@@ -222,6 +257,48 @@ export default {
       }, time);
       // //send comment后重新获取最新的评论信息
       // await this.initComments();
+    },
+    //回复评论
+    replyComment: async function(comment) {
+      this.commentPlaceHolder = `回复${comment.nickName}:`;
+      this.sourse = "comment";
+      this.commentId = comment.id;
+    },
+    //展示所有comments 或收起 comments
+    showComments: async function(comment, type) {
+      if (type === "hot") {
+        for (const hotComment of this.hotComments) {
+          //找到了hotComment中对应的那个
+          if (hotComment._id === comment._id) {
+            const tempInfo = hotComment.commentInfo;
+            hotComment.commentInfo = [];
+            hotComment.commentInfo = tempInfo;
+            if (hotComment.maxNumber === 999) {
+              console.log("收起");
+              hotComment.maxNumber = 2;
+              console.log(hotComment.maxNumber);
+              return;
+            }
+            hotComment.maxNumber = 999;
+          }
+        }
+      } else {
+        for (const hotComment of this.comments) {
+          //找到了hotComment中对应的那个
+          if (hotComment._id === comment._id) {
+            const tempInfo = hotComment.commentInfo;
+            hotComment.commentInfo = [];
+            hotComment.commentInfo = tempInfo;
+            if (hotComment.maxNumber === 999) {
+              console.log("收起");
+              hotComment.maxNumber = 2;
+              console.log(hotComment.maxNumber);
+              return;
+            }
+            hotComment.maxNumber = 999;
+          }
+        }
+      }
     }
   }
 };
@@ -246,7 +323,7 @@ div {
 .comment-show {
   overflow-y: auto;
   flex-grow: 1;
-  margin-bottom: 3px;
+  margin-bottom: 84px;
   .content-box-title {
     height: 10vw;
     text-align: left;
@@ -267,7 +344,7 @@ div {
       background-size: 100% 100%;
     }
     .right {
-      flex-grow: 1;
+      width: 75vw;
       display: flex;
       flex-direction: column;
       padding-left: 10px;
@@ -277,6 +354,7 @@ div {
       }
       .header {
         margin-top: 5px;
+        width: 75vw;
         height: 10vw;
         display: flex;
         justify-content: space-between;
@@ -326,12 +404,44 @@ div {
         }
       }
       .main {
+        width: 75vw;
         margin-top: 2vw;
         text-align: left;
         font-size: 3.5vw;
       }
       .footer {
-        margin-top: 0vw;
+        width: 75vw;
+        margin-top: 3vw;
+        background-color: rgb(230, 230, 230);
+        flex-direction: column;
+        border-radius: 5vw;
+        padding: 10px;
+        .footer-comment {
+          width: 71vw;
+          margin-top: 5px;
+          border: 0px solid black;
+          font-size: 4.2vw;
+          text-align: left;
+          overflow-y: hidden;
+          max-height: 40vh;
+          .name {
+            height: 5vw;
+            line-height: 5vw;
+            float: left;
+            flex-shrink: 0;
+            color: #3594ca;
+          }
+          .content {
+            line-height: 5vw;
+            flex-grow: 1;
+            word-wrap: break-word;
+            text-align: left;
+          }
+        }
+        .open-button {
+          margin-top: 10px;
+          font-size: 4vw;
+        }
       }
     }
   }
@@ -344,6 +454,7 @@ div {
   bottom: 0;
   display: flex;
   width: 100vw;
+  position: fixed;
   justify-content: space-around;
   padding: 0 0vw;
   .content-area {

@@ -5,6 +5,7 @@
         <span class="down-arrow" v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }">↓</span>
         <spinner v-show="topStatus === 'loading'" color="#32a8fc" type="triple-bounce"></spinner>
       </div>
+      <div class="noThreadInfo" v-if="threads.length<=0">暂时还没有动态哦...</div>
       <div class="threadBox" v-for="thread in threads">
         <thread-box :thread="thread"></thread-box>
       </div>
@@ -37,6 +38,7 @@ export default {
             withCredentials: true
           });
           this.threads = threads.data.threads;
+          this.threads = helper.parseDate(this.threads);
           break;
         case "热门":
           const hotThreads = await axios({
@@ -46,6 +48,7 @@ export default {
             data: {}
           });
           this.threads = hotThreads.data.threads;
+          this.threads = helper.parseDate(this.threads);
           break;
         default:
           //根据主题获得thread
@@ -62,6 +65,7 @@ export default {
               }
             });
             this.threads = typeThreads.data.threads;
+            this.threads = helper.parseDate(this.threads);
             break;
           }
       }
@@ -75,6 +79,7 @@ export default {
           withCredentials: true
         });
         this.threads = threads.data.threads;
+        this.threads = helper.parseDate(this.threads);
         break;
       case "热门":
         const hotThreads = await axios({
@@ -84,6 +89,7 @@ export default {
           data: {}
         });
         this.threads = hotThreads.data.threads;
+        this.threads = helper.parseDate(this.threads);
         break;
       default:
         //根据主题获得thread
@@ -100,6 +106,7 @@ export default {
             }
           });
           this.threads = typeThreads.data.threads;
+          this.threads = helper.parseDate(this.threads);
           break;
         }
     }
@@ -130,6 +137,7 @@ export default {
             }
           });
           this.threads = this.threads.concat(threads.data.threads);
+          this.threads = helper.parseDate(this.threads);
           if (threads.data.threads.length < 5) {
             this.nomore = true;
             this.busy = true;
@@ -154,6 +162,7 @@ export default {
             }
           });
           this.threads = this.threads.concat(threads.data.threads);
+          this.threads = helper.parseDate(this.threads);
           if (threads.data.threads.length < 5) {
             this.nomore = true;
             this.busy = true;
@@ -174,6 +183,7 @@ export default {
           this.threads = [];
           await helper.wait(10);
           this.threads = threads.data.threads;
+          this.threads = helper.parseDate(this.threads);
           break;
         case "热门":
           const hotThreads = await axios({
@@ -185,6 +195,7 @@ export default {
           this.threads = [];
           await helper.wait(10);
           this.threads = hotThreads.data.threads;
+          this.threads = helper.parseDate(this.threads);
           break;
       }
       this.nomore = false;
@@ -205,6 +216,10 @@ export default {
 }
 .threadBox {
   width: 100vw;
+}
+.noThreadInfo {
+  color: #919191;
+  margin-top: 37vh;
 }
 .down-arrow {
   color: #32a8fc;

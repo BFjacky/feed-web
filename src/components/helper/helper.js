@@ -28,15 +28,42 @@ export default {
             const signature = await getSignature();
 
             wx.config({
-                debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
                 appId: 'wx9fd6bbc89436a5ee', // 必填，公众号的唯一标识
                 timestamp, // 必填，生成签名的时间戳
                 nonceStr, // 必填，生成签名的随机串
                 signature,// 必填，签名
-                jsApiList: ['chooseImage', 'previewImage'] // 必填，需要使用的JS接口列表
+                jsApiList: ['chooseImage', 'previewImage', 'onMenuShareTimeline'] // 必填，需要使用的JS接口列表
             });
             wx.ready(function () {
                 resolve('ok')
+                wx.onMenuShareTimeline({
+                    title: '自己的标题', // 分享标题
+                    link: 'http://myccc.feit.me/#/', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: '', // 分享图标
+                    success: function () {
+                        // 用户确认分享后执行的回调函数
+                        alert('分享成功')
+                    },
+                    cancel: function () {
+                        alert('分享失败')
+                        // 用户取消分享后执行的回调函数
+                    }
+                });
+                wx.onMenuShareAppMessage({
+                    title: '校友圈', // 分享标题
+                    desc: '快来看看吧', // 分享描述
+                    link: 'http://myccc.feit.me/#/', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: '', // 分享图标
+                    type: '', // 分享类型,music、video或link，不填默认为link
+                    dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+                    success: function () {
+                        // 用户确认分享后执行的回调函数
+                    },
+                    cancel: function () {
+                        // 用户取消分享后执行的回调函数
+                    }
+                });
             })
         })
     },
@@ -89,5 +116,29 @@ export default {
                 resolve("ok");
             }, time);
         });
+    },
+    //解析日期时间
+    parseDate(array) {
+        for (const ele of array) {
+            if (ele.createdAt.indexOf('-') === -1) {
+                continue
+            }
+            const now = new Date();
+            ele.createdAt = new Date(ele.createdAt)
+            if (ele.createdAt.getDate() - now.getDate() <= 0) {
+                // 一天内 :只显示:小时:分钟
+                ele.createdAt = `${ele.createdAt.getHours()}:${ele.createdAt.getMinutes()}`;
+            }
+            else if (ele.createdAt.getDate() - now.getDate() <= 1) {
+                ele.createdAt = `昨天  ${ele.createdAt.getHours()}:${ele.createdAt.getMinutes()}`;
+                //超过一天,不超过两天:显示昨天
+            } else {
+                ele.createdAt = `${ele.createdAt.getMonth() + 1}月${ele.createdAt.getDate()}日  ${ele.createdAt.getHours()}:${ele.createdAt.getMinutes()}`;
+                //超过两天，显示日期和时间
+
+            }
+        }
+        return array;
     }
+
 }

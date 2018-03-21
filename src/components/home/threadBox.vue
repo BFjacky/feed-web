@@ -28,7 +28,7 @@
                   <div class="text">{{thread.comments}}</div>
               </div>
               <div class="button-share">
-                  <div class="icon"></div>
+                  <div class="icon" @click="share"></div>
               </div>
           </div>
       </div>
@@ -45,7 +45,9 @@ import helper from "../helper/helper";
 import { Toast } from "mint-ui";
 export default {
   props: ["thread"],
-  created: async function() {},
+  created: async function() {
+    console.log(this.thread, this.thread.comments);
+  },
   components: {
     Toast
   },
@@ -124,6 +126,9 @@ export default {
         urls.push(tempImg.sourceUrl);
       }
       wx.previewImage({ current, urls });
+    },
+    share:async function(){
+      helper.wxShare();
     }
   }
 };
