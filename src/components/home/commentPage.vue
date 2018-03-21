@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+        <thread-box :thread="thread"></thread-box>
         <div class="comment-show"  v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="100">
             <div class="content-box-title">热门评论({{hotComments.length}})</div>
             <div class="content-box" v-for="comment in hotComments" @click="replyComment(comment)">
@@ -64,13 +65,15 @@
 import axios from "axios";
 import config from "../helper/config";
 import helper from "../helper/helper";
+import threadBox from "./threadBox";
 import { Toast } from "mint-ui";
 export default {
   created: async function() {
     await this.initComments();
   },
   components: {
-    Toast
+    Toast,
+    threadBox
   },
   data: function() {
     return {
