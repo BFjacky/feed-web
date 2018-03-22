@@ -2,16 +2,16 @@
   <div class="container">
         <div class="comment-show"  v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="100">
             <div class="content-box-title">热门评论({{hotComments.length}})</div>
-            <div class="content-box" v-for="comment in hotComments" @click="replyComment(comment)">
+            <div class="content-box" v-for="comment in hotComments">
                <div class="left" v-bind:style="{backgroundImage:`url(${comment.avatarUrl})`}"></div>
                <div class="right">
                     <div class="header">
                       <div class="header-left">
-                        <div class="name">{{comment.nickName}}</div>
+                        <div class="name" v-on:click="replyComment(comment)">{{comment.nickName}}</div>
                         <div class="time">{{comment.createdAt}}</div>
                       </div>
                       <div class="header-right">
-                        <div v-bind:class="{praise:!comment.hasPraised,'praise-after':comment.hasPraised}" @click="praise(comment)"></div>
+                        <div v-bind:class="{praise:!comment.hasPraised,'praise-after':comment.hasPraised}" v-on:click.stop="praise(comment)"></div>
                         <div class="number">{{comment.praises}}</div>
                       </div>
                     </div>
@@ -21,23 +21,23 @@
                         <div class="name">{{subComment.nickName}}:</div>
                         <div class="content">{{subComment.content}}</div>
                       </div>
-                      <div class="open-button" @click="showComments(comment,'hot')" v-if="comment.commentInfo.length>=3 && comment.maxNumber<=2">还有{{comment.commentInfo.length-2}}条评论&nbsp&nbsp&nbsp>></div>
-                      <div class="open-button" @click="showComments(comment,'hot')" v-if="comment.commentInfo.length>=3 && comment.maxNumber>3">收起评论&nbsp&nbsp&nbsp>></div>
+                      <div class="open-button" v-on:click="showComments(comment,'hot')" v-if="comment.commentInfo.length>=3 && comment.maxNumber<=2">还有{{comment.commentInfo.length-2}}条评论&nbsp&nbsp&nbsp>></div>
+                      <div class="open-button" v-on:click="showComments(comment,'hot')" v-if="comment.commentInfo.length>=3 && comment.maxNumber>3">收起评论&nbsp&nbsp&nbsp>></div>
                     </div>
                 </div>
             </div>
             <div class="divide-line"></div>
             <div class="content-box-title">最新评论({{comments.length}})</div>
-            <div class="content-box" v-for="comment in comments" @click="replyComment(comment)">
+            <div class="content-box" v-for="comment in comments">
                <div class="left" v-bind:style="{backgroundImage:`url(${comment.avatarUrl})`}"></div>
                <div class="right">
                     <div class="header">
                       <div class="header-left">
-                        <div class="name">{{comment.nickName}}</div>
+                        <div class="name" v-on:click="replyComment(comment)">{{comment.nickName}}</div>
                         <div class="time">{{comment.createdAt}}</div>
                       </div>
                       <div class="header-right">
-                        <div v-bind:class="{praise:!comment.hasPraised,'praise-after':comment.hasPraised}" @click="praise(comment)"></div>
+                        <div v-bind:class="{praise:!comment.hasPraised,'praise-after':comment.hasPraised}" v-on:click="praise(comment)"></div>
                         <div class="number">{{comment.praises}}</div>
                       </div>
                     </div>
@@ -47,8 +47,8 @@
                         <div class="name">{{subComment.nickName}}:</div>
                         <div class="content">{{subComment.content}}</div>
                       </div>
-                      <div class="open-button" @click="showComments(comment,'')" v-if="comment.commentInfo.length>=3 && comment.maxNumber<=2">还有{{comment.commentInfo.length-2}}条评论&nbsp&nbsp&nbsp>></div>
-                      <div class="open-button" @click="showComments(comment,'')" v-if="comment.commentInfo.length>=3 && comment.maxNumber>3">收起评论&nbsp&nbsp&nbsp>></div>
+                      <div class="open-button" v-on:click="showComments(comment,'')" v-if="comment.commentInfo.length>=3 && comment.maxNumber<=2">还有{{comment.commentInfo.length-2}}条评论&nbsp&nbsp&nbsp>></div>
+                      <div class="open-button" v-on:click="showComments(comment,'')" v-if="comment.commentInfo.length>=3 && comment.maxNumber>3">收起评论&nbsp&nbsp&nbsp>></div>
                     </div>
                 </div>
             </div>
@@ -56,7 +56,7 @@
         </div>
         <div class="comment-make">
             <textarea class="content-area" :maxlength="maxWordsLength" :placeholder="commentPlaceHolder" v-model:value="content"></textarea> 
-            <div class="send-button" @click="sendAcomment">发送</div>
+            <div class="send-button" v-on:click="sendAcomment">发送</div>
         </div>
   </div>
 </template>
@@ -276,6 +276,7 @@ export default {
       setTimeout(() => {
         this.praiseLock = false;
       }, time);
+
       // //send comment后重新获取最新的评论信息
       // await this.initComments();
     },
@@ -386,6 +387,9 @@ div {
           .name {
             height: 5vw;
             text-align: left;
+          }
+          .name:active {
+            color:#5b99b6;
           }
           .time {
             margin-top: 1vw;
