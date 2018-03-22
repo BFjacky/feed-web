@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-        <thread-box :thread="thread"></thread-box>
         <div class="comment-show"  v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="100">
             <div class="content-box-title">热门评论({{hotComments.length}})</div>
             <div class="content-box" v-for="comment in hotComments" @click="replyComment(comment)">
@@ -65,15 +64,13 @@
 import axios from "axios";
 import config from "../helper/config";
 import helper from "../helper/helper";
-import threadBox from "./threadBox";
 import { Toast } from "mint-ui";
 export default {
   created: async function() {
     await this.initComments();
   },
   components: {
-    Toast,
-    threadBox
+    Toast
   },
   data: function() {
     return {
@@ -94,7 +91,9 @@ export default {
       praiseLock: false,
       busy: false,
       nomore: false,
-      hotComments: []
+      hotComments: [],
+      //在输入框提示 回复谁 的文字
+      replyFor: ""
     };
   },
   watch: {
@@ -104,6 +103,18 @@ export default {
         comment.maxNumber = 2;
       }
       this.comments = helper.parseDate(this.comments);
+    },
+    content: function() {
+      //判断当前replyFor 的 文字 有没有没修改一旦 replyFor的文字被修改了,清空这个效果,将sourse改为thread
+      for (let i = 0; i < this.replyFor.length; i++) {
+        if (this.replyFor[i] !== this.content[i]) {
+          this.replyFor = "";
+          this.content = "";
+          this.sourse = "thread";
+          this.commentId = "";
+          break;
+        }
+      }
     },
     hotComments: function() {
       for (let comment of this.hotComments) {
@@ -192,6 +203,9 @@ export default {
         });
         return;
       }
+      //去掉评论内容的前缀
+      this.content = this.content.slice(this.replyFor.length);
+
       const sendCommentRes = await axios({
         url: `${config.url.feedUrl}/thread/newComment`,
         method: "post",
@@ -202,8 +216,12 @@ export default {
           sourse: this.sourse
         }
       });
+      //评论完成后恢复状态
+      this.content = "";
+      this.sourse = "thread";
+      this.replyFor = "";
+      this.commentId = "";
       if (sendCommentRes.data.success) {
-        this.content = "";
         Toast({
           message: "评论成功",
           position: "middle",
@@ -263,7 +281,8 @@ export default {
     },
     //回复评论
     replyComment: async function(comment) {
-      this.commentPlaceHolder = `回复${comment.nickName}:`;
+      this.content = `回复${comment.nickName}:`;
+      this.replyFor = `回复${comment.nickName}:`;
       this.sourse = "comment";
       this.commentId = comment.id;
     },
@@ -309,12 +328,12 @@ export default {
 
 <style lang="less" scoped>
 .container {
-  justify-content: space-between;
+  justify-content: flex-start;
   height: 100vh;
   width: 100vw;
   display: flex;
+  overflow-y: auto;
   flex-direction: column;
-  justify-content: space-between;
 }
 div {
   border: 0px solid black;
@@ -324,7 +343,6 @@ div {
   border-top: 7px solid rgb(241, 241, 241);
 }
 .comment-show {
-  overflow-y: auto;
   flex-grow: 1;
   margin-bottom: 84px;
   .content-box-title {
