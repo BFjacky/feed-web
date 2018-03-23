@@ -10,12 +10,12 @@
       </tab-container-item>
     </tab-container>
     <tab-bar class="tab-bar" v-model="itemSelect">
-      <tab-item class="one-item" id="0" :class="itemChoosenClass[0]">
-      <img slot="icon" width="30vh" :src="itemIcon[0]">
+      <tab-item class="one-item" id="0" :class="{'item-chosen':itemSelect==='0'}">
+      <img slot="icon" width="30vh" :src="itemSelect==='0'?require('../assets/home1.png'):require('../assets/home.png')">
         首页
       </tab-item>
-      <tab-item class="one-item" id="1" :class="itemChoosenClass[1]">
-      <img slot="icon" width="30vh" :src="itemIcon[1]">
+      <tab-item class="one-item" id="1" :class="{'item-chosen':itemSelect==='1'}">
+      <img slot="icon" width="30vh"  :src="itemSelect==='0'?require('../assets/person.png'):require('../assets/person1.png')">
         我的
       </tab-item>
     </tab-bar>
@@ -28,17 +28,12 @@ import home from "@/components/home/home";
 import person from "@/components/person/person";
 import helper from "@/components/helper/helper";
 import config from "@/components/helper/config";
-import indicatorModal from '@/components/commonVue/indicatorModal';
+import indicatorModal from "@/components/commonVue/indicatorModal";
 import axios from "axios";
 export default {
   data: function() {
     return {
-      itemSelect: "0",
-      itemIcon: [
-        require("../assets/home1.png"),
-        require("../assets/person.png")
-      ],
-      itemChoosenClass: ["item-chosen", ""],
+      itemSelect: "0"
     };
   },
   created: async function() {
@@ -64,28 +59,6 @@ export default {
     config.user.updating = false;
     //在这里获得用户跳转到此页面的参数,将code传到后端进行鉴权
   },
-  watch: {
-    itemSelect: function() {
-      switch (this.itemSelect) {
-        case "0":
-          //图标更换
-          this.itemIcon[0] = require("../assets/home1.png");
-          this.itemIcon[1] = require("../assets/person.png");
-          //样式更换
-          this.itemChoosenClass[0] = "item-chosen";
-          this.itemChoosenClass[1] = "";
-          break;
-        case "1":
-          //图标更换
-          this.itemIcon[0] = require("../assets/home.png");
-          this.itemIcon[1] = require("../assets/person1.png");
-          //样式更换
-          this.itemChoosenClass[0] = "";
-          this.itemChoosenClass[1] = "item-chosen";
-          break;
-      }
-    }
-  },
   methods: {
     gotoPostPage: async function() {
       const res = await helper.checkOauth();
@@ -102,7 +75,7 @@ export default {
     tabContainerItem: TabContainerItem,
     homePage: home,
     personPage: person,
-    indicatorModal,
+    indicatorModal
   }
 };
 </script>
