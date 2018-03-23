@@ -3,9 +3,9 @@
     <!-- FIX ME 为能够实现点击 主题 navbar而实现的 透明按钮 -->
     <div class="float-button" @click="chooseItem2"></div>
     <nav-bar v-model="selectItem" class="nav-bar">
-      <tab-item class="tab-item" :class="itemChosenClass[0]" id="0">最新</tab-item>
-      <tab-item class="tab-item" :class="itemChosenClass[1]" id="1">热门</tab-item>
-      <tab-item class="tab-item" :class="itemChosenClass[2]" id="2" @click="showThemeList">{{nowTheme===''?'主题':nowTheme}}</tab-item>   
+      <tab-item class="tab-item" :class="selectItem==='0'?'itemChosen':''" id="0">最新</tab-item>
+      <tab-item class="tab-item" :class="selectItem==='1'?'itemChosen':''" id="1">热门</tab-item>
+      <tab-item class="tab-item" :class="selectItem==='2'?'itemChosen':''" id="2" @click="showThemeList">{{nowTheme===''?'主题':nowTheme}}</tab-item>   
       <div class="moving-bottom-line" :class="moveAnimation"></div>   
       <div class="themeList" v-show="listExist" v-bind:class="{listShow:listShow,listHide:listHide}">
         <div class="themeItem" v-for="theme in themes" @click="chooseTheme(theme)">
@@ -37,6 +37,7 @@ import {
 } from "mint-ui";
 import axios from "axios";
 import config from "../helper/config";
+import store from "../helper/store";
 import threadsList from "./threadsList";
 export default {
   components: {
@@ -73,7 +74,6 @@ export default {
       this.hideThemeList();
     }
   },
-  created: async function() {},
   watch: {
     selectItem: function() {
       switch (this.selectItem) {
@@ -84,7 +84,6 @@ export default {
           if (this.oldSelectItem === "2") {
             this.moveAnimation = "move-2-0";
           }
-          this.itemChosenClass = ["itemChosen", "", ""];
           this.hideThemeList();
           break;
         case "1":
@@ -94,7 +93,6 @@ export default {
           if (this.oldSelectItem === "2") {
             this.moveAnimation = "move-2-1";
           }
-          this.itemChosenClass = ["", "itemChosen", ""];
           this.hideThemeList();
           break;
         case "2":
@@ -104,7 +102,6 @@ export default {
           if (this.oldSelectItem === "1") {
             this.moveAnimation = "move-1-2";
           }
-          this.itemChosenClass = ["", "", "itemChosen"];
           break;
       }
       this.oldSelectItem = this.selectItem;
@@ -114,21 +111,41 @@ export default {
     return {
       selectItem: "0",
       oldSelectItem: "0",
-      itemChosenClass: ["itemChosen", "", ""],
       moveAnimation: "",
       listShow: false,
       listHide: false,
       listExist: false,
+      //当前选择的theme
+      nowTheme: "",
       themes: [
         { icon: require("../../assets/search.png"), text: "失物招领" },
         { icon: require("../../assets/cardiogram.png"), text: "表白墙  " },
         { icon: require("../../assets/money-bag.png"), text: "二手交易" },
         { icon: require("../../assets/car.png"), text: "拼车出行" },
         { icon: require("../../assets/learning.png"), text: "寻找研友" }
-      ],
-      //当前选择的theme
-      nowTheme: ""
+      ]
     };
+  },
+  created: async function() {
+    if (store.home.stored) {
+      this.selectItem = store.home.selectItem;
+      this.oldSelectItem = store.home.oldSelectItem;
+      this.moveAnimation = store.home.moveAnimation;
+      this.listShow = store.home.listShow;
+      this.listHide = store.home.listHide;
+      this.listExist = store.home.listExist;
+      this.nowTheme = store.home.nowTheme;
+    }
+  },
+  beforeDestroy: function() {
+    store.home.stored = true;
+    store.home.selectItem = this.selectItem;
+    store.home.oldSelectItem = this.oldSelectItem;
+    store.home.moveAnimation = this.moveAnimation;
+    store.home.listShow = this.listShow;
+    store.home.listHide = this.listHide;
+    store.home.listExist = this.listExist;
+    store.home.nowTheme = this.nowTheme;
   }
 };
 </script>

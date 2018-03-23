@@ -28,6 +28,7 @@ import home from "@/components/home/home";
 import person from "@/components/person/person";
 import helper from "@/components/helper/helper";
 import config from "@/components/helper/config";
+import store from "@/components/helper/store";
 import indicatorModal from "@/components/commonVue/indicatorModal";
 import axios from "axios";
 export default {
@@ -36,7 +37,14 @@ export default {
       itemSelect: "0"
     };
   },
+  beforeDestroy: function() {
+    store.index.stored = true;
+    store.index.itemSelect = this.itemSelect;
+  },
   created: async function() {
+    if (store.index.stored) {
+      this.itemSelect = store.index.itemSelect;
+    }
     const { code } = this.$route.query;
     if (!code) {
       const res = await helper.wxinit();
