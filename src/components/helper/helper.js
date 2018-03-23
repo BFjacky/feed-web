@@ -125,17 +125,16 @@ export default {
             }
             const now = new Date();
             ele.createdAt = new Date(ele.createdAt)
-            if (ele.createdAt.getDate() - now.getDate() <= 0) {
+            if (now.getDate() - ele.createdAt.getDate() <= 0) {
                 // 一天内 :只显示:小时:分钟
                 ele.createdAt = `${ele.createdAt.getHours()}:${ele.createdAt.getMinutes()}`;
             }
-            else if (ele.createdAt.getDate() - now.getDate() <= 1) {
+            else if (now.getDate() - ele.createdAt.getDate() <= 1) {
                 ele.createdAt = `昨天  ${ele.createdAt.getHours()}:${ele.createdAt.getMinutes()}`;
                 //超过一天,不超过两天:显示昨天
             } else {
                 ele.createdAt = `${ele.createdAt.getMonth() + 1}月${ele.createdAt.getDate()}日  ${ele.createdAt.getHours()}:${ele.createdAt.getMinutes()}`;
                 //超过两天，显示日期和时间
-
             }
         }
         return array;

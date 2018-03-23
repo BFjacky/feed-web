@@ -1,12 +1,26 @@
 <template>
   <div id="app">
+    <transition :name="transitionName">
     <router-view/>
+    </transition>
   </div>
 </template>
 
 <script>
 export default {
-  name: "App"
+  name: "App",
+  data: function() {
+    return {
+      transitionName: "forwardMov"
+    };
+  },
+  watch: {
+    $route(to, from) {
+      const toDepth = to.path.split("/").length;
+      const fromDepth = from.path.split("/").length;
+      this.transitionName = toDepth < fromDepth ? "forwardMov" : "backMov";
+    }
+  }
 };
 </script>
 
@@ -22,10 +36,63 @@ div {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  position: absolute;
+  position: fixed;
   height: 100vh;
   width: 100vw;
   overflow-x: hidden;
+}
+.forwardMov-enter-active {
+  animation: forwardMov-in 0.4s;
+}
+.forwardMov-leave-active {
+  animation: forwardMov-out 0.4s;
+}
+@keyframes forwardMov-in {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+@keyframes forwardMov-out {
+  0% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+.backMov-enter-active {
+  animation: backMov-in 0.4s;
+}
+.backMov-leave-active {
+  animation: backMov-out 0.4s;
+}
+@keyframes backMov-in {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+@keyframes backMov-out {
+  0% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }
 /* -------------------------------------------------------------------------------------------------------- */
 .mint-spinner-snake {
