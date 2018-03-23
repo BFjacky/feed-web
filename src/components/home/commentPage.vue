@@ -2,12 +2,12 @@
   <div class="container">
         <div class="comment-show"  v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="100">
             <div class="content-box-title">热门评论({{hotComments.length}})</div>
-            <div class="content-box" v-for="comment in hotComments">
+            <div class="content-box" v-bind:class="hotFades[index]" v-for="(comment,index) in hotComments" @click="replyComment(comment,index,'hot')">
                <div class="left" v-bind:style="{backgroundImage:`url(${comment.avatarUrl})`}"></div>
                <div class="right">
                     <div class="header">
                       <div class="header-left">
-                        <div class="name" v-on:click="replyComment(comment)">{{comment.nickName}}</div>
+                        <div class="name">{{comment.nickName}}</div>
                         <div class="time">{{comment.createdAt}}</div>
                       </div>
                       <div class="header-right">
@@ -21,23 +21,23 @@
                         <div class="name">{{subComment.nickName}}:</div>
                         <div class="content">{{subComment.content}}</div>
                       </div>
-                      <div class="open-button" v-on:click="showComments(comment,'hot')" v-if="comment.commentInfo.length>=3 && comment.maxNumber<=2">还有{{comment.commentInfo.length-2}}条评论&nbsp&nbsp&nbsp>></div>
-                      <div class="open-button" v-on:click="showComments(comment,'hot')" v-if="comment.commentInfo.length>=3 && comment.maxNumber>3">收起评论&nbsp&nbsp&nbsp>></div>
+                      <div class="open-button" v-on:click.stop="showComments(comment,'hot')" v-if="comment.commentInfo.length>=3 && comment.maxNumber<=2">还有{{comment.commentInfo.length-2}}条评论&nbsp&nbsp&nbsp>></div>
+                      <div class="open-button" v-on:click.stop="showComments(comment,'hot')" v-if="comment.commentInfo.length>=3 && comment.maxNumber>3">收起评论&nbsp&nbsp&nbsp>></div>
                     </div>
                 </div>
             </div>
             <div class="divide-line"></div>
             <div class="content-box-title">最新评论({{comments.length}})</div>
-            <div class="content-box" v-for="comment in comments">
+            <div class="content-box" v-bind:class="fades[index]" v-for="(comment,index) in comments" @click="replyComment(comment,index,'')">
                <div class="left" v-bind:style="{backgroundImage:`url(${comment.avatarUrl})`}"></div>
                <div class="right">
                     <div class="header">
                       <div class="header-left">
-                        <div class="name" v-on:click="replyComment(comment)">{{comment.nickName}}</div>
+                        <div class="name">{{comment.nickName}}</div>
                         <div class="time">{{comment.createdAt}}</div>
                       </div>
                       <div class="header-right">
-                        <div v-bind:class="{praise:!comment.hasPraised,'praise-after':comment.hasPraised}" v-on:click="praise(comment)"></div>
+                        <div v-bind:class="{praise:!comment.hasPraised,'praise-after':comment.hasPraised}" v-on:click.stop="praise(comment)"></div>
                         <div class="number">{{comment.praises}}</div>
                       </div>
                     </div>
@@ -47,8 +47,8 @@
                         <div class="name">{{subComment.nickName}}:</div>
                         <div class="content">{{subComment.content}}</div>
                       </div>
-                      <div class="open-button" v-on:click="showComments(comment,'')" v-if="comment.commentInfo.length>=3 && comment.maxNumber<=2">还有{{comment.commentInfo.length-2}}条评论&nbsp&nbsp&nbsp>></div>
-                      <div class="open-button" v-on:click="showComments(comment,'')" v-if="comment.commentInfo.length>=3 && comment.maxNumber>3">收起评论&nbsp&nbsp&nbsp>></div>
+                      <div class="open-button" v-on:click.stop="showComments(comment,'')" v-if="comment.commentInfo.length>=3 && comment.maxNumber<=2">还有{{comment.commentInfo.length-2}}条评论&nbsp&nbsp&nbsp>></div>
+                      <div class="open-button" v-on:click.stop="showComments(comment,'')" v-if="comment.commentInfo.length>=3 && comment.maxNumber>3">收起评论&nbsp&nbsp&nbsp>></div>
                     </div>
                 </div>
             </div>
@@ -93,7 +93,10 @@ export default {
       nomore: false,
       hotComments: [],
       //在输入框提示 回复谁 的文字
-      replyFor: ""
+      replyFor: "",
+
+      fades: [],
+      hotFades: []
     };
   },
   watch: {
@@ -247,7 +250,7 @@ export default {
         return;
       }
       this.praiseLock = true;
-      const time = 1000;
+      const time = 700;
       //如果已经点过赞了则 取消点赞
       if (comment.hasPraised) {
         const praiseRes = await axios({
@@ -281,7 +284,19 @@ export default {
       // await this.initComments();
     },
     //回复评论
-    replyComment: async function(comment) {
+    replyComment: async function(comment, index, hot) {
+      if (hot) {
+        this.$set(this.hotFades, index, "fade");
+        setTimeout(() => {
+          this.$set(this.hotFades, index, "");
+        }, 500);
+      } else {
+        this.$set(this.fades, index, "fade");
+        setTimeout(() => {
+          this.$set(this.fades, index, "");
+        }, 500);
+      }
+
       this.content = `回复${comment.nickName}:`;
       this.replyFor = `回复${comment.nickName}:`;
       this.sourse = "comment";
@@ -352,13 +367,35 @@ div {
     line-height: 10vw;
     padding-left: 10px;
   }
+  // 点击commentBox 的渐变动画效果
+  @keyframes fade-in-out {
+    0% {
+      background-color: #d4d4d400;
+    }
+    25% {
+      background-color: #e6e6e6;
+    }
+    50% {
+      background-color: #e6e6e6;
+    }
+    75% {
+      background-color: #e6e6e6;
+    }
+    100% {
+      background-color: #d4d4d400;
+    }
+  }
+
+  .fade {
+    animation: fade-in-out ease-in-out 0.5s;
+  }
   .content-box {
     padding-top: 3vw;
     border-top: 1px solid rgb(233, 233, 233);
     display: flex;
     width: 100%;
     padding-left: 10px;
-    margin-bottom: 3vw;
+    padding: 3vw;
     .left {
       width: 15vw;
       height: 15vw;
@@ -389,7 +426,7 @@ div {
             text-align: left;
           }
           .name:active {
-            color:#5b99b6;
+            color: #5b99b6;
           }
           .time {
             margin-top: 1vw;
@@ -445,7 +482,7 @@ div {
           width: 71vw;
           margin-top: 5px;
           border: 0px solid black;
-          font-size: 4.2vw;
+          font-size: 3.5vw;
           text-align: left;
           overflow-y: hidden;
           max-height: 40vh;
@@ -465,7 +502,7 @@ div {
         }
         .open-button {
           margin-top: 10px;
-          font-size: 4vw;
+          font-size: 3vw;
         }
       }
     }
