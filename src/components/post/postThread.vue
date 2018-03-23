@@ -183,6 +183,7 @@ export default {
   width: 100vw;
   display: flex;
   flex-direction: column;
+  position: fixed;
 }
 .text-area {
   resize: none;

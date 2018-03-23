@@ -14,12 +14,12 @@ const router = new Router({
       component: index
     },
     {
-      path: '/postThread',
+      path: '/index/postThread',
       name: 'postThread',
       component: postThread,
     },
     {
-      path: '/commentPage',
+      path: '/index/commentPage',
       name: 'commentPage',
       component: commentPage,
     }

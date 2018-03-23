@@ -39,7 +39,6 @@ export default {
         require("../assets/person.png")
       ],
       itemChoosenClass: ["item-chosen", ""],
-      realTrue: true
     };
   },
   created: async function() {
@@ -93,7 +92,7 @@ export default {
       if (!res) {
         return;
       }
-      this.$router.push({ path: "/postThread" });
+      this.$router.push({ path: "/index/postThread" });
     }
   },
   components: {
@@ -115,6 +114,7 @@ div {
 .container {
   height: 100vh;
   width: 100vw;
+  position: fixed;
 }
 .tab-bar {
   position: fixed;
