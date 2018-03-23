@@ -19,7 +19,6 @@
 <script>
 import threadBox from "./threadBox";
 import config from "../helper/config";
-import store from "../helper/store";
 import axios from "axios";
 import helper from "../helper/helper";
 import { Spinner, Loadmore } from "mint-ui";
@@ -73,15 +72,6 @@ export default {
     }
   },
   created: async function() {
-    if (store.threadList.stored) {
-      this.threads = store.threadList.threads;
-      this.busy = store.threadList.busy;
-      this.nomore = store.threadList.nomore;
-      this.topStatus = store.threadList.topStatus;
-      this.forbidLoadmore = store.threadList.forbidLoadmore;
-      console.log(`threadList 开始:`, this.threads);
-      return;
-    }
     switch (this.type) {
       case "最新":
         const threads = await axios({
@@ -119,15 +109,6 @@ export default {
           break;
         }
     }
-  },
-  beforeDestroy: function() {
-    store.threadList.stored = true;
-    store.threadList.threads = this.threads;
-    console.log(`销毁了很多threads:`, store.threadList.threads);
-    store.threadList.busy = this.busy;
-    store.threadList.nomore = this.nomore;
-    store.threadList.topStatus = this.topStatus;
-    store.threadList.forbidLoadmore = this.forbidLoadmore;
   },
   data: function() {
     return {

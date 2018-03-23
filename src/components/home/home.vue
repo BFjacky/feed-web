@@ -37,7 +37,6 @@ import {
 } from "mint-ui";
 import axios from "axios";
 import config from "../helper/config";
-import store from "../helper/store";
 import threadsList from "./threadsList";
 export default {
   components: {
@@ -126,27 +125,7 @@ export default {
       ]
     };
   },
-  created: async function() {
-    if (store.home.stored) {
-      this.selectItem = store.home.selectItem;
-      this.oldSelectItem = store.home.oldSelectItem;
-      this.moveAnimation = store.home.moveAnimation;
-      this.listShow = store.home.listShow;
-      this.listHide = store.home.listHide;
-      this.listExist = store.home.listExist;
-      this.nowTheme = store.home.nowTheme;
-    }
-  },
-  beforeDestroy: function() {
-    store.home.stored = true;
-    store.home.selectItem = this.selectItem;
-    store.home.oldSelectItem = this.oldSelectItem;
-    store.home.moveAnimation = this.moveAnimation;
-    store.home.listShow = this.listShow;
-    store.home.listHide = this.listHide;
-    store.home.listExist = this.listExist;
-    store.home.nowTheme = this.nowTheme;
-  }
+  created: async function() {}
 };
 </script>
 <style lang="less" scoped>
