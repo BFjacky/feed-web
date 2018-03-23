@@ -105,6 +105,7 @@ export default {
           duration: 500
         });
         setTimeout(() => {
+          this.hasSent = false;
           this.$router.push({ name: "index", params: { allowBack: true } });
         }, 500);
       } else {

@@ -71,7 +71,18 @@ export default {
       }
     }
   },
+  // deactivated: function() {
+  //   console.log(`threadList拉黑了`, $(".container").scrollHeight);
+  // },
   created: async function() {
+    setInterval(() => {
+      $(".container").scrollTop(100);
+      console.log(
+        `threadList拉黑了`,
+        $(".container").scrollTop(),
+        $("body").scrollTop()
+      );
+    }, 1000);
     switch (this.type) {
       case "最新":
         const threads = await axios({
@@ -211,7 +222,7 @@ export default {
 .container {
   height: 85vh;
   width: 100%;
-  overflow-y: auto;
+  overflow: auto;
 }
 .threadBox {
   width: 100vw;

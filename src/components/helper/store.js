@@ -1,24 +1,10 @@
 export default {
     index: {
-        stored: false,
-        itemSelect: "",
+        x: 0,
+        y: 0,
     },
-    home: {
-        stored: false,
-        selectItem: '',
-        oldSelectItem: '',
-        moveAnimation: '',
-        listShowe: '',
-        listHidee: '',
-        listExiste: '',
-        nowTheme: '',
-    },
-    threadList: {
-        stored: false,
-        threads: '',
-        busy: '',
-        nomore: '',
-        topStatus: '',
-        forbidLoadmore: '',
+    commentPage: {
+        x: 0,
+        y: 0,
     }
 }

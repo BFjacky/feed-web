@@ -141,9 +141,10 @@ export default {
 .container {
   height: 92vh;
   width: 100%;
-  overflow-y: hidden;
 }
 .nav-bar {
+  position: fixed;
+  top: 0;
   height: 7vh;
   width: 100%;
   display: flex;
@@ -161,14 +162,14 @@ export default {
     padding-top: 10px;
   }
   .moving-bottom-line {
-    z-index: 2000;
+    z-index: 2100;
     border: 0px solid #32a8fc;
     height: 5px;
     background-color: #32a8fc;
     position: absolute;
     width: 10.33vw;
     left: 11.5vw;
-    top: 8%;
+    top: 8vh;
     transform: translateY(-200%);
   }
 }
@@ -179,10 +180,8 @@ export default {
 .tab-container {
   height: 85vh;
   width: 100%;
-  overflow-y: auto;
-
+  margin-top: 7vh;
   /*避免遮挡nav-bar的box-shadow*/
-  margin-top: 1px;
 
   .tab-container-item {
     height: 85vh;

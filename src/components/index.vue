@@ -80,14 +80,11 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-div {
-  border: 0px solid black;
-  box-sizing: border-box;
-}
 .container {
   height: 100vh;
   width: 100vw;
   position: fixed;
+  overflow-y: hidden;
 }
 .tab-bar {
   position: fixed;
@@ -126,7 +123,7 @@ div {
 .tab-container {
   width: 100vw;
   height: 92vh;
-  overflow-y: auto;
+  margin-bottom: 8vh;
   .item {
     height: 92vh;
     width: 100vw;

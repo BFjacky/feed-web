@@ -80,6 +80,7 @@ export default {
 .container {
   display: flex;
   flex-direction: column;
+  overflow:hidden;
   height: 100vh;
   width: 100vw;
 }
