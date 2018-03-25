@@ -45,8 +45,7 @@ import helper from "../helper/helper";
 import { Toast } from "mint-ui";
 export default {
   props: ["thread"],
-  created: async function() {
-  },
+  created: async function() {},
   components: {
     Toast
   },
@@ -126,8 +125,9 @@ export default {
       }
       wx.previewImage({ current, urls });
     },
-    share:async function(){
-      helper.wxShare();
+    share: async function() {
+      // helper.wxShare();
+      alert("暂无分享功能");
     }
   }
 };
