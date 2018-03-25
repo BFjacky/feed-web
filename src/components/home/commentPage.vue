@@ -165,7 +165,53 @@ export default {
   },
   methods: {
     // ---------threads 方法
-    praiseThread: function() {},
+    praiseThread: async function() {
+      const res = await helper.checkOauth();
+      if (!res) {
+        return;
+      }
+      if (this.praiseLock) {
+        Toast({
+          message: "操作太快了...",
+          position: "middle",
+          duration: 700
+        });
+        return;
+      }
+      const time = 700;
+      this.praiseLock = true;
+      if (this.thread.hasPraised) {
+        //如果已经点赞,则取消点赞
+        const cancelRes = await axios({
+          url: `${config.url.feedUrl}/thread/cancelPraise`,
+          method: "post",
+          data: {
+            _id: this.thread._id
+          },
+          withCredentials: true
+        });
+        this.thread.hasPraised = false;
+
+        //FiX ME 点赞之后不去查询该条说说最新的点赞总数，只是单纯在客户端将点赞数减一
+        this.thread.praises = this.thread.praises - 1;
+      } else {
+        const praiseRes = await axios({
+          url: `${config.url.feedUrl}/thread/praise`,
+          method: "post",
+          data: {
+            _id: this.thread._id
+          },
+          withCredentials: true
+        });
+        this.thread.hasPraised = true;
+
+        //FiX ME 点赞之后不去查询该条说说最新的点赞总数，只是单纯在客户端将点赞数加一
+        this.thread.praises = this.thread.praises + 1;
+      }
+      setTimeout(() => {
+        this.praiseLock = false;
+      }, time);
+    },
     previewImage: async function(img) {
       const urls = [];
       const current = img.sourceUrl;
@@ -414,7 +460,7 @@ div {
 
 .thread-container {
   div {
-    border: 1px solid red;
+    border: 0px solid red;
     box-sizing: border-box;
   }
   border-bottom: 2vw solid #eeeded;
@@ -423,7 +469,7 @@ div {
 
   .header {
     height: 8vh;
-    width: 100vw;
+    width: 90vw;
     display: flex;
     .part1 {
       height: 8vh;
@@ -455,7 +501,7 @@ div {
     }
   }
   .main {
-    width: 100vw;
+    width: 90vw;
     margin-top: 2vh;
     .content-text {
       text-align: left;
@@ -481,7 +527,7 @@ div {
   }
   .footer {
     height: 3vh;
-    width: 100vw;
+    width: 90vw;
     margin-top: 3vh;
     display: flex;
     .buttons {
