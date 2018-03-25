@@ -66,7 +66,7 @@ import config from "../helper/config";
 import helper from "../helper/helper";
 import { Toast } from "mint-ui";
 export default {
-  created: async function() {
+  activated: async function() {
     await this.initComments();
   },
   components: {

@@ -46,7 +46,6 @@ import { Toast } from "mint-ui";
 export default {
   props: ["thread"],
   created: async function() {
-    console.log(this.thread, this.thread.comments);
   },
   components: {
     Toast

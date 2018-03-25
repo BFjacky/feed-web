@@ -38,6 +38,7 @@ export default {
   },
   created: async function() {
     const { code } = this.$route.query;
+    console.log('进入了index页面',code)
     if (!code) {
       const res = await helper.wxinit();
       return;

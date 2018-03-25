@@ -3,6 +3,8 @@ import Router from 'vue-router'
 import index from '@/components/index'
 import postThread from '@/components/post/postThread'
 import commentPage from '@/components/home/commentPage'
+import mine from '@/components/person/mine'
+import notify from '@/components/person/notify'
 Vue.use(Router)
 
 const router = new Router({
@@ -22,6 +24,16 @@ const router = new Router({
       path: '/index/commentPage',
       name: 'commentPage',
       component: commentPage,
+    },
+    {
+      path: '/index/mine',
+      name: 'mine',
+      component: mine,
+    },
+    {
+      path: '/index/notify',
+      name: 'notify',
+      component: notify,
     }
   ]
 })

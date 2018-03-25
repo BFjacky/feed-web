@@ -66,6 +66,12 @@ export default {
           break;
         }
       }
+      for (let i = 0; i < this.finalImgs.length; i++) {
+        if (this.finalImgs[i].sourceUrl === img.sourceUrl) {
+          this.finalImgs.splice(i, 1);
+          break;
+        }
+      }
       //FIX ME
       const imgs = this.imgs;
       this.imgs = [];
@@ -76,8 +82,6 @@ export default {
       if (this.hasSent) {
         return;
       }
-      this.hasSent = true;
-
       if (this.finalImgs.length !== this.imgs.length) {
         MessageBox.alert(
           `还差${this.imgs.length - this.finalImgs.length}张图片没有上传完`,
@@ -85,6 +89,8 @@ export default {
         );
         return;
       }
+
+      this.hasSent = true;
       const _this = this;
       const sendRes = await axios({
         method: "post",
@@ -184,7 +190,7 @@ export default {
   width: 100vw;
   display: flex;
   flex-direction: column;
-  position: fixed;
+  // position: absolute;
 }
 .text-area {
   resize: none;
@@ -221,16 +227,12 @@ export default {
 }
 .imgs-area {
   width: 100%;
-  border: 0px solid black;
+  position: relative;
+  border: 1px solid black;
   display: flex;
   flex-wrap: wrap;
   padding: 3vw;
-  .img {
-    width: 25vw;
-    height: 25vw;
-    background-size: 100% 100%;
-    background-position: center center;
-  }
+
 }
 .bottom-bar {
   display: flex;

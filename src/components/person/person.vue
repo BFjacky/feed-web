@@ -8,17 +8,17 @@
       </div>
     </div>
     <div class="main">
-      <div class="item button">
+      <div class="item button" @click="item1Click">
         <div class="icon icon1"></div>
         <div class="text">我发出的动态</div>
       </div>
-      <div class="item button ">
+      <div class="item button" @click="item2Click">
         <div class="icon icon2"></div>
-        <div class="text">我收到的回复</div>
+        <div class="text">我的通知</div>
       </div>
       <div class="item button">
         <div class="icon icon3"></div>
-        <div class="text">我点赞的动态</div>
+        <div class="text">我收到的点赞</div>
       </div>
       <div class="item button">
         <div class="icon icon4"></div>
@@ -72,6 +72,12 @@ export default {
   methods: {
     wechatLogin: function() {
       window.location.href = config.url.oauthUrl;
+    },
+    item1Click: function() {
+      this.$router.push({ name: "mine" });
+    },
+    item2Click: function() {
+      this.$router.push({ name: "notify" });
     }
   }
 };
@@ -80,9 +86,10 @@ export default {
 .container {
   display: flex;
   flex-direction: column;
-  overflow:hidden;
+  overflow: hidden;
   height: 100vh;
   width: 100vw;
+  position: fixed;
 }
 
 .header {
@@ -127,7 +134,7 @@ export default {
   flex-direction: column;
   border-top: 7px solid rgb(223, 223, 223);
   .item {
-    height: 7vh;
+    height: 9vh;
     display: flex;
     align-items: center;
     padding-left: 4vw;

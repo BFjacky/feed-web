@@ -50,6 +50,16 @@ export default {
           this.threads = hotThreads.data.threads;
           this.threads = helper.parseDate(this.threads);
           break;
+        case "用户":
+          const userThreads = await axios({
+            url: `${config.url.feedUrl}/thread/getThreadByUser`,
+            method: "post",
+            withCredentials: true,
+            data: {}
+          });
+          this.threads = userThreads.data.threads;
+          this.threads = helper.parseDate(this.threads);
+          break;
         default:
           //根据主题获得thread
           if (this.type === "") {
@@ -71,18 +81,7 @@ export default {
       }
     }
   },
-  // deactivated: function() {
-  //   console.log(`threadList拉黑了`, $(".container").scrollHeight);
-  // },
   created: async function() {
-    setInterval(() => {
-      $(".container").scrollTop(100);
-      console.log(
-        `threadList拉黑了`,
-        $(".container").scrollTop(),
-        $("body").scrollTop()
-      );
-    }, 1000);
     switch (this.type) {
       case "最新":
         const threads = await axios({
@@ -100,6 +99,16 @@ export default {
           data: {}
         });
         this.threads = hotThreads.data.threads;
+        this.threads = helper.parseDate(this.threads);
+        break;
+      case "用户":
+        const userThreads = await axios({
+          url: `${config.url.feedUrl}/thread/getThreadByUser`,
+          method: "post",
+          withCredentials: true,
+          data: {}
+        });
+        this.threads = userThreads.data.threads;
         this.threads = helper.parseDate(this.threads);
         break;
       default:
@@ -181,6 +190,52 @@ export default {
           this.busy = false;
           break;
         }
+        case "用户": {
+          this.busy = true;
+          const threads = await axios({
+            url: `${config.url.feedUrl}/thread/getThreadByUser`,
+            withCredentials: true,
+            method:'post',
+            data: {
+              objectId: this.threads[this.threads.length - 1]._id
+            }
+          });
+          this.threads = this.threads.concat(threads.data.threads);
+          this.threads = helper.parseDate(this.threads);
+          if (threads.data.threads.length < 5) {
+            this.nomore = true;
+            this.busy = true;
+            return;
+          }
+          this.busy = false;
+          break;
+        }
+        default: {
+          //根据主题获得thread
+          if (this.type === "") {
+            return;
+          } else {
+            this.busy = true;
+            const threads = await axios({
+              url: `${config.url.feedUrl}/thread/getThreadByType`,
+              withCredentials: true,
+              method: "post",
+              data: {
+                objectId: this.threads[this.threads.length - 1]._id,
+                themeText: this.type
+              }
+            });
+            this.threads = this.threads.concat(threads.data.threads);
+            this.threads = helper.parseDate(this.threads);
+            if (threads.data.threads.length < 5) {
+              this.nomore = true;
+              this.busy = true;
+              return;
+            }
+            this.busy = false;
+            break;
+          }
+        }
       }
     },
     refresh: async function() {
@@ -207,6 +262,38 @@ export default {
           this.threads = hotThreads.data.threads;
           this.threads = helper.parseDate(this.threads);
           break;
+        case "用户":
+          const userThreads = await axios({
+            url: `${config.url.feedUrl}/thread/getThreadByUser`,
+            method: "post",
+            withCredentials: true,
+            data: {}
+          });
+          this.threads = [];
+          await helper.wait(10);
+          this.threads = userThreads.data.threads;
+          this.threads = helper.parseDate(this.threads);
+          break;
+        default:
+          //根据主题获得thread
+          if (this.type === "") {
+            return;
+          } else {
+            console.log("here");
+            const typeThreads = await axios({
+              url: `${config.url.feedUrl}/thread/getThreadByType`,
+              method: "post",
+              withCredentials: true,
+              data: {
+                themeText: this.type
+              }
+            });
+            this.threads = [];
+            await helper.wait(10);
+            this.threads = typeThreads.data.threads;
+            this.threads = helper.parseDate(this.threads);
+            break;
+          }
       }
       this.nomore = false;
       this.busy = false;
