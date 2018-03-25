@@ -14,16 +14,17 @@
       </div>
       <div class="item button" @click="item2Click">
         <div class="icon icon2"></div>
-        <div class="text">我的通知</div>
+        <div class="text">未读通知</div>
+        <div class="number-text">{{notifies.length}}</div>
       </div>
-      <div class="item button">
+      <!-- <div class="item button">
         <div class="icon icon3"></div>
         <div class="text">我收到的点赞</div>
       </div>
       <div class="item button">
         <div class="icon icon4"></div>
         <div class="text">我发出的回复</div>
-      </div>
+      </div> -->
     </div>
     <div class="footer"></div>
   </div>
@@ -31,6 +32,7 @@
 <script>
 import axios from "axios";
 import config from "../helper/config";
+import pageHelper from "./helper";
 async function checkUpdating() {
   return new Promise((resolve, reject) => {
     const intervalId = setInterval(() => {
@@ -50,11 +52,11 @@ export default {
       withCredentials: true
     });
     config.user.fetching = false;
+    this.prepared = true;
     if (!userGet.data || !userGet.data._id) {
       //未能获取到用户信息
       return;
     }
-    console.log("判断一下nickName:");
     const { avatarUrl, nickName, gender, _id } = userGet.data;
     this.avatarUrl = avatarUrl;
     this.nickName = nickName;
@@ -62,11 +64,40 @@ export default {
     config.user.oauth = true;
     config.user._id = _id;
   },
+  activated: async function() {
+    //查看 客户端 是否已经获得了用户信息
+    const _this = this;
+    async function checkPrepared() {
+      return new Promise((resolve, reject) => {
+        const intervalId = setInterval(() => {
+          if (_this.prepared) {
+            resolve("ok");
+            clearInterval(intervalId);
+          }
+        }, 100);
+      });
+    }
+
+    await checkPrepared();
+
+    pageHelper.getNoReadNotify();
+
+    //检查pageHelper.notifies 有没有变化
+    setInterval(() => {
+      if (!this.$lodash.isEqual(pageHelper.notifies, this.notifies)) {
+        //notifies 发生了变化
+        this.notifies = pageHelper.notifies;
+      }
+    }, 500);
+  },
   data: function() {
     return {
       avatarUrl: "",
       nickName: "点我登陆",
-      gender: -1
+      gender: -1,
+      notifiesNumber: 0,
+      notifies: [],
+      prepared: false
     };
   },
   methods: {
@@ -145,6 +176,20 @@ export default {
     height: 4vh;
     width: 4vh;
   }
+  .number-text {
+    padding:0.5vw;
+    height: 3.5vw;
+    min-width: 3.5vw;
+    background-color: rgb(248, 94, 94);
+    border-radius: 1.75vw;
+    line-height: 3.5vw;
+    font-size: 3.5vw;
+    color: white;
+    text-align: center;
+    position: relative;
+    left: -1.5vw;
+    top: -2vw;
+  }
   .text {
     margin-left: 5vw;
   }
@@ -152,7 +197,7 @@ export default {
     background-image: url("../../assets/note.png");
   }
   .icon2 {
-    background-image: url("../../assets/accept-message.png");
+    background-image: url("../../assets/letter.png");
   }
   .icon3 {
     background-image: url("../../assets/finger.png");

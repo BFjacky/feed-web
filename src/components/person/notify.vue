@@ -2,7 +2,12 @@
   <div class="container"></div>
 </template>
 <script>
-export default {};
+import axios from "axios"
+export default {
+  activated:async function(){
+    
+  }
+};
 </script>
 <style lang="less" scoped>
 div {

@@ -226,7 +226,7 @@ export default {
 .imgs-area {
   width: 100%;
   position: relative;
-  border: 1px solid black;
+  border: 0px solid black;
   display: flex;
   flex-wrap: wrap;
   padding: 3vw;
