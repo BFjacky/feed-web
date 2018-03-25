@@ -71,7 +71,7 @@ export default {
         });
         return;
       }
-      const time = 1000;
+      const time = 700;
       this.praiseLock = true;
       if (this.thread.hasPraised) {
         //如果已经点赞,则取消点赞

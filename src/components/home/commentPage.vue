@@ -1,5 +1,41 @@
 <template>
   <div class="container">
+
+        <div class="thread-container">
+          <div class="header">
+              <div class="part1" v-bind:style="{backgroundImage:`url(${thread.avatarUrl})`}"></div>
+              <div class="part2">
+                  <div class="name-part">{{thread.nickName}}</div>
+                  <div class="time-part">{{thread.createdAt}}</div>
+              </div>
+              <div class="part3">
+                  {{thread.themeText}}
+              </div>
+          </div>
+          <div class="main">
+              <div class="content-text">{{thread.content}}</div>
+              <div class="content-buttons"></div>
+              <div class="imgs-part">
+                <div @click="previewImage(img)" class="img" :class="{singleImg:thread.imgs.length===1}" v-for="img in thread.imgs" v-bind:style="{backgroundImage:`url(${img.url})`}"></div>
+              </div>
+          </div>
+          <div class="footer">
+              <div class="buttons">
+                  <div class="button-praise" @click="praiseThread">
+                      <div v-bind:class="{icon:!thread.hasPraised,'icon-praised':thread.hasPraised}"></div>
+                      <div class="text">{{thread.praises}}</div>
+                  </div>
+                  <div class="button-share">
+                      <div class="icon" @click="share"></div>
+                  </div>
+              </div>
+          </div>
+        </div>
+
+
+
+
+
         <div class="comment-show"  v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="100">
             <div class="content-box-title">热门评论({{hotComments.length}})</div>
             <div class="content-box" v-bind:class="hotFades[index]" v-for="(comment,index) in hotComments" @click="replyComment(comment,index,'hot')">
@@ -128,6 +164,22 @@ export default {
     }
   },
   methods: {
+    // ---------threads 方法
+    praiseThread: function() {},
+    previewImage: async function(img) {
+      const urls = [];
+      const current = img.sourceUrl;
+      for (const tempImg of this.thread.imgs) {
+        urls.push(tempImg.sourceUrl);
+      }
+      wx.previewImage({ current, urls });
+    },
+    share: async function() {
+      // helper.wxShare();
+      alert("暂无分享功能");
+    },
+
+    //-------comments 方法
     initComments: async function() {
       this.busy = true;
 
@@ -358,6 +410,151 @@ div {
 }
 .divide-line {
   border-top: 7px solid rgb(241, 241, 241);
+}
+
+.thread-container {
+  div {
+    border: 1px solid red;
+    box-sizing: border-box;
+  }
+  border-bottom: 2vw solid #eeeded;
+  width: 100vw;
+  padding: 3vw 5vw;
+
+  .header {
+    height: 8vh;
+    width: 100vw;
+    display: flex;
+    .part1 {
+      height: 8vh;
+      width: 8vh;
+      background-size: 80% 80%;
+      background-position: center center;
+      background-repeat: no-repeat;
+      border-radius: 2vw;
+    }
+    .part2 {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 8vh;
+      text-align: left;
+      justify-content: center;
+      .name-part {
+        color: #47a4c9;
+      }
+      .time-part {
+        font-size: 3vw;
+        color: #c9c9c9;
+      }
+    }
+    .part3 {
+      height: 8vh;
+      line-height: 8vh;
+      color: #883b6a;
+    }
+  }
+  .main {
+    width: 100vw;
+    margin-top: 2vh;
+    .content-text {
+      text-align: left;
+    }
+    .imgs-part {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-top: 2vh;
+      .img {
+        height: 28vw;
+        width: 28vw;
+        margin-bottom: 1vw;
+        background-size: 100% 100%;
+      }
+      .singleImg {
+        height: 65vw;
+        width: 65vw;
+        margin-bottom: 1vw;
+        background-size: 100% 100%;
+      }
+    }
+  }
+  .footer {
+    height: 3vh;
+    width: 100vw;
+    margin-top: 3vh;
+    display: flex;
+    .buttons {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      .button-praise {
+        height: 3vh;
+        width: 10vh;
+        display: flex;
+        .icon {
+          height: 3vh;
+          width: 3vh;
+          background-image: url("../../assets/like.png");
+          background-size: 100% 100%;
+        }
+        //已经点过赞
+        .icon-praised {
+          height: 3vh;
+          width: 3vh;
+          background-image: url("../../assets/like-after.png");
+          background-size: 100% 100%;
+        }
+        .text {
+          text-align: center;
+          line-height: 3vh;
+          margin-left: 3vw;
+          font-size: 4vw;
+          color: #e2e2e2;
+        }
+      }
+      .button-comment {
+        margin-left: 7vw;
+        height: 3vh;
+        width: 10vh;
+        display: flex;
+        .icon {
+          height: 3vh;
+          width: 3vh;
+          background-image: url("../../assets/comment.png");
+          background-size: 100% 100%;
+        }
+        .text {
+          text-align: center;
+          line-height: 3vh;
+          margin-left: 3vw;
+          font-size: 4vw;
+          color: #e2e2e2;
+        }
+      }
+      .button-share {
+        margin-left: 7vw;
+        height: 3vh;
+        width: 10vh;
+        display: flex;
+        .icon {
+          height: 3vh;
+          width: 3vh;
+          background-image: url("../../assets/share.png");
+          background-size: 100% 100%;
+        }
+        .text {
+          text-align: center;
+          line-height: 3vh;
+          margin-left: 3vw;
+          font-size: 4vw;
+          color: #e2e2e2;
+        }
+      }
+    }
+  }
 }
 .comment-show {
   flex-grow: 1;
