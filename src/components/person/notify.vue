@@ -2,7 +2,7 @@
   <div class="container">
     <div class="header">我的通知</div>
     <div class="notifies-container">
-      <div class="notify-box" v-for="notify in notifies">
+      <div class="notify-box" v-for="(notify,index) in notifies" @click="clickNotifyBox(notify,index)" v-bind:class="clickingAni[index]">
         <div class="left">
           <div class="head">
             <div class="avatar" v-bind:style="{backgroundImage:`url(${notify.commentInfo.avatarUrl})`}"></div>
@@ -20,12 +20,17 @@
       </div>
       <div class="nomore-remind">没有更多了</div>
     </div>
+    <popup v-model="popupVisible" class="popup" >
+      <div class="item" @click="gotoCommentPage">查看此条动态</div>
+    </popup>
   </div>
 </template>
 <script>
 import axios from "axios";
 import pageHelper from "./helper";
 import helper from "../helper/helper";
+import config from "../helper/config";
+import { Popup } from "mint-ui";
 export default {
   activated: async function() {
     //获得 notifies
@@ -33,18 +38,112 @@ export default {
 
     console.log(`获得了notifies`, this.notifies);
     this.notifies = helper.parseDate(this.notifies);
+
+    //将所有notifies 设为已读
+    const res = await axios({
+      method: "post",
+      url: `${config.url.feedUrl}/user/readNotify`,
+      withCredentials: true,
+      data: {
+        notifies: this.notifies
+      }
+    });
+
+    console.log(res);
+  },
+  components: {
+    popup: Popup
   },
   data: function() {
     return {
-      notifies: []
+      notifies: [],
+      choosedNotify: "",
+      clickingAni: [],
+      popupVisible: false
     };
+  },
+  methods: {
+    clickNotifyBox: function(notify, index) {
+      //显示动画效果
+      this.$set(this.clickingAni, index, "fade");
+      setTimeout(() => {
+        this.$set(this.clickingAni, index, "");
+      }, 500);
+      //显示toast
+      this.popupVisible = true;
+      this.choosedNotify = notify;
+    },
+    gotoCommentPage: async function() {
+      //popupVisible
+      this.popupVisible = false;
+
+      let thread;
+      if (this.choosedNotify.threadSourceId) {
+        const threadData = await axios({
+          method: "post",
+          url: `${config.url.feedUrl}/thread/getOneThread`,
+          withCredentials: true,
+          data: {
+            threadId: this.choosedNotify.threadSourceId
+          }
+        });
+        thread = threadData.data.thread;
+      }
+
+      //commment 连套问题 FIX ME
+      if (this.choosedNotify.commentSourceId) {
+        const commentData = await axios({
+          method: "post",
+          url: `${config.url.feedUrl}/comment/getOneComment`,
+          withCredentials: true,
+          data: {
+            commentId: this.choosedNotify.commentSourceId
+          }
+        });
+        const comment = commentData.data.comment;
+        const threadData = await axios({
+          method: "post",
+          url: `${config.url.feedUrl}/thread/getOneThread`,
+          withCredentials: true,
+          data: {
+            threadId: comment.threadSourceId
+          }
+        });
+        thread = threadData.data.thread;
+      }
+      //  获得点击的目标thread;
+      this.$router.push({
+        path: "/index/commentPage",
+        query: {
+          thread
+        }
+      });
+    }
   }
 };
 </script>
 <style lang="less" scoped>
-div {
-  border: 0px solid black;
-  box-sizing: border-box;
+// 点击notifyBox 的渐变动画效果
+@keyframes fade-in-out {
+  0% {
+    background-color: #d4d4d400;
+  }
+  25% {
+    background-color: #e6e6e6;
+  }
+  50% {
+    background-color: #e6e6e6;
+  }
+  75% {
+    background-color: #e6e6e6;
+  }
+  100% {
+    background-color: #d4d4d400;
+  }
+}
+
+.fade {
+  animation: fade-in-out ease-in-out 0.5s;
 }
 .container {
   height: 100vh;
@@ -122,5 +221,25 @@ div {
   text-align: center;
   height: 10vw;
   line-height: 10vw;
+}
+@keyframes fade-in {
+  0% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.popup {
+  animation: fade-in 0.3s ease-in-out forwards;
+  height: 8vh;
+  width: 60vw;
+  .item {
+    height: 8vh;
+    width: 100%;
+    text-align: center;
+    line-height: 8vh;
+    font-size: 4.5vw;
+  }
 }
 </style>
