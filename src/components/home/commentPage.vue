@@ -509,13 +509,17 @@ div {
     .imgs-part {
       display: flex;
       flex-wrap: wrap;
-      justify-content: space-between;
+      justify-content: flex-start;
       margin-top: 2vh;
       .img {
         height: 28vw;
         width: 28vw;
+        margin-left: 1vw;
         margin-bottom: 1vw;
         background-size: 100% 100%;
+      }
+      .img:nth-child(1){
+        margin-left:0;
       }
       .singleImg {
         height: 65vw;
