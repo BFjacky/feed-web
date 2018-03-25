@@ -55,7 +55,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid rgb(233, 230, 230);
+  border: 0px solid rgb(233, 230, 230);
+  position: relative;
 }
 .spinPosition {
   position: relative;
