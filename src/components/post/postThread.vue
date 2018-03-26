@@ -110,6 +110,12 @@ export default {
           position: "middle",
           duration: 500
         });
+        //清空内容
+        this.content = "";
+        this.imgs = [];
+        this.finalImgs = [];
+        this.themeText = "无主题";
+
         setTimeout(() => {
           this.hasSent = false;
           this.$router.push({ name: "index", params: { allowBack: true } });
@@ -230,7 +236,6 @@ export default {
   display: flex;
   flex-wrap: wrap;
   padding: 3vw;
-
 }
 .bottom-bar {
   display: flex;
