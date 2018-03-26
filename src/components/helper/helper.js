@@ -12,7 +12,7 @@ export default {
             }
             const getSignature = async function () {
                 const signatureRes = await axios({
-                    url: `http://feedServer.feit.me/sign`,
+                    url: `${myconfig.url.feedUrl}/sign`,
                     params: {
                         nonceStr, timestamp
                     },

@@ -37,28 +37,11 @@ export default {
     };
   },
   created: async function() {
-    const { code } = this.$route.query;
-    console.log('进入了index页面',code)
-    if (!code) {
-      const res = await helper.wxinit();
-      return;
-    }
+    console.log("进入了index页面,应该获得code");
     // 告诉整个页面，该用户正在鉴权中
-    config.user.updating = true;
+    // config.user.updating = true;
     //提示全局正在登陆
-
     const res = await helper.wxinit();
-    const oauthRes = await axios({
-      url: `${config.url.feedUrl}/oauth`,
-      method: "post",
-      data: {
-        code
-      },
-      withCredentials: true
-    });
-
-    config.user.updating = false;
-    //在这里获得用户跳转到此页面的参数,将code传到后端进行鉴权
   },
   methods: {
     gotoPostPage: async function() {
