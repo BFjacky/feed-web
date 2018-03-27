@@ -32,6 +32,7 @@ div {
   word-wrap: break-word;
   padding: 0;
   margin: 0;
+  -webkit-tap-highlight-color:#12312300;
 }
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;

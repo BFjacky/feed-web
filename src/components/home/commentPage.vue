@@ -444,7 +444,9 @@ export default {
   width: 100vw;
   display: flex;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   flex-direction: column;
+  background-color: white;
 }
 div {
   border: 0px solid black;

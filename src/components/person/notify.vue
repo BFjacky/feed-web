@@ -150,6 +150,8 @@ export default {
   width: 100vw;
   position: fixed;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  background-color: white;
 }
 .header {
   text-align: left;
@@ -163,6 +165,7 @@ export default {
   height: 94vh;
   width: 100vw;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .notify-box {
   border-bottom: 1px solid rgb(211, 211, 211);

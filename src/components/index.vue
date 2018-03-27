@@ -69,6 +69,7 @@ export default {
   width: 100vw;
   position: fixed;
   overflow-y: hidden;
+  background-color: white;
 }
 .tab-bar {
   position: fixed;

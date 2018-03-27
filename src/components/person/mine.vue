@@ -35,6 +35,7 @@ div {
   height: 100vh;
   width: 100vw;
   position: fixed;
+    background-color: white;
 }
 .head-bar {
   height: 6vh;
@@ -48,5 +49,6 @@ div {
 .main {
   height: 94vh;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 </style>

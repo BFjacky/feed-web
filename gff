@@ -1,0 +1,66 @@
+[33m88f4ff5[m[33m ([m[1;36mHEAD -> [m[1;32mkeepalive[m[33m)[m HEAD@{0}: commit: '修复了gender问题'
+[33mb828e27[m[33m ([m[1;31mmyorigin/keepalive[m[33m)[m HEAD@{1}: reset: moving to b828e27
+[33mb828e27[m[33m ([m[1;31mmyorigin/keepalive[m[33m)[m HEAD@{2}: commit: '修复了notify正文文字不对齐的问题'
+[33m5c0be42[m HEAD@{3}: commit: '修复了几个发现的bug'
+[33m2453694[m HEAD@{4}: commit: '关闭了调试模式,编辑完成清除post'
+[33md8c4876[m HEAD@{5}: commit: '第一版测试可用'
+[33m7074ac2[m HEAD@{6}: commit: '完善了notify'
+[33me6cf00b[m HEAD@{7}: commit: '修复了图片的布局问题'
+[33m2ea4c3d[m HEAD@{8}: commit: '完成了详情页面'
+[33m6b13e91[m HEAD@{9}: reset: moving to 6b13e91
+[33m6b13e91[m HEAD@{10}: commit: 'flex-direction:column引起布局错误'
+[33md8416c1[m HEAD@{11}: commit: '添加了notify页面'
+[33mddb6ba2[m HEAD@{12}: commit: '添加了未读通知的个数'
+[33m34ebd8a[m HEAD@{13}: commit: '修复了照片叠在一起的问题'
+[33m72776ee[m HEAD@{14}: commit: '修复了发状态页面发送在上传图片后不能点击的问题'
+[33m31a140f[m HEAD@{15}: commit: '无论如何都获取不到scrollTop的值'
+[33m6ca59b6[m HEAD@{16}: commit: '删除了store，添加了keep-alive'
+[33m77c5370[m[33m ([m[1;31mmyorigin/master[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{17}: checkout: moving from master to keepalive
+[33m77c5370[m[33m ([m[1;31mmyorigin/master[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{18}: commit: '添加了store'
+[33m58d092c[m HEAD@{19}: commit: '修改了index页面的数据'
+[33m0b28715[m HEAD@{20}: commit: '添加了过渡效果'
+[33m085c62f[m HEAD@{21}: commit: '修复了时间不显示昨天的bug'
+[33m6daa7d1[m HEAD@{22}: commit: '由于javascript的限制,无法感知数组元素的变化或是对象属性的变化'
+[33m38125d8[m HEAD@{23}: commit: '点名字回复'
+[33m8fdc4c1[m HEAD@{24}: commit: '添加了一个回复CYF:'
+[33me98f923[m HEAD@{25}: reset: moving to e98f923
+[33m1af9054[m HEAD@{26}: commit: '123'
+[33me98f923[m HEAD@{27}: reset: moving to HEAD
+[33me98f923[m HEAD@{28}: reset: moving to e98f923
+[33me98f923[m HEAD@{29}: commit: '正在向commentPage页添加thread'
+[33m118bce5[m HEAD@{30}: commit: '正常显示时间'
+[33m923f9c0[m HEAD@{31}: commit: '修复了点击post按钮，不检查登陆的bug'
+[33m1619462[m HEAD@{32}: commit: '添加了首页登陆提示，modal层'
+[33m67038a7[m HEAD@{33}: commit: '觉得点赞功能写的太烂准备重写'
+[33mf22756f[m HEAD@{34}: commit: '添加了按类搜索'
+[33mee7a1ba[m HEAD@{35}: commit: '连续为data赋值出问题'
+[33m6bb9458[m HEAD@{36}: commit: '添加了主题分类'
+[33mf0a22ce[m HEAD@{37}: commit: '完善了登陆'
+[33m6d89f11[m HEAD@{38}: merge dev: Merge made by the 'recursive' strategy.
+[33ma52d69f[m HEAD@{39}: checkout: moving from dev to master
+[33mb189519[m[33m ([m[1;32mdev[m[33m)[m HEAD@{40}: commit: '实现了慢登陆'
+[33ma668c08[m HEAD@{41}: commit: '完成了评论功能'
+[33m4218c3e[m HEAD@{42}: commit: '完成了平陵功能'
+[33m2630ee6[m HEAD@{43}: commit: '修改了一些配色'
+[33m83937d7[m HEAD@{44}: checkout: moving from master to dev
+[33ma52d69f[m HEAD@{45}: commit: '123'
+[33md047cd7[m HEAD@{46}: commit (merge): 'scroll-infinite----下拉刷新完成'
+[33m817acec[m HEAD@{47}: checkout: moving from dev to master
+[33m83937d7[m HEAD@{48}: checkout: moving from 83937d7ce83d078cdda785f27818c29dc6fac344 to dev
+[33m83937d7[m HEAD@{49}: commit: 'scroll-infinite----下拉刷新完成'
+[33m7df78a6[m HEAD@{50}: checkout: moving from master to 7df78a6
+[33m817acec[m HEAD@{51}: commit: '添加了loadmore之后出现了bug'
+[33m7df78a6[m HEAD@{52}: commit: '改用mint-ui的infinite-scroll'
+[33me43f2fb[m HEAD@{53}: reset: moving to e43f2fb
+[33me43f2fb[m HEAD@{54}: commit: '初步完成了查看页面'
+[33m54c3fc9[m HEAD@{55}: commit: '能够发状态了'
+[33me43d59d[m HEAD@{56}: commit: 'window.histroy.forward()'
+[33m4556c5c[m HEAD@{57}: commit: '将66.66vw的动画写为calc(100vw*2/3)'
+[33mea2b27e[m HEAD@{58}: commit: '使用wx.previewImage来查看图片'
+[33m00a3ba3[m HEAD@{59}: commit: '完成了删除图片的功能，使用了wait等待，有bug'
+[33me3c3666[m HEAD@{60}: commit: '添加了lodash工具包'
+[33m912c8c4[m HEAD@{61}: reset: moving to 912c8c4
+[33m912c8c4[m HEAD@{62}: commit: '基本完成post-img页面'
+[33md3b257c[m HEAD@{63}: commit: 添加了申请wx sdk的权限
+[33mf2abe5d[m HEAD@{64}: commit: '下一步要添加element-ui'
+[33m3a70080[m HEAD@{65}: commit (initial): feed-web init

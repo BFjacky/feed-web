@@ -83,6 +83,15 @@ export default {
       if (this.hasSent) {
         return;
       }
+      console.log(`即将发布`, this.content, this.finalImgs, this.imgs);
+      if (
+        this.content == "" &&
+        this.finalImgs.length === 0 &&
+        this.imgs.length === 0
+      ) {
+        MessageBox.alert(`写点内容再发布吧~`, "提示");
+        return;
+      }
       if (this.finalImgs.length !== this.imgs.length) {
         MessageBox.alert(
           `还差${this.imgs.length - this.finalImgs.length}张图片没有上传完`,
@@ -200,6 +209,7 @@ export default {
   height: 100vh;
   width: 100vw;
   position: fixed;
+  background-color: white;
 }
 .text-area {
   resize: none;

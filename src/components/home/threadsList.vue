@@ -1,6 +1,6 @@
 <template>
-  <div class="container" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="100">
-    <load-more :top-method="refresh" ref="loadmore" v-on:top-status-change="topStatusChange" class="load-more-box">
+  <div class="container">
+    <load-more :top-method="refresh" ref="loadmore" v-on:top-status-change="topStatusChange" class="load-more-box"  v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="100">
       <div slot="top" class="mint-loadmore-top">
         <span class="down-arrow" v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }">↓</span>
         <spinner v-show="topStatus === 'loading'" color="#32a8fc" type="triple-bounce"></spinner>
@@ -9,11 +9,11 @@
       <div class="threadBox" v-for="thread in threads">
         <thread-box :thread="thread"></thread-box>
       </div>
-    </load-more>
-      <div class="spinner-box" v-if="busy">
+       <div class="spinner-box" v-if="busy">
         <spinner type="triple-bounce" color="#32a8fc" v-if="!nomore"></spinner>
-        <div class="text-line" v-if="nomore">没有更多了...</div>
+        <div class="text-line" v-if="nomore">没有更多了</div>
       </div>
+    </load-more>
   </div>
 </template>
 <script>
@@ -149,6 +149,7 @@ export default {
   },
   methods: {
     loadMore: async function() {
+      console.log("loadmore");
       if (this.threads.length === 0) {
         return;
       }
@@ -316,13 +317,14 @@ export default {
 .container {
   height: 85vh;
   width: 100%;
-  overflow: auto;
 }
 .threadBox {
   width: 100vw;
 }
 .load-more-box {
   height: 85vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .noThreadInfo {
   color: #919191;
