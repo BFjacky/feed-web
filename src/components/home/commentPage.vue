@@ -104,6 +104,7 @@ import { Toast } from "mint-ui";
 export default {
   activated: async function() {
     await this.initComments();
+    this.thread = helper.parseDate([this.thread])[0];
   },
   components: {
     Toast
@@ -468,12 +469,12 @@ div {
   padding: 3vw 5vw;
 
   .header {
-    height: 8vh;
+    height: calc(8vw*16/9);
     width: 90vw;
     display: flex;
     .part1 {
-      height: 8vh;
-      width: 8vh;
+      height: calc(8vw*16/9);
+      width: calc(8vw*16/9);
       background-size: 80% 80%;
       background-position: center center;
       background-repeat: no-repeat;
@@ -483,7 +484,7 @@ div {
       flex-grow: 1;
       display: flex;
       flex-direction: column;
-      height: 8vh;
+      height: calc(8vw*16/9);
       text-align: left;
       justify-content: center;
       .name-part {
@@ -495,14 +496,14 @@ div {
       }
     }
     .part3 {
-      height: 8vh;
-      line-height: 8vh;
+      height: calc(8vw*16/9);
+      line-height: calc(8vw*16/9);
       color: #883b6a;
     }
   }
   .main {
     width: 90vw;
-    margin-top: 2vh;
+    margin-top: calc(2vw*16/9);
     .content-text {
       text-align: left;
     }
@@ -510,7 +511,7 @@ div {
       display: flex;
       flex-wrap: wrap;
       justify-content: flex-start;
-      margin-top: 2vh;
+      margin-top: calc(2vw*16/9);
       .img {
         height: 28vw;
         width: 28vw;
@@ -518,8 +519,8 @@ div {
         margin-bottom: 1vw;
         background-size: 100% 100%;
       }
-      .img:nth-child(1){
-        margin-left:0;
+      .img:nth-child(1) {
+        margin-left: 0;
       }
       .singleImg {
         height: 65vw;
@@ -530,9 +531,9 @@ div {
     }
   }
   .footer {
-    height: 3vh;
+    height: calc(3vw*16/9);
     width: 90vw;
-    margin-top: 3vh;
+    margin-top: calc(3vw*16/9);
     display: flex;
     .buttons {
       height: 100%;
@@ -541,25 +542,25 @@ div {
       align-items: center;
       justify-content: flex-end;
       .button-praise {
-        height: 3vh;
-        width: 10vh;
+        height: calc(3vw*16/9);
+        width: calc(10vw*16/9);
         display: flex;
         .icon {
-          height: 3vh;
-          width: 3vh;
+          height: calc(3vw*16/9);
+          width: calc(3vw*16/9);
           background-image: url("../../assets/like.png");
           background-size: 100% 100%;
         }
         //已经点过赞
         .icon-praised {
-          height: 3vh;
-          width: 3vh;
+          height: calc(3vw*16/9);
+          width: calc(3vw*16/9);
           background-image: url("../../assets/like-after.png");
           background-size: 100% 100%;
         }
         .text {
           text-align: center;
-          line-height: 3vh;
+          line-height: calc(3vw*16/9);
           margin-left: 3vw;
           font-size: 4vw;
           color: #e2e2e2;
@@ -567,18 +568,18 @@ div {
       }
       .button-comment {
         margin-left: 7vw;
-        height: 3vh;
-        width: 10vh;
+        height: calc(3vw*16/9);
+        width: calc(10vw*16/9);
         display: flex;
         .icon {
-          height: 3vh;
-          width: 3vh;
+          height: calc(3vw*16/9);
+          width: calc(3vw*16/9);
           background-image: url("../../assets/comment.png");
           background-size: 100% 100%;
         }
         .text {
           text-align: center;
-          line-height: 3vh;
+          line-height: calc(3vw*16/9);
           margin-left: 3vw;
           font-size: 4vw;
           color: #e2e2e2;
@@ -586,18 +587,18 @@ div {
       }
       .button-share {
         margin-left: 7vw;
-        height: 3vh;
-        width: 10vh;
+        height: calc(3vw*16/9);
+        width: calc(10vw*16/9);
         display: flex;
         .icon {
-          height: 3vh;
-          width: 3vh;
+          height: calc(3vw*16/9);
+          width: calc(3vw*16/9);
           background-image: url("../../assets/share.png");
           background-size: 100% 100%;
         }
         .text {
           text-align: center;
-          line-height: 3vh;
+          line-height: calc(3vw*16/9);
           margin-left: 3vw;
           font-size: 4vw;
           color: #e2e2e2;

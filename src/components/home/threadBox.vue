@@ -164,6 +164,7 @@ div {
     flex-direction: column;
     height: 8vh;
     text-align: left;
+    margin-left:3vw;
     justify-content: center;
     .name-part {
       color: #47a4c9;

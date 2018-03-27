@@ -11,11 +11,11 @@
     </tab-container>
     <tab-bar class="tab-bar" v-model="itemSelect">
       <tab-item class="one-item" id="0" :class="{'item-chosen':itemSelect==='0'}">
-      <img slot="icon" width="30vh" :src="itemSelect==='0'?require('../assets/home1.png'):require('../assets/home.png')">
+      <img slot="icon" width="27vh" :src="itemSelect==='0'?require('../assets/home1.png'):require('../assets/home.png')">
         首页
       </tab-item>
       <tab-item class="one-item" id="1" :class="{'item-chosen':itemSelect==='1'}">
-      <img slot="icon" width="30vh"  :src="itemSelect==='0'?require('../assets/person.png'):require('../assets/person1.png')">
+      <img slot="icon" width="27vh"  :src="itemSelect==='0'?require('../assets/person.png'):require('../assets/person1.png')">
         我的
       </tab-item>
     </tab-bar>

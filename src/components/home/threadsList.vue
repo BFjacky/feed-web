@@ -21,6 +21,7 @@ import threadBox from "./threadBox";
 import config from "../helper/config";
 import axios from "axios";
 import helper from "../helper/helper";
+import store from "../helper/store";
 import { Spinner, Loadmore } from "mint-ui";
 export default {
   props: ["type"],
@@ -130,6 +131,12 @@ export default {
         }
     }
   },
+  activated: async function() {
+    if (store.index.needRefresh) {
+      await this.refresh();
+      store.index.needRefresh = false;
+    }
+  },
   data: function() {
     return {
       threads: [],
@@ -195,7 +202,7 @@ export default {
           const threads = await axios({
             url: `${config.url.feedUrl}/thread/getThreadByUser`,
             withCredentials: true,
-            method:'post',
+            method: "post",
             data: {
               objectId: this.threads[this.threads.length - 1]._id
             }

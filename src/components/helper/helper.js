@@ -125,15 +125,21 @@ export default {
             }
             const now = new Date();
             ele.createdAt = new Date(ele.createdAt)
+            //获得分钟数，如果分钟数小于10则:例如 9:01,
+            const minute = ele.createdAt.getMinutes();
+
+            if (minute < 10) {
+                minute = '0' + minute;
+            }
             if (now.getDate() - ele.createdAt.getDate() <= 0) {
                 // 一天内 :只显示:小时:分钟
-                ele.createdAt = `${ele.createdAt.getHours()}:${ele.createdAt.getMinutes()}`;
+                ele.createdAt = `${ele.createdAt.getHours()}:${minute}`;
             }
             else if (now.getDate() - ele.createdAt.getDate() <= 1) {
-                ele.createdAt = `昨天  ${ele.createdAt.getHours()}:${ele.createdAt.getMinutes()}`;
+                ele.createdAt = `昨天  ${ele.createdAt.getHours()}:${minute}`;
                 //超过一天,不超过两天:显示昨天
             } else {
-                ele.createdAt = `${ele.createdAt.getMonth() + 1}月${ele.createdAt.getDate()}日  ${ele.createdAt.getHours()}:${ele.createdAt.getMinutes()}`;
+                ele.createdAt = `${ele.createdAt.getMonth() + 1}月${ele.createdAt.getDate()}日  ${ele.createdAt.getHours()}:${minute}`;
                 //超过两天，显示日期和时间
             }
         }

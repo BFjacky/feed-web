@@ -28,6 +28,7 @@ import { MessageBox, Spinner, Popup, Toast } from "mint-ui";
 import imgViewBox from "./imgViewBox";
 import helper from "../helper/helper";
 import config from "../helper/config";
+import store from "../helper/store";
 import axios from "axios";
 export default {
   watch: {
@@ -118,7 +119,11 @@ export default {
 
         setTimeout(() => {
           this.hasSent = false;
-          this.$router.push({ name: "index", params: { allowBack: true } });
+          this.$router.push({
+            name: "index",
+            params: { allowBack: true }
+          });
+          store.index.needRefresh = true;
         }, 500);
       } else {
         this.hasSent = false;

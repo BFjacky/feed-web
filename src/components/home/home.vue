@@ -37,6 +37,7 @@ import {
 } from "mint-ui";
 import axios from "axios";
 import config from "../helper/config";
+import store from "../helper/store";
 import threadsList from "./threadsList";
 export default {
   components: {
@@ -124,6 +125,13 @@ export default {
         { icon: require("../../assets/learning.png"), text: "寻找研友" }
       ]
     };
+  },
+  activated: async function() {
+    //刚发完一条状态的时候,将type切换到最新
+    if (store.index.needRefresh) {
+      this.oldSelectItem = this.selectItem;
+      this.selectItem = '0';
+    }
   },
   created: async function() {}
 };
