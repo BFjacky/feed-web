@@ -14,7 +14,7 @@
           <div class="content-text">{{thread.content}}</div>
           <div class="content-buttons"></div>
           <div class="imgs-part">
-            <div @click="previewImage(img)" class="img" :class="{singleImg:thread.imgs.length===1}" v-for="img in thread.imgs" v-bind:style="{backgroundImage:`url(${thread.imgs.length===1?img.sourceUrl:img.url})`}"></div>
+            <div @click="previewImage(img)" class="img" :class="{singleImg:thread.imgs.length===1}" v-for="img in thread.imgs" v-bind:style="{backgroundImage:`url(${thread.imgs.length===1?img.urlMiddle:img.url})`}"></div>
           </div>
       </div>
       <div class="footer">
