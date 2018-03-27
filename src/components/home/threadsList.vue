@@ -315,14 +315,14 @@ export default {
 </script>
 <style lang="less" scoped>
 .container {
-  height: 85vh;
+  height: 100%;
   width: 100%;
 }
 .threadBox {
   width: 100vw;
 }
 .load-more-box {
-  height: 85vh;
+  height: 100%;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
