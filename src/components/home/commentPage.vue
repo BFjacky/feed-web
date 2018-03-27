@@ -16,7 +16,7 @@
               <div class="content-text">{{thread.content}}</div>
               <div class="content-buttons"></div>
               <div class="imgs-part">
-                <div @click="previewImage(img)" class="img" :class="{singleImg:thread.imgs.length===1}" v-for="img in thread.imgs" v-bind:style="{backgroundImage:`url(${img.url})`}"></div>
+                <div @click="previewImage(img)" class="img" :class="{singleImg:thread.imgs.length===1}" v-for="img in thread.imgs" v-bind:style="{backgroundImage:`url(${thread.imgs.length===1?img.sourceUrl:img.url})`}"></div>
               </div>
           </div>
           <div class="footer">
@@ -173,13 +173,12 @@ export default {
       }
       if (this.praiseLock) {
         Toast({
-          message: "操作太快了...",
+          message: "客官慢点...",
           position: "middle",
-          duration: 700
+          duration: 500
         });
         return;
       }
-      const time = 700;
       this.praiseLock = true;
       if (this.thread.hasPraised) {
         //如果已经点赞,则取消点赞
@@ -209,9 +208,8 @@ export default {
         //FiX ME 点赞之后不去查询该条说说最新的点赞总数，只是单纯在客户端将点赞数加一
         this.thread.praises = this.thread.praises + 1;
       }
-      setTimeout(() => {
-        this.praiseLock = false;
-      }, time);
+
+      this.praiseLock = false;
     },
     previewImage: async function(img) {
       const urls = [];
@@ -342,14 +340,13 @@ export default {
     praise: async function(comment) {
       if (this.praiseLock) {
         Toast({
-          message: "操作太快了...",
+          message: "客官慢点...",
           position: "middle",
-          duration: 700
+          duration: 500
         });
         return;
       }
       this.praiseLock = true;
-      const time = 700;
       //如果已经点过赞了则 取消点赞
       if (comment.hasPraised) {
         const praiseRes = await axios({
@@ -375,9 +372,7 @@ export default {
         comment.praises++;
       }
 
-      setTimeout(() => {
-        this.praiseLock = false;
-      }, time);
+      this.praiseLock = false;
 
       // //send comment后重新获取最新的评论信息
       // await this.initComments();
@@ -525,8 +520,9 @@ div {
       .singleImg {
         height: 65vw;
         width: 65vw;
+        background-repeat: no-repeat;
         margin-bottom: 1vw;
-        background-size: 100% 100%;
+        background-size: cover;
       }
     }
   }

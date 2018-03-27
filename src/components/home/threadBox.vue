@@ -14,7 +14,7 @@
           <div class="content-text">{{thread.content}}</div>
           <div class="content-buttons"></div>
           <div class="imgs-part">
-            <div @click="previewImage(img)" class="img" :class="{singleImg:thread.imgs.length===1}" v-for="img in thread.imgs" v-bind:style="{backgroundImage:`url(${img.url})`}"></div>
+            <div @click="previewImage(img)" class="img" :class="{singleImg:thread.imgs.length===1}" v-for="img in thread.imgs" v-bind:style="{backgroundImage:`url(${thread.imgs.length===1?img.sourceUrl:img.url})`}"></div>
           </div>
       </div>
       <div class="footer">
@@ -49,7 +49,6 @@ export default {
   components: {
     Toast
   },
-
   data: function() {
     return {
       popupVisible: false,
@@ -67,11 +66,10 @@ export default {
         Toast({
           message: "操作太快了...",
           position: "middle",
-          duration: 700
+          duration: 500
         });
         return;
       }
-      const time = 700;
       this.praiseLock = true;
       if (this.thread.hasPraised) {
         //如果已经点赞,则取消点赞
@@ -101,9 +99,8 @@ export default {
         //FiX ME 点赞之后不去查询该条说说最新的点赞总数，只是单纯在客户端将点赞数加一
         this.thread.praises = this.thread.praises + 1;
       }
-      setTimeout(() => {
-        this.praiseLock = false;
-      }, time);
+
+      this.praiseLock = false;
     },
     gotoComment: async function() {
       const res = await helper.checkOauth();
@@ -164,7 +161,7 @@ div {
     flex-direction: column;
     height: 8vh;
     text-align: left;
-    margin-left:3vw;
+    margin-left: 3vw;
     justify-content: center;
     .name-part {
       color: #47a4c9;
@@ -204,8 +201,9 @@ div {
     .singleImg {
       height: 65vw;
       width: 65vw;
+      background-repeat: no-repeat;
       margin-bottom: 1vw;
-      background-size: 100% 100%;
+      background-size: cover;
     }
   }
 }

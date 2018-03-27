@@ -198,6 +198,7 @@ export default {
     .main {
       padding: 1vw;
       margin-top: 1vw;
+      width: 70vw;
       text-align: left;
       font-size: 4vw;
     }
@@ -209,10 +210,17 @@ export default {
     }
   }
   .right {
+    display: flex;
+    align-items: center;
     .content-box {
+      border: 0px solid black;
       color: #b3b3b3;
       font-size: 2vw;
-      height: 100%;
+      line-height: 4vw;
+      max-height: 31vw;
+      max-width: 20vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }
