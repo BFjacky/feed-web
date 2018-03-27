@@ -4,7 +4,7 @@
       <div class="left" v-bind:style="{backgroundImage:`url(${avatarUrl})`}"></div>
       <div class="right">
         <div class="name">{{nickName}}</div>
-        <div v-bind:class="{boy:gender===1,girl:gender===0}"></div>
+        <div v-bind:class="{boy:gender===1,girl:gender===2}"></div>
       </div>
     </div>
     <div class="main">

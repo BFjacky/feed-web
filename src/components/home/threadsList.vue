@@ -1,6 +1,6 @@
 <template>
   <div class="container" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="100">
-    <load-more :top-method="refresh" ref="loadmore" v-on:top-status-change="topStatusChange">
+    <load-more :top-method="refresh" ref="loadmore" v-on:top-status-change="topStatusChange" class="load-more-box">
       <div slot="top" class="mint-loadmore-top">
         <span class="down-arrow" v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }">↓</span>
         <spinner v-show="topStatus === 'loading'" color="#32a8fc" type="triple-bounce"></spinner>
@@ -320,6 +320,9 @@ export default {
 }
 .threadBox {
   width: 100vw;
+}
+.load-more-box {
+  height: 85vh;
 }
 .noThreadInfo {
   color: #919191;
