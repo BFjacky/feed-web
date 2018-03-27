@@ -32,6 +32,8 @@ export default {
       const imgUploaded = await helper.upload(this.img);
       //w200
       this.img.url = imgUploaded.url;
+      //w500
+      this.img.urlMiddle = imgUploaded.urlMiddle;
       //原图
       this.img.sourceUrl = imgUploaded.sourceUrl;
       //key

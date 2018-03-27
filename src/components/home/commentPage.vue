@@ -16,7 +16,7 @@
               <div class="content-text">{{thread.content}}</div>
               <div class="content-buttons"></div>
               <div class="imgs-part">
-                <div @click="previewImage(img)" class="img" :class="{singleImg:thread.imgs.length===1}" v-for="img in thread.imgs" v-bind:style="{backgroundImage:`url(${thread.imgs.length===1?img.urlMiddle:img.url})`}"></div>
+                <img @click="previewImage(img)"  class="img" :class="{singleImg:thread.imgs.length===1}" v-for="img in thread.imgs" v-bind:src="thread.imgs.length===1?img.urlMiddle:img.url"></img>
               </div>
           </div>
           <div class="footer">
@@ -514,17 +514,13 @@ div {
         width: 28vw;
         margin-left: 1vw;
         margin-bottom: 1vw;
-        background-size: 100% 100%;
       }
       .img:nth-child(1) {
         margin-left: 0;
       }
       .singleImg {
-        height: 65vw;
         width: 65vw;
-        background-repeat: no-repeat;
         margin-bottom: 1vw;
-        background-size: cover;
       }
     }
   }
