@@ -136,6 +136,50 @@ export default {
       await this.refresh();
       store.index.needRefresh = false;
     }
+    //重新获得scrollTop;
+    const elements = $(".load-more-box");
+    switch (this.type) {
+      case "最新":
+        elements.each(function(index) {
+          if (index === 0) {
+            $(this).scrollTop(store.index.list1.scrollTop);
+          }
+        });
+        break;
+      case "热门":
+        elements.each(function(index) {
+          if (index === 1) {
+            $(this).scrollTop(store.index.list2.scrollTop);
+          }
+        });
+        break;
+      case "用户":
+        elements.each(function(index) {
+          if (index === 2) {
+            $(this).scrollTop(store.index.list2.scrollTop);
+          }
+        });
+        break;
+      default:
+        break;
+    }
+    console.log(`regain：`, store.index);
+  },
+  deactivated: async function() {
+    const elements = $(".load-more-box");
+    elements.each(function(index) {
+      switch (index) {
+        case 0:
+          store.index.list1.scrollTop = $(this).scrollTop();
+          break;
+        case 1:
+          store.index.list2.scrollTop = $(this).scrollTop();
+          break;
+        case 2:
+          store.index.list3.scrollTop = $(this).scrollTop();
+          break;
+      }
+    });
   },
   data: function() {
     return {

@@ -1,7 +1,14 @@
 export default {
     index: {
-        x: 0,
-        y: 0,
+        list1: {
+            scrollTop: '',
+        },
+        list2: {
+            scrollTop: '',
+        },
+        list3: {
+            scrollTop: '',
+        },
         needRefresh: false,
     },
     commentPage: {
