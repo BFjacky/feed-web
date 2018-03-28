@@ -198,7 +198,9 @@ div {
       margin-left: 0;
     }
     .singleImg {
-      width:65vw;
+      height: 65vw;
+      width: 65vw !important;
+      // object-fit:cover;
       margin-bottom: 1vw;
     }
   }
@@ -219,6 +221,7 @@ div {
       width: 10vh;
       display: flex;
       .icon {
+        flex-shrink: 0;
         height: 3vh;
         width: 3vh;
         background-image: url("../../assets/like.png");
@@ -226,6 +229,7 @@ div {
       }
       //已经点过赞
       .icon-praised {
+        flex-shrink: 0;
         height: 3vh;
         width: 3vh;
         background-image: url("../../assets/like-after.png");
@@ -245,6 +249,7 @@ div {
       width: 10vh;
       display: flex;
       .icon {
+        flex-shrink: 0;
         height: 3vh;
         width: 3vh;
         background-image: url("../../assets/comment.png");
@@ -264,6 +269,7 @@ div {
       width: 10vh;
       display: flex;
       .icon {
+        flex-shrink: 0;
         height: 3vh;
         width: 3vh;
         background-image: url("../../assets/share.png");

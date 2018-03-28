@@ -540,6 +540,7 @@ div {
         width: calc(10vw*16/9);
         display: flex;
         .icon {
+          flex-shrink: 0;
           height: calc(3vw*16/9);
           width: calc(3vw*16/9);
           background-image: url("../../assets/like.png");
@@ -547,6 +548,7 @@ div {
         }
         //已经点过赞
         .icon-praised {
+          flex-shrink: 0;
           height: calc(3vw*16/9);
           width: calc(3vw*16/9);
           background-image: url("../../assets/like-after.png");
@@ -566,6 +568,7 @@ div {
         width: calc(10vw*16/9);
         display: flex;
         .icon {
+          flex-shrink: 0;
           height: calc(3vw*16/9);
           width: calc(3vw*16/9);
           background-image: url("../../assets/comment.png");
@@ -585,6 +588,7 @@ div {
         width: calc(10vw*16/9);
         display: flex;
         .icon {
+          flex-shrink: 0;
           height: calc(3vw*16/9);
           width: calc(3vw*16/9);
           background-image: url("../../assets/share.png");
