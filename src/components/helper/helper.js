@@ -73,7 +73,7 @@ export default {
                 method: 'post',
                 url: `${myconfig.url.feedUrl}/file/transfer`,
                 data: {
-                    from: 'cyf',
+                    from: myconfig.user._id,
                     filename: file.name
                 },
                 withCredentials: true
@@ -92,6 +92,7 @@ export default {
                     reject(err);
                 },
                 complete(res) {
+                    console.log('上传结束:', res)
                     resolve(res);
                 }
             })

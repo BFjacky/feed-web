@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-
+    <div class="content-container">
         <div class="thread-container">
           <div class="header">
               <div class="part1" v-bind:style="{backgroundImage:`url(${thread.avatarUrl})`}"></div>
@@ -16,7 +16,7 @@
               <div class="content-text">{{thread.content}}</div>
               <div class="content-buttons"></div>
               <div class="imgs-part">
-                <img @click="previewImage(img)"  class="img" :class="{singleImg:thread.imgs.length===1}" v-for="img in thread.imgs" v-bind:src="thread.imgs.length===1?img.urlMiddle:img.url"></img>
+                <img @click="previewImage(img)"  class="img" :style="singleImgStyle" v-for="img in thread.imgs" v-bind:src="thread.imgs.length===1?img.urlMiddle:img.url"></img>
               </div>
           </div>
           <div class="footer">
@@ -90,6 +90,7 @@
             </div>
             <div class="divide-line"></div>
         </div>
+        </div>
         <div class="comment-make">
             <textarea class="content-area" :maxlength="maxWordsLength" :placeholder="commentPlaceHolder" v-model:value="content"></textarea> 
             <div class="send-button" v-on:click="sendAcomment">发送</div>
@@ -105,6 +106,23 @@ export default {
   activated: async function() {
     await this.initComments();
     this.thread = helper.parseDate([this.thread])[0];
+    //获得图片宽高
+    if (this.thread.imgs.length === 1) {
+      const img = new Image();
+      img.src = this.thread.imgs[0].urlMiddle;
+      if (img.complete) {
+        const height = 65 * img.height / img.width + "vw";
+        const width = "65vw";
+        this.singleImgStyle = { height: height, width: width };
+      } else {
+        img.onload = () => {
+          const height = 65 * img.height / img.width + "vw";
+          const width = "65vw";
+          this.singleImgStyle = { height: height, width: width };
+          img.onload = null; //避免重复加载
+        };
+      }
+    }
   },
   components: {
     Toast
@@ -131,9 +149,10 @@ export default {
       hotComments: [],
       //在输入框提示 回复谁 的文字
       replyFor: "",
-
+      sending: false,
       fades: [],
-      hotFades: []
+      hotFades: [],
+      singleImgStyle: {}
     };
   },
   watch: {
@@ -295,6 +314,9 @@ export default {
       this.busy = false;
     },
     sendAcomment: async function() {
+      if (this.sending) {
+        return;
+      }
       if (this.content.length === 0 || this.content == "") {
         Toast({
           message: "评论内容不得为空",
@@ -303,6 +325,7 @@ export default {
         });
         return;
       }
+      this.sending = true;
       //去掉评论内容的前缀
       this.content = this.content.slice(this.replyFor.length);
 
@@ -316,6 +339,8 @@ export default {
           sourse: this.sourse
         }
       });
+
+      this.sending = false;
       //评论完成后恢复状态
       this.content = "";
       this.sourse = "thread";
@@ -442,15 +467,15 @@ export default {
   position: fixed;
   height: 100vh;
   width: 100vw;
-  display: flex;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  flex-direction: column;
   background-color: white;
 }
-div {
-  border: 0px solid black;
-  box-sizing: border-box;
+.content-container {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  height: 100vh;
+  overflow-x: hidden;
 }
 .divide-line {
   border-top: 7px solid rgb(241, 241, 241);

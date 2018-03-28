@@ -9,10 +9,16 @@ export default {
         list3: {
             scrollTop: '',
         },
+        list4: {
+            scrollTop: '',
+        },
         needRefresh: false,
     },
     commentPage: {
         x: 0,
         y: 0,
+    },
+    postThread: {
+        hasSent: false,
     }
 }

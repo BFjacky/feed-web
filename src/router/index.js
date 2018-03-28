@@ -5,6 +5,7 @@ import postThread from '@/components/post/postThread'
 import commentPage from '@/components/home/commentPage'
 import mine from '@/components/person/mine'
 import notify from '@/components/person/notify'
+import store from "@/components/helper/store"
 Vue.use(Router)
 
 const router = new Router({
@@ -40,7 +41,7 @@ const router = new Router({
 //编辑页面的lock，禁止随意退出
 
 router.beforeEach(async (to, from, next) => {
-  if (from.name === 'postThread' && !to.params.allowBack) {
+  if (from.name === 'postThread' && !to.params.allowBack && !store.postThread.hasSent) {
     const res = await postThread.methods.showBackModal();
     if (res === 'ok') {
       next();
@@ -49,6 +50,7 @@ router.beforeEach(async (to, from, next) => {
     next(false)
     return;
   }
+  store.postThread.hasSent = false;
   next()
 })
 export default router;

@@ -14,7 +14,7 @@
           <div class="content-text">{{thread.content}}</div>
           <div class="content-buttons"></div>
           <div class="imgs-part">
-            <img @click="previewImage(img)"  class="img" :class="{singleImg:thread.imgs.length===1}" v-for="img in thread.imgs" v-bind:src="thread.imgs.length===1?img.urlMiddle:img.url"></img>
+            <img @click="previewImage(img)" :style="singleImgStyle"  class="img"  v-for="img in thread.imgs" v-bind:src="thread.imgs.length===1?img.urlMiddle:img.url"></img>
           </div>
       </div>
       <div class="footer">
@@ -45,7 +45,25 @@ import helper from "../helper/helper";
 import { Toast } from "mint-ui";
 export default {
   props: ["thread"],
-  created: async function() {},
+  created: async function() {
+    //获得图片宽高
+    if (this.thread.imgs.length === 1) {
+      const img = new Image();
+      img.src = this.thread.imgs[0].urlMiddle;
+      if (img.complete) {
+        const height = 65 * img.height / img.width + "vw";
+        const width = "65vw";
+        this.singleImgStyle = { height: height, width: width };
+      } else {
+        img.onload = () => {
+          const height = 65 * img.height / img.width + "vw";
+          const width = "65vw";
+          this.singleImgStyle = { height: height, width: width };
+          img.onload = null; //避免重复加载
+        };
+      }
+    }
+  },
   components: {
     Toast
   },
@@ -53,7 +71,8 @@ export default {
     return {
       popupVisible: false,
       //避免用户频繁点赞，过度消耗资源
-      praiseLock: false
+      praiseLock: false,
+      singleImgStyle: {}
     };
   },
   methods: {
@@ -196,12 +215,6 @@ div {
     }
     .img:nth-child(1) {
       margin-left: 0;
-    }
-    .singleImg {
-      height: 65vw;
-      width: 65vw !important;
-      // object-fit:cover;
-      margin-bottom: 1vw;
     }
   }
 }

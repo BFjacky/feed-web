@@ -155,12 +155,17 @@ export default {
         break;
       case "用户":
         elements.each(function(index) {
-          if (index === 2) {
-            $(this).scrollTop(store.index.list2.scrollTop);
+          if (index === 3) {
+            $(this).scrollTop(store.index.list4.scrollTop);
           }
         });
         break;
       default:
+        elements.each(function(index) {
+          if (index === 2) {
+            $(this).scrollTop(store.index.list3.scrollTop);
+          }
+        });
         break;
     }
     console.log(`regain：`, store.index);

@@ -128,11 +128,10 @@ export default {
 
         setTimeout(() => {
           this.hasSent = false;
-          this.$router.push({
-            name: "index",
-            params: { allowBack: true }
-          });
           store.index.needRefresh = true;
+          store.index.list1.scrollTop = 0;
+          store.postThread.hasSent = true;
+          this.$router.go(-1);
         }, 500);
       } else {
         this.hasSent = false;

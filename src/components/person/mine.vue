@@ -8,6 +8,7 @@
 </template>
 <script>
 import threadsList from "../home/threadsList";
+import store from "../helper/store";
 import config from "../helper/config";
 import axios from "axios";
 export default {
@@ -23,6 +24,16 @@ export default {
       data: {}
     });
     console.log(threadsRes.data.threads);
+  },
+  deactivated: function() {
+    const elements = $(".load-more-box");
+    elements.each(function(index) {
+      switch (index) {
+        case 3:
+          store.index.list4.scrollTop = $(this).scrollTop();
+          break;
+      }
+    });
   }
 };
 </script>
@@ -35,7 +46,7 @@ div {
   height: 100vh;
   width: 100vw;
   position: fixed;
-    background-color: white;
+  background-color: white;
 }
 .head-bar {
   height: 6vh;
