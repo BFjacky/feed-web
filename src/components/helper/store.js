@@ -13,6 +13,10 @@ export default {
             scrollTop: '',
         },
         needRefresh: false,
+        pupup: {
+            // show: false,
+            // thread: {},
+        }
     },
     commentPage: {
         x: 0,

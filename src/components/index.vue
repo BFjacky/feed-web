@@ -3,7 +3,7 @@
     <indicator-modal></indicator-modal>
     <tab-container class="tab-container" v-model="itemSelect" :swipeable=false>
       <tab-container-item class="item" id="0">
-        <home-page></home-page>
+        <home-page  v-on:clickBox="clickBox"></home-page>
       </tab-container-item>
       <tab-container-item class='item' id="1">
         <person-page></person-page>
@@ -20,11 +20,23 @@
       </tab-item>
     </tab-bar>
     <div class="send-button" @click="gotoPostPage"></div>
+         <popup v-model="popupVisible" class="popup" position="bottom">
+        <div class="item" @click="focusThis" v-show="!myself">{{item1Text}}</div> 
+        <div class="item" @click="shieldThis" v-show="!myself">屏蔽此人的动态</div>
+         <div class="item delete" @click="deleteThis" v-show="myself">删除此条动态</div>      
+      </popup>
   </div>
 </template>
 <script>
-import { Tabbar, TabItem, TabContainer, TabContainerItem } from "mint-ui";
+import {
+  Tabbar,
+  TabItem,
+  TabContainer,
+  TabContainerItem,
+  Popup
+} from "mint-ui";
 import home from "@/components/home/home";
+import store from "@/components/helper/store";
 import person from "@/components/person/person";
 import helper from "@/components/helper/helper";
 import config from "@/components/helper/config";
@@ -33,7 +45,11 @@ import axios from "axios";
 export default {
   data: function() {
     return {
-      itemSelect: "0"
+      itemSelect: "0",
+      popupVisible: false,
+      item1Text: "",
+      thread: {},
+      myself: false
     };
   },
   created: async function() {
@@ -44,6 +60,79 @@ export default {
     const res = await helper.wxinit();
   },
   methods: {
+    clickBox: function(thread) {
+      this.thread = thread;
+      this.popupVisible = true;
+      //查看该用户是否已经关注了此用户
+      this.item1Text = "关注此用户";
+      for (const focusUser of config.user.focus) {
+        if (focusUser.uid == this.thread.uid) {
+          this.item1Text = "取消关注此用户";
+          break;
+        }
+      }
+      //查看此用户是否为自己，若为自己则不显示关注或屏蔽
+      if (this.thread.uid == config.user._id) {
+        this.myself = true;
+      } else {
+        this.myself = false;
+      }
+      console.log(`myself:${this.myself}`);
+      //显示出popup
+      this.popupVisible = true;
+    },
+    focusThis: async function() {
+      if (this.item1Text === "关注此用户") {
+        const res = await axios({
+          url: `${config.url.feedUrl}/user/focus`,
+          method: "post",
+          withCredentials: true,
+          data: {
+            uid: this.thread.uid
+          }
+        });
+        //更新本地的
+        const { focus } = res.data;
+        if (focus !== undefined) {
+          config.user.focus = focus;
+        }
+      } else {
+        const res = await axios({
+          url: `${config.url.feedUrl}/user/cancelFocus`,
+          method: "post",
+          withCredentials: true,
+          data: {
+            uid: this.thread.uid
+          }
+        });
+        //更新本地的
+        const { focus } = res.data;
+        if (focus !== undefined) {
+          config.user.focus = focus;
+        }
+      }
+      this.popupVisible = false;
+    },
+    shieldThis: async function() {
+      const res = await axios({
+        url: `${config.url.feedUrl}/user/shields`,
+        method: "post",
+        withCredentials: true,
+        data: {
+          uid: this.thread.uid
+        }
+      });
+      //更新本地的
+      const { shields } = res.data;
+      if (shields !== undefined) {
+        config.user.shields = shields;
+      }
+      console.log("屏蔽完了:", res.data);
+      this.popupVisible = false;
+    },
+    deleteThis: async function() {
+      this.popupVisible = false;
+    },
     gotoPostPage: async function() {
       const res = await helper.checkOauth();
       if (!res) {
@@ -52,6 +141,7 @@ export default {
       this.$router.push({ path: "/index/postThread" });
     }
   },
+  watch: {},
   components: {
     tabBar: Tabbar,
     tabItem: TabItem,
@@ -59,7 +149,8 @@ export default {
     tabContainerItem: TabContainerItem,
     homePage: home,
     personPage: person,
-    indicatorModal
+    indicatorModal,
+    popup: Popup
   }
 };
 </script>
@@ -112,6 +203,21 @@ export default {
   .item {
     height: 92vh;
     width: 100vw;
+  }
+}
+.popup {
+  width: 100vw;
+  .item {
+    height: 8vh;
+    width: 100%;
+    background-color: white;
+    border-bottom: 1px solid rgb(221, 221, 221);
+    text-align: center;
+    line-height: 8vh;
+    font-size: 4.5vw;
+  }
+  .delete{
+    color:red;
   }
 }
 </style>

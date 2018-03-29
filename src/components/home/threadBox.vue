@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-show="!needShield" @click="clickBox" :class="{fade:fade}">
       <div class="header">
           <div class="part1" v-bind:style="{backgroundImage:`url(${thread.avatarUrl})`}"></div>
           <div class="part2">
@@ -32,17 +32,13 @@
               </div>
           </div>
       </div>
-
-      <!-- 评论页 -->
-
-
   </div>
 </template>
 <script>
 import axios from "axios";
 import config from "../helper/config";
 import helper from "../helper/helper";
-import { Toast } from "mint-ui";
+import { Toast, Popup } from "mint-ui";
 export default {
   props: ["thread"],
   created: async function() {
@@ -63,16 +59,24 @@ export default {
         };
       }
     }
+
+    for (const shield of config.user.shields) {
+      if (shield.uid === this.thread.uid) {
+        this.needShield = true;
+      }
+    }
   },
   components: {
-    Toast
+    Toast,
+    popup: Popup
   },
   data: function() {
     return {
-      popupVisible: false,
       //避免用户频繁点赞，过度消耗资源
       praiseLock: false,
-      singleImgStyle: {}
+      singleImgStyle: {},
+      fade: false,
+      needShield: false
     };
   },
   methods: {
@@ -141,6 +145,14 @@ export default {
       }
       wx.previewImage({ current, urls });
     },
+    clickBox: function() {
+      this.$emit("clickBox", this.thread);
+      //点击了箱子 添加动画效果
+      this.fade = true;
+      setTimeout(() => {
+        this.fade = false;
+      }, 500);
+    },
     share: async function() {
       // helper.wxShare();
       alert("暂无分享功能");
@@ -150,14 +162,58 @@ export default {
 </script>
 
 <style lang="less" scoped>
-div {
-  border: 0px solid black;
-  box-sizing: border-box;
+@keyframes fade-in-out {
+  0% {
+    background-color: #d4d4d400;
+  }
+  25% {
+    background-color: #e6e6e6;
+  }
+  50% {
+    background-color: #e6e6e6;
+  }
+  75% {
+    background-color: #e6e6e6;
+  }
+  100% {
+    background-color: #d4d4d400;
+  }
+}
+.fade {
+  animation: fade-in-out ease-in-out 0.5s;
+}
+@keyframes fade-in-out {
+  0% {
+    background-color: #d4d4d400;
+  }
+  25% {
+    background-color: #e6e6e6;
+  }
+  50% {
+    background-color: #e6e6e6;
+  }
+  75% {
+    background-color: #e6e6e6;
+  }
+  100% {
+    background-color: #d4d4d400;
+  }
+}
+.fade {
+  animation: fade-in-out ease-in-out 0.5s;
+}
+@keyframes fade-in {
+  0% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 .container {
   border-bottom: 2vw solid #eeeded;
-  height: 100%;
-  width: 100%;
+  width: 90vw;
+  overflow-x: hidden;
   padding: 3vw 5vw;
   display: flex;
   flex-direction: column;

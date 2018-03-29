@@ -16,13 +16,13 @@
     </nav-bar>
     <tab-container v-model="selectItem" class="tab-container">
       <tab-container-item class="tab-container-item" id="0">
-        <threads-list  type="最新"></threads-list>
+        <threads-list  type="最新" v-on:clickBox="clickBox"></threads-list>
       </tab-container-item>
       <tab-container-item class="tab-container-item" id="1">
-          <threads-list type="热门"></threads-list>
+          <threads-list type="热门" v-on:clickBox="clickBox"></threads-list>
       </tab-container-item>
       <tab-container-item class="tab-container-item" id="2">
-          <threads-list :type="nowTheme"></threads-list>
+          <threads-list :type="nowTheme"  v-on:clickBox="clickBox"></threads-list>
       </tab-container-item>
     </tab-container>
   </div>
@@ -49,6 +49,10 @@ export default {
     popup: Popup
   },
   methods: {
+    //事件传递
+    clickBox: function(thread) {
+      this.$emit("clickBox", thread);
+    },
     hideThemeList: function() {
       this.listShow = false;
       this.listHide = true;
@@ -130,7 +134,7 @@ export default {
     //刚发完一条状态的时候,将type切换到最新
     if (store.index.needRefresh) {
       this.oldSelectItem = this.selectItem;
-      this.selectItem = '0';
+      this.selectItem = "0";
     }
   },
   created: async function() {}

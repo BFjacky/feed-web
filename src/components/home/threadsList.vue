@@ -7,7 +7,7 @@
       </div>
       <div class="noThreadInfo" v-if="threads.length<=0">暂时还没有动态哦...</div>
       <div class="threadBox" v-for="thread in threads">
-        <thread-box :thread="thread"></thread-box>
+        <thread-box :thread="thread" v-on:clickBox="clickBox"></thread-box>
       </div>
        <div class="spinner-box" v-if="busy">
         <spinner type="triple-bounce" color="#32a8fc" v-if="!nomore"></spinner>
@@ -32,9 +32,14 @@ export default {
   },
   watch: {
     type: async function() {
+      //等待取回用户
+      while (!config.user._id) {
+        await helper.wait(50);
+      }
+
       switch (this.type) {
         case "最新":
-          const threads = await axios({
+          let threads = await axios({
             url: `${config.url.feedUrl}/thread/getThread`,
             withCredentials: true
           });
@@ -83,6 +88,11 @@ export default {
     }
   },
   created: async function() {
+    //等待取回用户
+    while (!config.user._id) {
+      await helper.wait(50);
+    }
+
     switch (this.type) {
       case "最新":
         const threads = await axios({
@@ -355,6 +365,9 @@ export default {
       this.nomore = false;
       this.busy = false;
       this.$refs.loadmore.onTopLoaded();
+    },
+    clickBox: function(thread) {
+      this.$emit("clickBox", thread);
     },
     topStatusChange: function(e) {
       this.topStatus = e;

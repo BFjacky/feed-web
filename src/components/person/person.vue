@@ -17,6 +17,14 @@
         <div class="text">未读通知</div>
         <div class="number-text">{{notifies.length}}</div>
       </div>
+      <div class="item button" @click="item1Click">
+        <div class="icon icon1"></div>
+        <div class="text">我的收藏</div>
+      </div>
+        <div class="item button" @click="item1Click">
+        <div class="icon icon1"></div>
+        <div class="text">黑名单</div>
+      </div>
       <!-- <div class="item button">
         <div class="icon icon3"></div>
         <div class="text">我收到的点赞</div>
@@ -57,10 +65,12 @@ export default {
       //未能获取到用户信息
       return;
     }
-    const { avatarUrl, nickName, gender, _id } = userGet.data;
+    const { avatarUrl, nickName, gender, _id, focus, shields } = userGet.data;
     this.avatarUrl = avatarUrl;
     this.nickName = nickName;
     this.gender = gender;
+    config.user.focus = focus;
+    config.user.shields = shields;
     config.user.oauth = true;
     config.user._id = _id;
   },
@@ -177,7 +187,7 @@ export default {
     width: 4vh;
   }
   .number-text {
-    padding:0.5vw;
+    padding: 0.5vw;
     height: 3.5vw;
     min-width: 3.5vw;
     background-color: rgb(248, 94, 94);
