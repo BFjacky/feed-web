@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-show="!needShield" @click="clickBox" :class="{fade:fade}">
+  <div class="container" v-show="!thread.needShield" @click="clickBox" :class="{fade:fade}">
       <div class="header">
           <div class="part1" v-bind:style="{backgroundImage:`url(${thread.avatarUrl})`}"></div>
           <div class="part2">
@@ -59,12 +59,6 @@ export default {
         };
       }
     }
-
-    for (const shield of config.user.shields) {
-      if (shield.uid === this.thread.uid) {
-        this.needShield = true;
-      }
-    }
   },
   components: {
     Toast,
@@ -75,8 +69,7 @@ export default {
       //避免用户频繁点赞，过度消耗资源
       praiseLock: false,
       singleImgStyle: {},
-      fade: false,
-      needShield: false
+      fade: false
     };
   },
   methods: {

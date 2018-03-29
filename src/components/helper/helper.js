@@ -145,6 +145,18 @@ export default {
             }
         }
         return array;
+    },
+
+    //为已经被屏蔽的thread添加needShield参数
+    parseShield(threads) {
+        for (const thread of threads) {
+            for (const shield of myconfig.user.shields) {
+                if (shield.uid === thread.uid) {
+                    thread.needShield = true;
+                }
+            }
+        }
+        return threads;
     }
 
 }
