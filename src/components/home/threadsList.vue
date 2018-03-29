@@ -7,7 +7,7 @@
       </div>
       <div class="noThreadInfo" v-if="threads.length<=0">暂时还没有动态哦...</div>
       <div class="threadBox" v-for="thread in threads">
-        <thread-box :thread="thread" v-on:clickBox="clickBox"></thread-box>
+        <thread-box :thread="thread"></thread-box>
       </div>
        <div class="spinner-box" v-if="busy">
         <spinner type="triple-bounce" color="#32a8fc" v-if="!nomore"></spinner>
@@ -22,6 +22,7 @@ import config from "../helper/config";
 import axios from "axios";
 import helper from "../helper/helper";
 import store from "../helper/store";
+import events from "../helper/events";
 import { Spinner, Loadmore } from "mint-ui";
 export default {
   props: ["type"],
@@ -96,7 +97,6 @@ export default {
     while (!config.user._id) {
       await helper.wait(50);
     }
-
     switch (this.type) {
       case "最新":
         const threads = await axios({
@@ -156,7 +156,7 @@ export default {
         numbers++;
       }
     }
-    while (numbers < 5) {
+    while (numbers < 5 && !this.nomore) {
       await this.myloadMore();
       numbers = 0;
       for (const thread of this.threads) {
@@ -496,7 +496,7 @@ export default {
           numbers++;
         }
       }
-      while (numbers < 5) {
+      while (numbers < 5 && !this.nomore) {
         await this.myloadMore();
         numbers = 0;
         for (const thread of this.threads) {
@@ -505,9 +505,6 @@ export default {
           }
         }
       }
-    },
-    clickBox: function(thread) {
-      this.$emit("clickBox", thread);
     },
     topStatusChange: function(e) {
       this.topStatus = e;

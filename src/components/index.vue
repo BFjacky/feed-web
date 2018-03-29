@@ -3,7 +3,7 @@
     <indicator-modal></indicator-modal>
     <tab-container class="tab-container" v-model="itemSelect" :swipeable=false>
       <tab-container-item class="item" id="0">
-        <home-page  v-on:clickBox="clickBox"></home-page>
+        <home-page></home-page>
       </tab-container-item>
       <tab-container-item class='item' id="1">
         <person-page></person-page>
@@ -33,13 +33,15 @@ import {
   TabItem,
   TabContainer,
   TabContainerItem,
-  Popup
+  Popup,
+  MessageBox
 } from "mint-ui";
 import home from "@/components/home/home";
 import store from "@/components/helper/store";
 import person from "@/components/person/person";
 import helper from "@/components/helper/helper";
 import config from "@/components/helper/config";
+import events from "@/components/helper/events";
 import indicatorModal from "@/components/commonVue/indicatorModal";
 import axios from "axios";
 export default {
@@ -53,9 +55,7 @@ export default {
     };
   },
   created: async function() {
-    console.log("进入了index页面,应该获得code");
-    // 告诉整个页面，该用户正在鉴权中
-    // config.user.updating = true;
+    events.$on("clickBox", this.clickBox);
     //提示全局正在登陆
     const res = await helper.wxinit();
   },
@@ -82,6 +82,7 @@ export default {
       this.popupVisible = true;
     },
     focusThis: async function() {
+      this.popupVisible = false;
       if (this.item1Text === "关注此用户") {
         const res = await axios({
           url: `${config.url.feedUrl}/user/focus`,
@@ -111,27 +112,51 @@ export default {
           config.user.focus = focus;
         }
       }
-      this.popupVisible = false;
     },
     shieldThis: async function() {
-      const res = await axios({
-        url: `${config.url.feedUrl}/user/shields`,
-        method: "post",
-        withCredentials: true,
-        data: {
-          uid: this.thread.uid
-        }
-      });
-      //更新本地的
-      const { shields } = res.data;
-      if (shields !== undefined) {
-        config.user.shields = shields;
-      }
-      console.log("屏蔽完了:", res.data);
       this.popupVisible = false;
+      const _this = this;
+      MessageBox.confirm("以后将无法查看此用户的状态")
+        .then(async action => {
+          if (action === "confirm") {
+            const res = await axios({
+              url: `${config.url.feedUrl}/user/shields`,
+              method: "post",
+              withCredentials: true,
+              data: {
+                uid: _this.thread.uid
+              }
+            });
+            //更新本地的
+            const { shields } = res.data;
+            if (shields !== undefined) {
+              config.user.shields = shields;
+            }
+            console.log("屏蔽完了:", res.data);
+          }
+        })
+        .catch(() => {});
     },
     deleteThis: async function() {
       this.popupVisible = false;
+      const _this = this;
+      MessageBox.confirm("删除后将不会出现在你或其他人的动态中")
+        .then(async action => {
+          if (action === "confirm") {
+            const res = await axios({
+              url: `${config.url.feedUrl}/thread/deleteThread`,
+              method: "post",
+              withCredentials: true,
+              data: {
+                thread: _this.thread
+              }
+            });
+            //更新本地的
+            console.log("删除完了:", res.data);
+            events.$emit("deleteThread", _this.thread._id);
+          }
+        })
+        .catch(() => {});
     },
     gotoPostPage: async function() {
       const res = await helper.checkOauth();
@@ -216,8 +241,8 @@ export default {
     line-height: 8vh;
     font-size: 4.5vw;
   }
-  .delete{
-    color:red;
+  .delete {
+    color: red;
   }
 }
 </style>

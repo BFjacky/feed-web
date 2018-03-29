@@ -16,13 +16,13 @@
     </nav-bar>
     <tab-container v-model="selectItem" class="tab-container">
       <tab-container-item class="tab-container-item" id="0">
-        <threads-list  type="最新" v-on:clickBox="clickBox"></threads-list>
+        <threads-list  type="最新" ></threads-list>
       </tab-container-item>
       <tab-container-item class="tab-container-item" id="1">
-          <threads-list type="热门" v-on:clickBox="clickBox"></threads-list>
+          <threads-list type="热门" ></threads-list>
       </tab-container-item>
       <tab-container-item class="tab-container-item" id="2">
-          <threads-list :type="nowTheme"  v-on:clickBox="clickBox"></threads-list>
+          <threads-list :type="nowTheme"  ></threads-list>
       </tab-container-item>
     </tab-container>
   </div>
@@ -49,10 +49,6 @@ export default {
     popup: Popup
   },
   methods: {
-    //事件传递
-    clickBox: function(thread) {
-      this.$emit("clickBox", thread);
-    },
     hideThemeList: function() {
       this.listShow = false;
       this.listHide = true;
