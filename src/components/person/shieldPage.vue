@@ -33,7 +33,7 @@ export default {
   },
   activated: async function() {
     const res = await axios({
-      url: `${config.url.feedUrl}/user/getUesrById`,
+      url: `${config.url.feedUrl}/user/getShieldUesrById`,
       withCredentials: true
     });
     this.users = res.data.users;
@@ -47,7 +47,7 @@ export default {
       this.popupVisible = false;
       const cancelRes = await axios({
         method: "post",
-        url: `${config.url.feedUrl}/user/getShieldUesrById`,
+        url: `${config.url.feedUrl}/user/cancelShields`,
         data: {
           uid: this.choiseUser._id
         },

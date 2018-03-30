@@ -47,7 +47,6 @@ export default {
         });
         this.threads = typeThreads.data.threads;
         this.threads = helper.parseDate(this.threads);
-        this.threads = helper.parseShield(this.threads);
       }
     }
   },
@@ -64,7 +63,6 @@ export default {
         });
         this.threads = threads.data.threads;
         this.threads = helper.parseDate(this.threads);
-        this.threads = helper.parseShield(this.threads);
         break;
       case "热门":
         const hotThreads = await axios({
@@ -75,7 +73,6 @@ export default {
         });
         this.threads = hotThreads.data.threads;
         this.threads = helper.parseDate(this.threads);
-        this.threads = helper.parseShield(this.threads);
         break;
       case "关注":
         const focusThreads = await axios({
@@ -86,7 +83,6 @@ export default {
         });
         this.threads = focusThreads.data.threads;
         this.threads = helper.parseDate(this.threads);
-        this.threads = helper.parseShield(this.threads);
         break;
       case "用户":
         const userThreads = await axios({
@@ -97,7 +93,6 @@ export default {
         });
         this.threads = userThreads.data.threads;
         this.threads = helper.parseDate(this.threads);
-        this.threads = helper.parseShield(this.threads);
         break;
       default:
         //根据主题获得thread
@@ -114,7 +109,6 @@ export default {
           });
           this.threads = typeThreads.data.threads;
           this.threads = helper.parseDate(this.threads);
-          this.threads = helper.parseShield(this.threads);
           break;
         }
     }
@@ -227,7 +221,6 @@ export default {
           });
           this.threads = this.threads.concat(threads.data.threads);
           this.threads = helper.parseDate(this.threads);
-          this.threads = helper.parseShield(this.threads);
           if (threads.data.threads.length < 5) {
             this.nomore = true;
             return;
@@ -250,7 +243,6 @@ export default {
           });
           this.threads = this.threads.concat(threads.data.threads);
           this.threads = helper.parseDate(this.threads);
-          this.threads = helper.parseShield(this.threads);
           if (threads.data.threads.length < 5) {
             this.nomore = true;
             return;
@@ -268,7 +260,6 @@ export default {
           });
           this.threads = this.threads.concat(threads.data.threads);
           this.threads = helper.parseDate(this.threads);
-          this.threads = helper.parseShield(this.threads);
           if (threads.data.threads.length < 5) {
             this.nomore = true;
             return;
@@ -285,7 +276,6 @@ export default {
           });
           this.threads = this.threads.concat(threads.data.threads);
           this.threads = helper.parseDate(this.threads);
-          this.threads = helper.parseShield(this.threads);
           if (threads.data.threads.length < 5) {
             this.nomore = true;
             return;
@@ -308,7 +298,6 @@ export default {
             });
             this.threads = this.threads.concat(threads.data.threads);
             this.threads = helper.parseDate(this.threads);
-            this.threads = helper.parseShield(this.threads);
             if (threads.data.threads.length < 5) {
               this.nomore = true;
               return;
@@ -338,7 +327,6 @@ export default {
           });
           this.threads = this.threads.concat(threads.data.threads);
           this.threads = helper.parseDate(this.threads);
-          this.threads = helper.parseShield(this.threads);
           if (threads.data.threads.length < 5) {
             this.nomore = true;
             this.busy = true;
@@ -364,7 +352,6 @@ export default {
           });
           this.threads = this.threads.concat(threads.data.threads);
           this.threads = helper.parseDate(this.threads);
-          this.threads = helper.parseShield(this.threads);
           if (threads.data.threads.length < 5) {
             this.nomore = true;
             this.busy = true;
@@ -385,7 +372,6 @@ export default {
           });
           this.threads = this.threads.concat(threads.data.threads);
           this.threads = helper.parseDate(this.threads);
-          this.threads = helper.parseShield(this.threads);
           if (threads.data.threads.length < 5) {
             this.nomore = true;
             this.busy = true;
@@ -405,7 +391,6 @@ export default {
           });
           this.threads = this.threads.concat(threads.data.threads);
           this.threads = helper.parseDate(this.threads);
-          this.threads = helper.parseShield(this.threads);
           if (threads.data.threads.length < 5) {
             this.nomore = true;
             this.busy = true;
@@ -431,7 +416,6 @@ export default {
             });
             this.threads = this.threads.concat(threads.data.threads);
             this.threads = helper.parseDate(this.threads);
-            this.threads = helper.parseShield(this.threads);
             if (threads.data.threads.length < 5) {
               this.nomore = true;
               this.busy = true;
@@ -454,7 +438,6 @@ export default {
           await helper.wait(10);
           this.threads = threads.data.threads;
           this.threads = helper.parseDate(this.threads);
-          this.threads = helper.parseShield(this.threads);
           break;
         case "热门":
           const hotThreads = await axios({
@@ -467,7 +450,6 @@ export default {
           await helper.wait(10);
           this.threads = hotThreads.data.threads;
           this.threads = helper.parseDate(this.threads);
-          this.threads = helper.parseShield(this.threads);
           break;
         case "关注":
           console.log("重新刷新", this.threads.length);
@@ -481,7 +463,6 @@ export default {
           await helper.wait(10);
           this.threads = focusThreads.data.threads;
           this.threads = helper.parseDate(this.threads);
-          this.threads = helper.parseShield(this.threads);
           break;
         case "用户":
           const userThreads = await axios({
@@ -494,7 +475,6 @@ export default {
           await helper.wait(10);
           this.threads = userThreads.data.threads;
           this.threads = helper.parseDate(this.threads);
-          this.threads = helper.parseShield(this.threads);
           break;
         default:
           //根据主题获得thread
@@ -514,7 +494,7 @@ export default {
             await helper.wait(10);
             this.threads = typeThreads.data.threads;
             this.threads = helper.parseDate(this.threads);
-            this.threads = helper.parseShield(this.threads);
+
             break;
           }
       }
