@@ -4,6 +4,7 @@ import index from '@/components/index'
 import postThread from '@/components/post/postThread'
 import commentPage from '@/components/home/commentPage'
 import shieldPage from "@/components/person/shieldPage"
+import focusPage from "@/components/person/focusPage"
 import mine from '@/components/person/mine'
 import notify from '@/components/person/notify'
 import store from "@/components/helper/store"
@@ -41,6 +42,11 @@ const router = new Router({
       path: '/index/shieldPage',
       name: 'shieldPage',
       component: shieldPage,
+    },
+    {
+      path: '/index/focusPage',
+      name: 'focusPage',
+      component: focusPage,
     }
   ]
 })

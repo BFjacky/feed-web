@@ -9,7 +9,7 @@
     </div>
     <div class="nomore-text">{{remindText}}</div>
     <popup class="popup" v-model="popupVisible" pop-transition="popup-fade">
-      <div class="item" @click="cancelShield">移出黑名单</div>
+      <div class="item" @click="cancelFocus">取消关注</div>
     </popup>
   </div>
 </template>
@@ -25,7 +25,7 @@ export default {
       users: [],
       choiseUser: {},
       popupVisible: false,
-      remindText:"没有数据了..."
+      remindText: "没有数据了..."
     };
   },
   components: {
@@ -33,7 +33,7 @@ export default {
   },
   activated: async function() {
     const res = await axios({
-      url: `${config.url.feedUrl}/user/getUesrById`,
+      url: `${config.url.feedUrl}/user/getFocusUesrById`,
       withCredentials: true
     });
     this.users = res.data.users;
@@ -43,11 +43,11 @@ export default {
       this.popupVisible = true;
       this.choiseUser = user;
     },
-    cancelShield: async function() {
+    cancelFocus: async function() {
       this.popupVisible = false;
       const cancelRes = await axios({
         method: "post",
-        url: `${config.url.feedUrl}/user/getShieldUesrById`,
+        url: `${config.url.feedUrl}/user/cancelFocus`,
         data: {
           uid: this.choiseUser._id
         },

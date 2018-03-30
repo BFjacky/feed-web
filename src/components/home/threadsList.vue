@@ -457,6 +457,7 @@ export default {
           this.threads = helper.parseShield(this.threads);
           break;
         case "关注":
+          console.log("重新刷新", this.threads.length);
           const focusThreads = await axios({
             url: `${config.url.feedUrl}/thread/getFocusThread`,
             method: "post",

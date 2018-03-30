@@ -17,7 +17,7 @@
         <div class="text">未读通知</div>
         <div class="number-text">{{notifies.length}}</div>
       </div>
-      <div class="item button" @click="item1Click">
+      <div class="item button" @click="item3Click">
         <div class="icon icon1"></div>
         <div class="text">我的关注</div>
       </div>
@@ -107,6 +107,9 @@ export default {
     },
     item2Click: function() {
       this.$router.push({ name: "notify" });
+    },
+    item3Click: function() {
+      this.$router.push({ name: "focusPage" });
     },
     item4Click: function() {
       this.$router.push({ name: "shieldPage" });
