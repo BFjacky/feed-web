@@ -1,12 +1,12 @@
 <template>
   <div class="container">
     <!-- FIX ME 为能够实现点击 主题 navbar而实现的 透明按钮 -->
-    <div class="float-button" @click="chooseItem2"></div>
+    <div class="float-button" @click="chooseItem3"></div>
     <nav-bar v-model="selectItem" class="nav-bar">
       <tab-item class="tab-item" :class="selectItem==='0'?'itemChosen':''" id="0">最新</tab-item>
       <tab-item class="tab-item" :class="selectItem==='1'?'itemChosen':''" id="1">热门</tab-item>
-      <tab-item class="tab-item" :class="selectItem==='2'?'itemChosen':''" id="2" @click="showThemeList">{{nowTheme===''?'主题':nowTheme}}</tab-item>   
-      <div class="moving-bottom-line" :class="moveAnimation"></div>   
+      <tab-item class="tab-item" :class="selectItem==='2'?'itemChosen':''" id="2">关注</tab-item>
+      <tab-item class="tab-item" :class="selectItem==='3'?'itemChosen':''" id="3" @click="showThemeList">{{nowTheme===''?'主题':nowTheme}}</tab-item>   
       <div class="themeList" v-show="listExist" v-bind:class="{listShow:listShow,listHide:listHide}">
         <div class="themeItem" v-for="theme in themes" @click="chooseTheme(theme)">
           <div class="icon" v-bind:style="{backgroundImage:`url(${theme.icon})`}"></div>
@@ -22,6 +22,9 @@
           <threads-list type="热门" ></threads-list>
       </tab-container-item>
       <tab-container-item class="tab-container-item" id="2">
+          <threads-list type="关注" ></threads-list>
+      </tab-container-item>
+      <tab-container-item class="tab-container-item" id="3">
           <threads-list :type="nowTheme"  ></threads-list>
       </tab-container-item>
     </tab-container>
@@ -61,13 +64,13 @@ export default {
       this.listExist = true;
       this.listShow = true;
     },
-    chooseItem2: function() {
+    chooseItem3: function() {
       if (this.listExist) {
         this.hideThemeList();
         return;
       }
       this.showThemeList();
-      this.selectItem = "2";
+      this.selectItem = "3";
     },
     chooseTheme: function(theme) {
       this.nowTheme = theme.text;
@@ -78,40 +81,20 @@ export default {
     selectItem: function() {
       switch (this.selectItem) {
         case "0":
-          if (this.oldSelectItem === "1") {
-            this.moveAnimation = "move-1-0";
-          }
-          if (this.oldSelectItem === "2") {
-            this.moveAnimation = "move-2-0";
-          }
           this.hideThemeList();
           break;
         case "1":
-          if (this.oldSelectItem === "0") {
-            this.moveAnimation = "move-0-1";
-          }
-          if (this.oldSelectItem === "2") {
-            this.moveAnimation = "move-2-1";
-          }
           this.hideThemeList();
           break;
         case "2":
-          if (this.oldSelectItem === "0") {
-            this.moveAnimation = "move-0-2";
-          }
-          if (this.oldSelectItem === "1") {
-            this.moveAnimation = "move-1-2";
-          }
+          this.hideThemeList();
           break;
       }
-      this.oldSelectItem = this.selectItem;
     }
   },
   data: function() {
     return {
       selectItem: "0",
-      oldSelectItem: "0",
-      moveAnimation: "",
       listShow: false,
       listHide: false,
       listExist: false,
@@ -139,11 +122,11 @@ export default {
 <style lang="less" scoped>
 .float-button {
   position: absolute;
-  width: calc(100vw/3);
+  width: calc(100vw/4);
   height: 7vh;
   background-color: black;
   z-index: 2001;
-  left: calc(100vw*2/3);
+  left: calc(100vw*3/4);
   opacity: 0;
 }
 .container {
@@ -161,7 +144,7 @@ export default {
   background-color: white;
   .tab-item {
     background-color: white;
-    width: calc(100vw/3);
+    width: calc(100vw/4);
     flex-shrink: 0;
     flex-wrap: wrap;
     flex-grow: 1;
@@ -181,7 +164,16 @@ export default {
     transform: translateY(-200%);
   }
 }
+@keyframes fade-in {
+  0% {
+    background-color: white;
+  }
+  100% {
+    background-color: #e4c66371;
+  }
+}
 .itemChosen {
+  animation: fade-in 0.3s forwards ease-in-out;
   // border-bottom: 5px solid #32a8fc;
   color: #32a8fc;
 }
@@ -226,7 +218,7 @@ export default {
   background-color: #e2e2e2;
 }
 .themeItem {
-  width: calc(100vw/3);
+  width: calc(100vw/4);
   height: calc(25vh/3);
   border: 1px solid rgb(238, 238, 238);
   box-sizing: border-box;
@@ -235,15 +227,16 @@ export default {
   align-items: center;
   flex-grow: 0;
   .icon {
-    width: 4.5vh;
-    height: 4.5vh;
+    width: 7vw;
+    height: 7vw;
     background-size: 100% 100%;
-    margin-left: 3vw;
+    margin-left: 2vw;
   }
   .text {
     flex-grow: 1;
+    font-size:3vw;
     line-height: calc(20vh/3);
-    margin-right: 3vw;
+    margin-right: 1vw;
   }
 }
 .themeList {
@@ -252,99 +245,9 @@ export default {
   top: 0vh;
   z-index: 1500;
   display: flex;
-  right: 33.33vw;
+  right: calc(100vw/4);
   top: 1px;
   flex-wrap: wrap;
-}
-// 0-1
-@keyframes move-0-1 {
-  0% {
-    transform: translateY(-200%) translateX(0) scaleX(1);
-  }
-  50% {
-    transform: translateY(-200%) translateX(calc(100vw/6)) scaleX(3);
-  }
-  100% {
-    transform: translateY(-200%) translateX(calc(100vw/3)) scaleX(1);
-  }
-}
-.move-0-1 {
-  animation: move-0-1 0.15s ease-in-out forwards;
-}
-// 1-2
-@keyframes move-1-2 {
-  0% {
-    transform: translateY(-200%) translateX(calc(100vw/3)) scaleX(1);
-  }
-  50% {
-    transform: translateY(-200%) translateX(50vw) scaleX(3);
-  }
-  100% {
-    transform: translateY(-200%) translateX(calc(100vw*2/3)) scaleX(1);
-  }
-}
-.move-1-2 {
-  animation: move-1-2 0.15s ease-in-out forwards;
-}
-// 0-2
-@keyframes move-0-2 {
-  0% {
-    transform: translateY(-200%) translateX(0) scaleX(1);
-  }
-  50% {
-    transform: translateY(-200%) translateX(calc(100vw/3)) scaleX(3);
-  }
-  100% {
-    transform: translateY(-200%) translateX(calc(100vw*2/3)) scaleX(1);
-  }
-}
-.move-0-2 {
-  animation: move-0-2 0.15s ease-in-out forwards;
-}
-// 1-0
-@keyframes move-1-0 {
-  0% {
-    transform: translateY(-200%) translateX(calc(100vw/3)) scaleX(1);
-  }
-  50% {
-    transform: translateY(-200%) translateX(calc(100vw/6)) scaleX(3);
-  }
-  100% {
-    transform: translateY(-200%) translateX(0vw) scaleX(1);
-  }
-}
-.move-1-0 {
-  animation: move-1-0 0.15s ease-in-out forwards;
-}
-// 2-0
-@keyframes move-2-0 {
-  0% {
-    transform: translateY(-200%) translateX(calc(100vw*2/3)) scaleX(1);
-  }
-  50% {
-    transform: translateY(-200%) translateX(calc(100vw/3)) scaleX(3);
-  }
-  100% {
-    transform: translateY(-200%) translateX(0vw) scaleX(1);
-  }
-}
-.move-2-0 {
-  animation: move-2-0 0.15s ease-in-out forwards;
-}
-// 2-1
-@keyframes move-2-1 {
-  0% {
-    transform: translateY(-200%) translateX(calc(100vw*2/3)) scaleX(1);
-  }
-  50% {
-    transform: translateY(-200%) translateX(50vw) scaleX(3);
-  }
-  100% {
-    transform: translateY(-200%) translateX(calc(100vw/3)) scaleX(1);
-  }
-}
-.move-2-1 {
-  animation: move-2-1 0.15s ease-in-out forwards;
 }
 </style>
 

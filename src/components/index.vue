@@ -55,6 +55,9 @@ export default {
     };
   },
   created: async function() {
+    //在页面最初的组件中，告诉全局，页面正在尝试获取用户信息
+    config.user.fetching = true;
+
     events.$on("clickBox", this.clickBox);
     //提示全局正在登陆
     const res = await helper.wxinit();

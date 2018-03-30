@@ -14,21 +14,21 @@
           <div class="content-text">{{thread.content}}</div>
           <div class="content-buttons"></div>
           <div class="imgs-part">
-            <img @click="previewImage(img)" :style="singleImgStyle"  class="img"  v-for="img in thread.imgs" v-bind:src="thread.imgs.length===1?img.urlMiddle:img.url"></img>
+            <img @click.stop="previewImage(img)" :style="singleImgStyle"  class="img"  v-for="img in thread.imgs" v-bind:src="thread.imgs.length===1?img.urlMiddle:img.url"></img>
           </div>
       </div>
       <div class="footer">
           <div class="buttons">
-              <div class="button-praise" @click="praise">
+              <div class="button-praise" @click.stop="praise">
                   <div v-bind:class="{icon:!thread.hasPraised,'icon-praised':thread.hasPraised}"></div>
                   <div class="text">{{thread.praises}}</div>
               </div>
-              <div class="button-comment" @click="gotoComment">
+              <div class="button-comment" @click.stop="gotoComment">
                   <div class="icon"></div>
                   <div class="text">{{thread.comments}}</div>
               </div>
               <div class="button-share">
-                  <div class="icon" @click="share"></div>
+                  <div class="icon" @click.stop="share"></div>
               </div>
           </div>
       </div>

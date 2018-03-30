@@ -16,13 +16,11 @@ export default {
     };
   },
   created: function() {
-    this.updating = config.user.updating;
     this.fetching = config.user.fetching;
     if (!this.updating && !this.fetching) {
       return;
     }
     const intervalId = setInterval(() => {
-      this.updating = config.user.updating;
       this.fetching = config.user.fetching;
       if (this.updating || this.fetching) {
         Indicator.open({

@@ -19,7 +19,7 @@
       </div>
       <div class="item button" @click="item1Click">
         <div class="icon icon1"></div>
-        <div class="text">我的收藏</div>
+        <div class="text">我的关注</div>
       </div>
         <div class="item button" @click="item4Click">
         <div class="icon icon1"></div>
@@ -41,20 +41,8 @@
 import axios from "axios";
 import config from "../helper/config";
 import pageHelper from "./helper";
-async function checkUpdating() {
-  return new Promise((resolve, reject) => {
-    const intervalId = setInterval(() => {
-      if (!config.user.updating) {
-        resolve(intervalId);
-      }
-    }, 100);
-  });
-}
 export default {
-  mounted: async function() {
-    const intervalId = await checkUpdating();
-    clearInterval(intervalId);
-    config.user.fetching = true;
+  created: async function() {
     const userGet = await axios({
       url: `${config.url.feedUrl}/user/get`,
       withCredentials: true

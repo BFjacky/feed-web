@@ -4,16 +4,15 @@ export default {
         // feedUrl: 'https://neau-lib.xiaonei.io/feed'
         oauthUrl: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx9fd6bbc89436a5ee&redirect_uri=http%3a%2f%2ffeedServer.feit.me%2foauth&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect',
         feedUrl: 'http://feedServer.feit.me'
+        // feedUrl: 'http://localhost:7004'
     },
     //全局user
     user: {
         oauth: false,
-        //后台服务正在获取此微信用户信息
-        updating: false,
         //前端页面正在从后台服务器获取用户信息
         fetching: false,
         _id: '',
-        focus:[],
-        shields:undefined,
+        focus: [],
+        shields: [],
     }
 }
