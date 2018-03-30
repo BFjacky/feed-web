@@ -12,6 +12,9 @@ export default {
         list4: {
             scrollTop: '',
         },
+        list5: {
+            scrollTop: '',
+        },
         needRefresh: false,
         pupup: {
             // show: false,

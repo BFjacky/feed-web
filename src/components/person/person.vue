@@ -2,9 +2,12 @@
   <div class="container">
     <div class="header button" @click="wechatLogin">
       <div class="left" v-bind:style="{backgroundImage:`url(${avatarUrl})`}"></div>
-      <div class="right">
+      <div class="middle">
         <div class="name">{{nickName}}</div>
         <div v-bind:class="{boy:gender===1,girl:gender===2}"></div>
+      </div>
+      <div class="right">
+        <div class="text1">粉丝数:{{followers.length}}</div>
       </div>
     </div>
     <div class="main">
@@ -53,11 +56,20 @@ export default {
       //未能获取到用户信息
       return;
     }
-    const { avatarUrl, nickName, gender, _id, focus, shields } = userGet.data;
+    const {
+      avatarUrl,
+      nickName,
+      gender,
+      _id,
+      focus,
+      followers,
+      shields
+    } = userGet.data;
     this.avatarUrl = avatarUrl;
     this.nickName = nickName;
     this.gender = gender;
     config.user.focus = focus;
+    config.user.followers = followers;
     config.user.shields = shields;
     config.user.oauth = true;
     config.user._id = _id;
@@ -87,6 +99,8 @@ export default {
         this.notifies = pageHelper.notifies;
       }
     }, 500);
+
+    this.followers = config.user.followers;
   },
   data: function() {
     return {
@@ -95,7 +109,8 @@ export default {
       gender: -1,
       notifiesNumber: 0,
       notifies: [],
-      prepared: false
+      prepared: false,
+      followers: []
     };
   },
   methods: {
@@ -141,7 +156,7 @@ export default {
     border-radius: 50%;
     background-size: 100% 100%;
   }
-  .right {
+  .middle {
     margin-left: 8vw;
     display: flex;
     flex-direction: column;
@@ -161,6 +176,15 @@ export default {
       width: 5vw;
       height: 5vw;
       background-image: url("../../assets/girl.png");
+    }
+  }
+  .right {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20vw;
+    .text1 {
+      font-size: 4vw;
+      color:#59a181;
     }
   }
 }

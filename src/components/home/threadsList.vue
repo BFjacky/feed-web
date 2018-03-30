@@ -158,17 +158,24 @@ export default {
           }
         });
         break;
+      case "关注":
+        elements.each(function(index) {
+          if (index === 2) {
+            $(this).scrollTop(store.index.list3.scrollTop);
+          }
+        });
+        break;
       case "用户":
         elements.each(function(index) {
-          if (index === 3) {
-            $(this).scrollTop(store.index.list4.scrollTop);
+          if (index === 4) {
+            $(this).scrollTop(store.index.list5.scrollTop);
           }
         });
         break;
       default:
         elements.each(function(index) {
-          if (index === 2) {
-            $(this).scrollTop(store.index.list3.scrollTop);
+          if (index === 3) {
+            $(this).scrollTop(store.index.list4.scrollTop);
           }
         });
         break;
@@ -187,6 +194,12 @@ export default {
           break;
         case 2:
           store.index.list3.scrollTop = $(this).scrollTop();
+          break;
+        case 3:
+          store.index.list4.scrollTop = $(this).scrollTop();
+          break;
+        case 4:
+          store.index.list5.scrollTop = $(this).scrollTop();
           break;
       }
     });

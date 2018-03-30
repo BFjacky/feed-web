@@ -23,17 +23,9 @@ export default {
       withCredentials: true,
       data: {}
     });
-    console.log(threadsRes.data.threads);
+    console.log('进入我的动态页面,获得所有我发出的动态',threadsRes.data.threads);
   },
   deactivated: function() {
-    const elements = $(".load-more-box");
-    elements.each(function(index) {
-      switch (index) {
-        case 3:
-          store.index.list4.scrollTop = $(this).scrollTop();
-          break;
-      }
-    });
   }
 };
 </script>
