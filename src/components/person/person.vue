@@ -73,6 +73,8 @@ export default {
     config.user.shields = shields;
     config.user.oauth = true;
     config.user._id = _id;
+    //web-socket 通过 之前的http请求获得了该用户的用户信息后,发送一条socket消息;
+    this.$socket.emit("init", _id);
   },
   activated: async function() {
     //查看 客户端 是否已经获得了用户信息
@@ -90,16 +92,9 @@ export default {
 
     await checkPrepared();
 
-    pageHelper.getNoReadNotify();
-
-    //检查pageHelper.notifies 有没有变化
-    setInterval(() => {
-      if (!this.$lodash.isEqual(pageHelper.notifies, this.notifies)) {
-        //notifies 发生了变化
-        this.notifies = pageHelper.notifies;
-      }
-    }, 500);
-
+    this.$options.sockets.res = data => {
+      this.notifies =data;
+    };
     this.followers = config.user.followers;
   },
   data: function() {
@@ -184,7 +179,7 @@ export default {
     margin-left: 20vw;
     .text1 {
       font-size: 4vw;
-      color:#59a181;
+      color: #59a181;
     }
   }
 }
