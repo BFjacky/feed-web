@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-show="!thread.needShield&&!isDelete" @click="clickBox" :class="{fade:fade}">
+  <div class="container" v-show="!isShield&&!isDelete" @click="clickBox" :class="{fade:fade}">
       <div class="header">
           <div class="part1" v-bind:style="{backgroundImage:`url(${thread.avatarUrl})`}"></div>
           <div class="part2">
@@ -66,6 +66,11 @@ export default {
         this.isDelete = true;
       }
     });
+    events.$on("shieldThread", uid => {
+      if (this.thread.uid === uid) {
+        this.isShield = true;
+      }
+    });
   },
   components: {
     Toast,
@@ -77,7 +82,8 @@ export default {
       praiseLock: false,
       singleImgStyle: {},
       fade: false,
-      isDelete: false
+      isDelete: false,
+      isShield: false
     };
   },
   methods: {

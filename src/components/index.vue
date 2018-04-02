@@ -135,7 +135,7 @@ export default {
             if (shields !== undefined) {
               config.user.shields = shields;
             }
-            console.log("屏蔽完了:", res.data);
+            events.$emit("shieldThread", _this.thread.uid);
           }
         })
         .catch(() => {});
