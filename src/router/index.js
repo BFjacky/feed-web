@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import index from '@/components/index'
 import postThread from '@/components/post/postThread'
 import commentPage from '@/components/home/commentPage'
+import sonCommentPage from '@/components/home/sonCommentPage'
 import shieldPage from "@/components/person/shieldPage"
 import focusPage from "@/components/person/focusPage"
 import mine from '@/components/person/mine'
@@ -27,6 +28,11 @@ const router = new Router({
       path: '/index/commentPage',
       name: 'commentPage',
       component: commentPage,
+    },
+    {
+      path: '/index/commentPage/sonCommentPage',
+      name: 'sonCommentPage',
+      component: sonCommentPage,
     },
     {
       path: '/index/mine',

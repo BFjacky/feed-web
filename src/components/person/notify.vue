@@ -27,14 +27,13 @@
 </template>
 <script>
 import axios from "axios";
-import pageHelper from "./helper";
 import helper from "../helper/helper";
 import config from "../helper/config";
 import { Popup } from "mint-ui";
 export default {
   activated: async function() {
     //获得 notifies
-    this.notifies = pageHelper.notifies;
+    this.notifies = this.$route.query.notifies;
 
     console.log(`获得了notifies`, this.notifies);
     this.notifies = helper.parseDate(this.notifies);

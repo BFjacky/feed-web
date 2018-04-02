@@ -21,11 +21,11 @@
         <div class="number-text">{{notifies.length}}</div>
       </div>
       <div class="item button" @click="item3Click">
-        <div class="icon icon1"></div>
+        <div class="icon icon3"></div>
         <div class="text">我的关注</div>
       </div>
         <div class="item button" @click="item4Click">
-        <div class="icon icon1"></div>
+        <div class="icon icon4"></div>
         <div class="text">黑名单</div>
       </div>
       <!-- <div class="item button">
@@ -93,7 +93,7 @@ export default {
     await checkPrepared();
 
     this.$options.sockets.res = data => {
-      this.notifies =data;
+      this.notifies = data;
     };
     this.followers = config.user.followers;
   },
@@ -102,7 +102,6 @@ export default {
       avatarUrl: "",
       nickName: "点我登陆",
       gender: -1,
-      notifiesNumber: 0,
       notifies: [],
       prepared: false,
       followers: []
@@ -116,7 +115,7 @@ export default {
       this.$router.push({ name: "mine" });
     },
     item2Click: function() {
-      this.$router.push({ name: "notify" });
+      this.$router.push({ name: "notify", query: { notifies: this.notifies } });
     },
     item3Click: function() {
       this.$router.push({ name: "focusPage" });
@@ -223,10 +222,10 @@ export default {
     background-image: url("../../assets/letter.png");
   }
   .icon3 {
-    background-image: url("../../assets/finger.png");
+    background-image: url("../../assets/focus.png");
   }
   .icon4 {
-    background-image: url("../../assets/send-message.png");
+    background-image: url("../../assets/blackList.png");
   }
 }
 .button:active {
