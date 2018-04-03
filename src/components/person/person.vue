@@ -116,6 +116,7 @@ export default {
     },
     item2Click: function() {
       this.$router.push({ name: "notify", query: { notifies: this.notifies } });
+      this.notifies = [];
     },
     item3Click: function() {
       this.$router.push({ name: "focusPage" });
