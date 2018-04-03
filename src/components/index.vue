@@ -20,12 +20,13 @@
       </tab-item>
     </tab-bar>
     <div class="send-button" @click="gotoPostPage"></div>
-         <popup v-model="popupVisible" class="popup" position="bottom">
-        <div class="item" @click="focusThis" v-show="!myself">{{item1Text}}</div> 
-        <div class="item" @click="shieldThis" v-show="!myself">屏蔽此人的动态</div>
-         <div class="item delete" @click="deleteThis" v-show="myself">删除此条动态</div>      
-      </popup>
+    <popup v-model="popupVisible" class="popup" position="bottom">
+      <div class="item" @click="focusThis" v-show="!myself">{{item1Text}}</div> 
+      <div class="item" @click="shieldThis" v-show="!myself">屏蔽此人的动态</div>
+      <div class="item delete" @click="deleteThis" v-show="myself">删除此条动态</div>      
+    </popup>
   </div>
+
 </template>
 <script>
 import {
@@ -47,8 +48,10 @@ import axios from "axios";
 export default {
   data: function() {
     return {
+      realFalse: false,
       itemSelect: "0",
       popupVisible: false,
+      popupVisible2: false,
       item1Text: "",
       thread: {},
       myself: false

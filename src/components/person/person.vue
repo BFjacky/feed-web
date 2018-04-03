@@ -44,6 +44,7 @@
 import axios from "axios";
 import config from "../helper/config";
 import pageHelper from "./helper";
+import events from "../helper/events";
 export default {
   created: async function() {
     const userGet = await axios({
@@ -94,6 +95,7 @@ export default {
 
     this.$options.sockets.res = data => {
       this.notifies = data;
+      events.$emit('newNotifies',this.notifies)
     };
     this.followers = config.user.followers;
   },

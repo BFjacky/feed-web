@@ -5,16 +5,37 @@
     <router-view/>
       </keep-alive>
     </transition>
+
+     <popup v-model="popupVisible" class="feed-top-popup" style="background-color:#292929b6" position="top" :modal="realFalse">你有新的通知</popup>
   </div>
 </template>
 
 <script>
+import events from "./components/helper/events";
+import { Popup } from "mint-ui";
 export default {
   name: "App",
+  created: function() {
+    events.$on("newNotifies", notifies => {
+      //新的notify发过来，则显示popup提醒
+      if (notifies.length <= 0) {
+        return;
+      }
+      this.popupVisible = true;
+      setTimeout(() => {
+        this.popupVisible = false;
+      }, 1000);
+    });
+  },
   data: function() {
     return {
+      realFalse: false,
+      popupVisible: false,
       transitionName: "forwardMov"
     };
+  },
+  components: {
+    popup: Popup
   },
   watch: {
     $route(to, from) {
@@ -27,12 +48,21 @@ export default {
 </script>
 
 <style>
+.feed-top-popup {
+  width: 100vw;
+  height: 12vw;
+  line-height: 12vw;
+  font-size: 4vw;
+  color: white;
+  text-align: center;
+  z-index: 5000;
+}
 div {
   -moz-user-select: none;
   word-wrap: break-word;
   padding: 0;
   margin: 0;
-  -webkit-tap-highlight-color:#12312300;
+  -webkit-tap-highlight-color: #12312300;
 }
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
