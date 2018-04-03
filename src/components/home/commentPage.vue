@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="content-container">
-        <div class="thread-container">
+        <div class="thread-container" @click="replyThread">
           <div class="header">
               <div class="part1" v-bind:style="{backgroundImage:`url(${thread.avatarUrl})`}"></div>
               <div class="part2">
@@ -16,17 +16,17 @@
               <div class="content-text">{{thread.content}}</div>
               <div class="content-buttons"></div>
               <div class="imgs-part">
-                <img @click="previewImage(img)"  class="img" :style="singleImgStyle" v-for="img in thread.imgs" v-bind:src="thread.imgs.length===1?img.urlMiddle:img.url"></img>
+                <img @click.stop="previewImage(img)"  class="img" :style="singleImgStyle" v-for="img in thread.imgs" v-bind:src="thread.imgs.length===1?img.urlMiddle:img.url"></img>
               </div>
           </div>
           <div class="footer">
               <div class="buttons">
-                  <div class="button-praise" @click="praiseThread">
+                  <div class="button-praise" @click.stop="praiseThread">
                       <div v-bind:class="{icon:!thread.hasPraised,'icon-praised':thread.hasPraised}"></div>
                       <div class="text">{{thread.praises}}</div>
                   </div>
                   <div class="button-share">
-                      <div class="icon" @click="share"></div>
+                      <div class="icon" @click.stop="share"></div>
                   </div>
               </div>
           </div>
@@ -104,6 +104,13 @@ import helper from "../helper/helper";
 import { Toast } from "mint-ui";
 export default {
   activated: async function() {
+    if (!this.$route.query.thread._id) {
+      //没有路由参数，为回退路由,不初始化数据
+      return;
+    }
+    console.log(`commentPage init data`);
+
+    this.thread = this.$route.query.thread;
     await this.initComments();
     this.thread = helper.parseDate([this.thread])[0];
     //获得图片宽高
@@ -246,8 +253,6 @@ export default {
     //-------comments 方法
     initComments: async function() {
       this.busy = true;
-
-      this.thread = this.$route.query.thread;
       //获得此条thread的热门评论(点赞量前三)
       const hotCommentRes = await axios({
         url: `${config.url.feedUrl}/comment/getHotComment`,
@@ -402,19 +407,25 @@ export default {
       // //send comment后重新获取最新的评论信息
       // await this.initComments();
     },
+    replyThread:function(){
+      this.content = ``;
+      this.replyFor = ``;
+      this.sourse = "thread";
+      this.commentId = '';
+    },
     //回复评论
     replyComment: async function(comment, index, hot) {
-      if (hot) {
-        this.$set(this.hotFades, index, "fade");
-        setTimeout(() => {
-          this.$set(this.hotFades, index, "");
-        }, 500);
-      } else {
-        this.$set(this.fades, index, "fade");
-        setTimeout(() => {
-          this.$set(this.fades, index, "");
-        }, 500);
-      }
+      // if (hot) {
+      //   this.$set(this.hotFades, index, "fade");
+      //   setTimeout(() => {
+      //     this.$set(this.hotFades, index, "");
+      //   }, 500);
+      // } else {
+      //   this.$set(this.fades, index, "fade");
+      //   setTimeout(() => {
+      //     this.$set(this.fades, index, "");
+      //   }, 500);
+      // }
 
       this.content = `回复${comment.nickName}:`;
       this.replyFor = `回复${comment.nickName}:`;
@@ -484,7 +495,9 @@ export default {
 .divide-line {
   border-top: 7px solid rgb(241, 241, 241);
 }
-
+.thread-container:active{
+  background-color: #e6e6e6;
+}
 .thread-container {
   div {
     border: 0px solid red;
@@ -662,8 +675,11 @@ export default {
     }
   }
 
-  .fade {
-    animation: fade-in-out ease-in-out 0.5s;
+  .click-fade {
+    animation: fade-in-out ease-in-out 0.3s;
+  }
+  .content-box:active {
+    background-color: #e6e6e6;
   }
   .content-box {
     padding-top: 3vw;

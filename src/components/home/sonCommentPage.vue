@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="content-container">
-        <div class="thread-container">
+        <div class="thread-container" @click="replyFirstComment">
           <div class="header">
               <div class="part1" v-bind:style="{backgroundImage:`url(${comment.avatarUrl})`}"></div>
               <div class="part2">
@@ -13,24 +13,24 @@
               <div class="content-text">{{comment.content}}</div>
               <div class="content-buttons"></div>
               <div class="imgs-part">
-                <img @click="previewImage(img)"  class="img" :style="singleImgStyle" v-for="img in comment.imgs" v-bind:src="thread.imgs.length===1?img.urlMiddle:img.url"></img>
+                <img @click.stop="previewImage(img)"  class="img" :style="singleImgStyle" v-for="img in comment.imgs" v-bind:src="thread.imgs.length===1?img.urlMiddle:img.url"></img>
               </div>
           </div>
           <div class="footer">
               <div class="buttons">
-                  <div class="button-praise" @click="praiseComment">
+                  <div class="button-praise" @click.stop="praiseComment">
                       <div v-bind:class="{icon:!comment.hasPraised,'icon-praised':comment.hasPraised}"></div>
                       <div class="text">{{comment.praises}}</div>
                   </div>
                   <div class="button-share">
-                      <div class="icon" @click="share"></div>
+                      <div class="icon" @click.stop="share"></div>
                   </div>
               </div>
           </div>
         </div>
         <div class="comment-show">
             <div class="content-box-title">全部评论({{comments.length}})</div>
-            <div class="content-box" v-bind:class="fades[index]" v-for="(comment,index) in comments" @click="replyComment(comment,index,'')">
+            <div class="content-box"  v-for="(comment,index) in comments" @click="replySecondComment(comment)">
                <div class="left" v-bind:style="{backgroundImage:`url(${comment.avatarUrl})`}"></div>
                <div class="right">
                     <div class="header">
@@ -44,9 +44,9 @@
                       </div>
                     </div>
                     <div class="main">{{comment.content}}</div>
-                    <div class="footer"  v-if="comment.commentInfo.length>0" v-on:click.stop="goToSonCommentPage">
-                      <div class="footer-comment" v-for="(subComment,index) in comment.commentInfo"  v-if="index<comment.maxNumber">
-                        <div class="name">{{subComment.nickName}}:</div>
+                    <div class="footer"  v-if="comment.commentInfo.length>0">
+                      <div class="footer-comment" v-for="(subComment,index) in comment.commentInfo" v-on:click.stop="replyThirdComment(subComment)" v-if="index<comment.maxNumber">
+                        <div class="name">{{!subComment.replyFor?subComment.nickName:subComment.replyFor}}:</div>
                         <div class="content">{{subComment.content}}</div>
                       </div>
                       <div class="open-button" v-on:click.stop="showComments(comment,'')" v-if="comment.commentInfo.length>=3 && comment.maxNumber<=2">还有{{comment.commentInfo.length-2}}条评论&nbsp&nbsp&nbsp>></div>
@@ -57,10 +57,10 @@
             <div class="divide-line"></div>
         </div>
         </div>
-        <!-- <div class="comment-make">
+        <div class="comment-make">
             <textarea class="content-area" :maxlength="maxWordsLength" :placeholder="commentPlaceHolder" v-model:value="content"></textarea> 
             <div class="send-button" v-on:click="sendAcomment">发送</div>
-        </div> -->
+        </div>
   </div>
 </template>
 <script>
@@ -107,15 +107,11 @@ export default {
       commentPlaceHolder: "友善的发言更容易获得朋友",
       //评论最大字数
       maxWordsLength: 150,
-      //进行评论时的对象: thread||comment
-      sourse: "comment",
       //防止用户过度点赞
       praiseLock: false,
       //在输入框提示 回复谁 的文字
       replyFor: "",
       sending: false,
-      fades: [],
-      hotFades: [],
       singleImgStyle: {}
     };
   },
@@ -133,7 +129,6 @@ export default {
         if (this.replyFor[i] !== this.content[i]) {
           this.replyFor = "";
           this.content = "";
-          this.sourse = "thread";
           this.commentId = "";
           break;
         }
@@ -156,33 +151,33 @@ export default {
         return;
       }
       this.praiseLock = true;
-      if (this.thread.hasPraised) {
+      if (this.comment.hasPraised) {
         //如果已经点赞,则取消点赞
         const cancelRes = await axios({
-          url: `${config.url.feedUrl}/thread/cancelPraise`,
+          url: `${config.url.feedUrl}/comment/cancelPraise`,
           method: "post",
           data: {
-            _id: this.thread._id
+            _id: this.comment._id
           },
           withCredentials: true
         });
-        this.thread.hasPraised = false;
+        this.comment.hasPraised = false;
 
         //FiX ME 点赞之后不去查询该条说说最新的点赞总数，只是单纯在客户端将点赞数减一
-        this.thread.praises = this.thread.praises - 1;
+        this.comment.praises = this.comment.praises - 1;
       } else {
         const praiseRes = await axios({
-          url: `${config.url.feedUrl}/thread/praise`,
+          url: `${config.url.feedUrl}/comment/praise`,
           method: "post",
           data: {
-            _id: this.thread._id
+            _id: this.comment._id
           },
           withCredentials: true
         });
-        this.thread.hasPraised = true;
+        this.comment.hasPraised = true;
 
         //FiX ME 点赞之后不去查询该条说说最新的点赞总数，只是单纯在客户端将点赞数加一
-        this.thread.praises = this.thread.praises + 1;
+        this.comment.praises = this.comment.praises + 1;
       }
 
       this.praiseLock = false;
@@ -190,7 +185,7 @@ export default {
     previewImage: async function(img) {
       const urls = [];
       const current = img.sourceUrl;
-      for (const tempImg of this.thread.imgs) {
+      for (const tempImg of this.comment.imgs) {
         urls.push(tempImg.sourceUrl);
       }
       wx.previewImage({ current, urls });
@@ -202,7 +197,7 @@ export default {
 
     //-------comments 方法
     initComments: async function() {
-      //获得此条thread的评论
+      //获得此条comment的评论
       const commentRes = await axios({
         url: `${config.url.feedUrl}/comment/getComment`,
         method: "get",
@@ -217,8 +212,36 @@ export default {
         return;
       }
       if (commentRes.data.success) {
+        //获得二级评论
         this.comments = commentRes.data.comments;
-        console.log(`init comments success`, this.comments);
+        //获得三级评论
+        this.comments = await axios({
+          url: `${config.url.feedUrl}/comment/getAllSubComments`,
+          method: "post",
+          withCredentials: true,
+          data: {
+            comments: this.comments
+          }
+        });
+        this.comments = this.comments.data.comments;
+        //遍历获得的comments，将所有的commentInfo中的XXX回复XXX填在replyFor字段上
+        for (const comment of this.comments) {
+          for (const commentInfo of comment.commentInfo) {
+            if (commentInfo.commentSourceId == comment._id) {
+              //此条comment回复的是此条二级评论
+            } else {
+              //此条comment回复的是其他三级及以上评论
+              for (const commentInfo2 of comment.commentInfo) {
+                if (commentInfo.commentSourceId == commentInfo2._id) {
+                  commentInfo.replyFor =
+                    commentInfo.nickName + " 回复 " + commentInfo2.nickName;
+                  break;
+                }
+              }
+            }
+            // console.log(commentInfo.replyFor);
+          }
+        }
       }
     },
     sendAcomment: async function() {
@@ -242,16 +265,15 @@ export default {
         method: "post",
         withCredentials: true,
         data: {
-          _id: this.sourse === "thread" ? this.thread._id : this.commentId,
+          _id: !this.commentId ? this.comment._id : this.commentId,
           comment: { content: this.content },
-          sourse: this.sourse
+          sourse: "comment"
         }
       });
 
       this.sending = false;
       //评论完成后恢复状态
       this.content = "";
-      this.sourse = "thread";
       this.replyFor = "";
       this.commentId = "";
       if (sendCommentRes.data.success) {
@@ -310,28 +332,43 @@ export default {
       // //send comment后重新获取最新的评论信息
       // await this.initComments();
     },
-    //回复评论
-    replyComment: async function(comment, index, hot) {
-      if (hot) {
-        this.$set(this.hotFades, index, "fade");
-        setTimeout(() => {
-          this.$set(this.hotFades, index, "");
-        }, 500);
-      } else {
-        this.$set(this.fades, index, "fade");
-        setTimeout(() => {
-          this.$set(this.fades, index, "");
-        }, 500);
-      }
-
+    //一级评论
+    replyFirstComment: function() {
+      this.content = ``;
+      this.replyFor = ``;
+      this.commentId = "";
+    },
+    //二级评论
+    replySecondComment: async function(comment) {
       this.content = `回复${comment.nickName}:`;
       this.replyFor = `回复${comment.nickName}:`;
-      this.sourse = "comment";
       this.commentId = comment.id;
     },
-    goToSonCommentPage: function() {
-      console.log(`即将进入son comment page`);
-      this.$router.push({ comment });
+    //三级评论
+    replyThirdComment: function(comment) {
+      console.log(comment);
+      this.content = `回复${comment.nickName}:`;
+      this.replyFor = `回复${comment.nickName}:`;
+      this.commentId = comment._id;
+      console.log(this.content, this.replyFor, this.commentId);
+    },
+    //展示所有comments 或收起 comments
+    showComments: async function(comment) {
+      for (const chooseComment of this.comments) {
+        //找到了Comment中对应的那个
+        if (chooseComment._id === comment._id) {
+          const tempInfo = chooseComment.commentInfo;
+          chooseComment.commentInfo = [];
+          chooseComment.commentInfo = tempInfo;
+          if (chooseComment.maxNumber === 999) {
+            console.log("收起");
+            chooseComment.maxNumber = 2;
+            console.log(chooseComment.maxNumber);
+            return;
+          }
+          chooseComment.maxNumber = 999;
+        }
+      }
     }
   }
 };
@@ -356,12 +393,10 @@ export default {
 .divide-line {
   border-top: 7px solid rgb(241, 241, 241);
 }
-
+.thread-container:active {
+  background-color: #e6e6e6;
+}
 .thread-container {
-  div {
-    border: 0px solid red;
-    box-sizing: border-box;
-  }
   border-bottom: 2vw solid #eeeded;
   width: 100vw;
   padding: 3vw 5vw;
@@ -510,27 +545,8 @@ export default {
     line-height: 10vw;
     padding-left: 10px;
   }
-  // 点击commentBox 的渐变动画效果
-  @keyframes fade-in-out {
-    0% {
-      background-color: #d4d4d400;
-    }
-    25% {
-      background-color: #e6e6e6;
-    }
-    50% {
-      background-color: #e6e6e6;
-    }
-    75% {
-      background-color: #e6e6e6;
-    }
-    100% {
-      background-color: #d4d4d400;
-    }
-  }
-
-  .fade {
-    animation: fade-in-out ease-in-out 0.5s;
+  .content-box:active {
+    background-color: #e6e6e6;
   }
   .content-box {
     padding-top: 3vw;
@@ -621,6 +637,9 @@ export default {
         flex-direction: column;
         border-radius: 5vw;
         padding: 10px;
+        .footer-comment:active {
+          background-color: #ebebeb;
+        }
         .footer-comment {
           width: 71vw;
           margin-top: 5px;
