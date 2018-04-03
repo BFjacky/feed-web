@@ -31,11 +31,6 @@
               </div>
           </div>
         </div>
-
-
-
-
-
         <div class="comment-show"  v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="100">
             <div class="content-box-title">热门评论({{hotComments.length}})</div>
             <div class="content-box" v-bind:class="hotFades[index]" v-for="(comment,index) in hotComments" @click="replyComment(comment,index,'hot')">
@@ -90,10 +85,7 @@
             </div>
             <div class="divide-line"></div>
         </div>
-        </div>
-        <div class="comment-make">
-            <textarea class="content-area" :maxlength="maxWordsLength" :placeholder="commentPlaceHolder" v-model:value="content"></textarea> 
-            <div class="send-button" v-on:click="sendAcomment">发送</div>
+         <post-bar v-on:sendButton="sendAcomment" :replyFor="replyFor"></post-bar>
         </div>
   </div>
 </template>
@@ -101,6 +93,8 @@
 import axios from "axios";
 import config from "../helper/config";
 import helper from "../helper/helper";
+import events from "../helper/events";
+import postBar from "./components/postBar";
 import { Toast } from "mint-ui";
 export default {
   activated: async function() {
@@ -132,21 +126,16 @@ export default {
     }
   },
   components: {
-    Toast
+    Toast,
+    postBar
   },
   data: function() {
     return {
       thread: {},
       //此条thread的comments
       comments: [],
-      //用户评论的内容
-      content: "",
       //当前选中的commentId
       commentId: "",
-      //评论区placeholder
-      commentPlaceHolder: "友善的发言更容易获得朋友",
-      //评论最大字数
-      maxWordsLength: 150,
       //进行评论时的对象: thread||comment
       sourse: "thread",
       //防止用户过度点赞
@@ -169,18 +158,6 @@ export default {
         comment.maxNumber = 2;
       }
       this.comments = helper.parseDate(this.comments);
-    },
-    content: function() {
-      //判断当前replyFor 的 文字 有没有没修改一旦 replyFor的文字被修改了,清空这个效果,将sourse改为thread
-      for (let i = 0; i < this.replyFor.length; i++) {
-        if (this.replyFor[i] !== this.content[i]) {
-          this.replyFor = "";
-          this.content = "";
-          this.sourse = "thread";
-          this.commentId = "";
-          break;
-        }
-      }
     },
     hotComments: function() {
       for (let comment of this.hotComments) {
@@ -318,11 +295,11 @@ export default {
       }
       this.busy = false;
     },
-    sendAcomment: async function() {
+    sendAcomment: async function(content, imgs) {
       if (this.sending) {
         return;
       }
-      if (this.content.length === 0 || this.content == "") {
+      if (content.length === 0 || content == "") {
         Toast({
           message: "评论内容不得为空",
           position: "middle",
@@ -331,8 +308,6 @@ export default {
         return;
       }
       this.sending = true;
-      //去掉评论内容的前缀
-      this.content = this.content.slice(this.replyFor.length);
 
       const sendCommentRes = await axios({
         url: `${config.url.feedUrl}/thread/newComment`,
@@ -340,17 +315,17 @@ export default {
         withCredentials: true,
         data: {
           _id: this.sourse === "thread" ? this.thread._id : this.commentId,
-          comment: { content: this.content },
+          comment: { content, imgs},
           sourse: this.sourse
         }
       });
 
       this.sending = false;
       //评论完成后恢复状态
-      this.content = "";
       this.sourse = "thread";
       this.replyFor = "";
       this.commentId = "";
+      events.$emit("hasSent");
       if (sendCommentRes.data.success) {
         Toast({
           message: "评论成功",
@@ -407,27 +382,13 @@ export default {
       // //send comment后重新获取最新的评论信息
       // await this.initComments();
     },
-    replyThread:function(){
-      this.content = ``;
+    replyThread: function() {
       this.replyFor = ``;
       this.sourse = "thread";
-      this.commentId = '';
+      this.commentId = "";
     },
     //回复评论
     replyComment: async function(comment, index, hot) {
-      // if (hot) {
-      //   this.$set(this.hotFades, index, "fade");
-      //   setTimeout(() => {
-      //     this.$set(this.hotFades, index, "");
-      //   }, 500);
-      // } else {
-      //   this.$set(this.fades, index, "fade");
-      //   setTimeout(() => {
-      //     this.$set(this.fades, index, "");
-      //   }, 500);
-      // }
-
-      this.content = `回复${comment.nickName}:`;
       this.replyFor = `回复${comment.nickName}:`;
       this.sourse = "comment";
       this.commentId = comment.id;
@@ -469,7 +430,6 @@ export default {
       }
     },
     goToSonCommentPage: function(comment) {
-      console.log(`即将进入son comment page`);
       this.$router.push({ name: "sonCommentPage", query: { comment } });
     }
   }
@@ -478,7 +438,6 @@ export default {
 
 <style lang="less" scoped>
 .container {
-  justify-content: flex-start;
   position: fixed;
   height: 100vh;
   width: 100vw;
@@ -495,7 +454,7 @@ export default {
 .divide-line {
   border-top: 7px solid rgb(241, 241, 241);
 }
-.thread-container:active{
+.thread-container:active {
   background-color: #e6e6e6;
 }
 .thread-container {
@@ -649,7 +608,7 @@ export default {
 }
 .comment-show {
   flex-grow: 1;
-  margin-bottom: 84px;
+  margin-bottom: 14vw;
   .content-box-title {
     height: 10vw;
     text-align: left;
@@ -798,40 +757,6 @@ export default {
         }
       }
     }
-  }
-}
-.comment-make {
-  box-shadow: 0 -1px 1px 1px rgb(180, 178, 178);
-  flex-shrink: 0;
-  background-color: white;
-  height: 80px;
-  bottom: 0;
-  display: flex;
-  width: 100vw;
-  position: fixed;
-  justify-content: space-around;
-  padding: 0 0vw;
-  .content-area {
-    resize: none;
-    padding: 5px 0;
-    min-height: 40px;
-    line-height: 20px;
-    width: 80vw;
-    font-size: 4vw;
-    border-width: 0;
-    box-sizing: border-box;
-  }
-  .send-button {
-    margin-top: 5px;
-    border-radius: 7.5vw;
-    box-sizing: border-box;
-    border: 1px solid #32a8fc;
-    flex-shrink: 0;
-    height: 30px;
-    width: 15vw;
-    flex-grow: 0;
-    line-height: 30px;
-    color: #32a8fc;
   }
 }
 </style>

@@ -9,11 +9,17 @@ import focusPage from "@/components/person/focusPage"
 import mine from '@/components/person/mine'
 import notify from '@/components/person/notify'
 import store from "@/components/helper/store"
+import postBar from "@/components/home/components/postBar"
 Vue.use(Router)
 
 const router = new Router({
   // mode: 'history',
   routes: [
+    {
+      path: '/postBar',
+      name: 'postBar',
+      component: postBar
+    },
     {
       path: '/',
       name: 'index',

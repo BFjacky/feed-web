@@ -27,6 +27,7 @@ export default {
     }
   },
   mounted: async function() {
+    console.log("尽到了这里来");
     if (!this.img.hasUploaded) {
       console.log("未上传过的");
       const imgUploaded = await helper.upload(this.img);
@@ -57,7 +58,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 0px solid rgb(233, 230, 230);
+  border: 2px solid rgb(233, 230, 230);
   position: relative;
 }
 .spinPosition {

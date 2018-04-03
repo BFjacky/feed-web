@@ -12,8 +12,8 @@
           <div class="main">
               <div class="content-text">{{comment.content}}</div>
               <div class="content-buttons"></div>
-              <div class="imgs-part">
-                <img @click.stop="previewImage(img)"  class="img" :style="singleImgStyle" v-for="img in comment.imgs" v-bind:src="thread.imgs.length===1?img.urlMiddle:img.url"></img>
+              <div class="imgs-part"  v-if="comment.imgs.length>0">
+                <img @click.stop="previewImage(img)"  class="img" :style="singleImgStyle" v-for="img in comment.imgs" v-bind:src="comment.imgs.length===1?img.urlMiddle:img.url"></img>
               </div>
           </div>
           <div class="footer">
@@ -44,6 +44,9 @@
                       </div>
                     </div>
                     <div class="main">{{comment.content}}</div>
+                    <div class="imgs-part" v-if="comment.imgs.length>0">
+                      <img @click.stop="previewImage(img)"  class="img" v-for="img in comment.imgs" v-bind:src="img.url"></img>
+                    </div>
                     <div class="footer"  v-if="comment.commentInfo.length>0">
                       <div class="footer-comment" v-for="(subComment,index) in comment.commentInfo" v-on:click.stop="replyThirdComment(subComment)" v-if="index<comment.maxNumber">
                         <div class="name">{{!subComment.replyFor?subComment.nickName:subComment.replyFor}}:</div>
@@ -56,10 +59,7 @@
             </div>
             <div class="divide-line"></div>
         </div>
-        </div>
-        <div class="comment-make">
-            <textarea class="content-area" :maxlength="maxWordsLength" :placeholder="commentPlaceHolder" v-model:value="content"></textarea> 
-            <div class="send-button" v-on:click="sendAcomment">发送</div>
+        <post-bar v-on:sendButton="sendAcomment" :replyFor="replyFor"></post-bar>
         </div>
   </div>
 </template>
@@ -67,10 +67,13 @@
 import axios from "axios";
 import config from "../helper/config";
 import helper from "../helper/helper";
+import events from "../helper/events";
+import postBar from "./components/postBar";
 import { Toast } from "mint-ui";
 export default {
   activated: async function() {
     this.comment = this.$route.query.comment;
+    console.log("传过来的comment", this.comment);
     await this.initComments();
     this.comment = helper.parseDate([this.comment])[0];
     //获得图片宽高
@@ -92,21 +95,16 @@ export default {
     }
   },
   components: {
-    Toast
+    Toast,
+    postBar
   },
   data: function() {
     return {
       comment: {},
       //此条comment的comments
       comments: [],
-      //用户评论的内容
-      content: "",
       //当前选中的commentId
       commentId: "",
-      //评论区placeholder
-      commentPlaceHolder: "友善的发言更容易获得朋友",
-      //评论最大字数
-      maxWordsLength: 150,
       //防止用户过度点赞
       praiseLock: false,
       //在输入框提示 回复谁 的文字
@@ -122,21 +120,10 @@ export default {
         comment.maxNumber = 2;
       }
       this.comments = helper.parseDate(this.comments);
-    },
-    content: function() {
-      //判断当前replyFor 的 文字 有没有没修改一旦 replyFor的文字被修改了,清空这个效果,将sourse改为thread
-      for (let i = 0; i < this.replyFor.length; i++) {
-        if (this.replyFor[i] !== this.content[i]) {
-          this.replyFor = "";
-          this.content = "";
-          this.commentId = "";
-          break;
-        }
-      }
     }
   },
   methods: {
-    // ---------threads 方法
+    // ---------comment 方法
     praiseComment: async function() {
       const res = await helper.checkOauth();
       if (!res) {
@@ -213,19 +200,19 @@ export default {
       }
       if (commentRes.data.success) {
         //获得二级评论
-        this.comments = commentRes.data.comments;
+        let newComments = commentRes.data.comments;
         //获得三级评论
-        this.comments = await axios({
+        newComments = await axios({
           url: `${config.url.feedUrl}/comment/getAllSubComments`,
           method: "post",
           withCredentials: true,
           data: {
-            comments: this.comments
+            comments: newComments
           }
         });
-        this.comments = this.comments.data.comments;
+        newComments = newComments.data.comments;
         //遍历获得的comments，将所有的commentInfo中的XXX回复XXX填在replyFor字段上
-        for (const comment of this.comments) {
+        for (const comment of newComments) {
           for (const commentInfo of comment.commentInfo) {
             if (commentInfo.commentSourceId == comment._id) {
               //此条comment回复的是此条二级评论
@@ -242,13 +229,15 @@ export default {
             // console.log(commentInfo.replyFor);
           }
         }
+        this.comments = newComments;
+        console.log(this.comments);
       }
     },
-    sendAcomment: async function() {
+    sendAcomment: async function(content, imgs) {
       if (this.sending) {
         return;
       }
-      if (this.content.length === 0 || this.content == "") {
+      if (content.length === 0 || content == "") {
         Toast({
           message: "评论内容不得为空",
           position: "middle",
@@ -257,8 +246,6 @@ export default {
         return;
       }
       this.sending = true;
-      //去掉评论内容的前缀
-      this.content = this.content.slice(this.replyFor.length);
 
       const sendCommentRes = await axios({
         url: `${config.url.feedUrl}/thread/newComment`,
@@ -266,16 +253,16 @@ export default {
         withCredentials: true,
         data: {
           _id: !this.commentId ? this.comment._id : this.commentId,
-          comment: { content: this.content },
+          comment: { content, imgs },
           sourse: "comment"
         }
       });
 
       this.sending = false;
       //评论完成后恢复状态
-      this.content = "";
       this.replyFor = "";
       this.commentId = "";
+      events.$emit("hasSent");
       if (sendCommentRes.data.success) {
         Toast({
           message: "评论成功",
@@ -334,23 +321,18 @@ export default {
     },
     //一级评论
     replyFirstComment: function() {
-      this.content = ``;
       this.replyFor = ``;
       this.commentId = "";
     },
     //二级评论
     replySecondComment: async function(comment) {
-      this.content = `回复${comment.nickName}:`;
       this.replyFor = `回复${comment.nickName}:`;
       this.commentId = comment.id;
     },
     //三级评论
     replyThirdComment: function(comment) {
-      console.log(comment);
-      this.content = `回复${comment.nickName}:`;
       this.replyFor = `回复${comment.nickName}:`;
       this.commentId = comment._id;
-      console.log(this.content, this.replyFor, this.commentId);
     },
     //展示所有comments 或收起 comments
     showComments: async function(comment) {
@@ -360,13 +342,13 @@ export default {
           const tempInfo = chooseComment.commentInfo;
           chooseComment.commentInfo = [];
           chooseComment.commentInfo = tempInfo;
-          if (chooseComment.maxNumber === 999) {
-            console.log("收起");
+          if (chooseComment.maxNumber === 99999) {
+            //收起
             chooseComment.maxNumber = 2;
-            console.log(chooseComment.maxNumber);
             return;
           }
-          chooseComment.maxNumber = 999;
+          //展开
+          chooseComment.maxNumber = 99999;
         }
       }
     }
@@ -538,7 +520,7 @@ export default {
 }
 .comment-show {
   flex-grow: 1;
-  margin-bottom: 84px;
+  margin-bottom: 14vw;
   .content-box-title {
     height: 10vw;
     text-align: left;
@@ -629,6 +611,18 @@ export default {
         margin-top: 2vw;
         text-align: left;
         font-size: 3.5vw;
+      }
+      .imgs-part {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        margin-top: calc(2vw*16/9);
+        .img {
+          height: 28vw;
+          width: 28vw;
+          margin-left: 1vw;
+          margin-bottom: 1vw;
+        }
       }
       .footer {
         width: 75vw;
