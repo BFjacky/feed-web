@@ -27,5 +27,8 @@ export default {
     },
     postThread: {
         hasSent: false,
+    },
+    notify: {
+        notifies: [],
     }
 }

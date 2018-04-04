@@ -6,7 +6,9 @@
       </keep-alive>
     </transition>
 
-     <popup v-model="popupVisible" class="feed-top-popup" style="background-color:#292929b6" position="top" :modal="realFalse">你有新的通知</popup>
+    <popup v-model="popupVisible"  position="top" :modal="realFalse">
+      <div class="feed-top-popup-item1" @click="gotoNotifyPage">你有新的通知</div>
+    </popup>
   </div>
 </template>
 
@@ -24,7 +26,7 @@ export default {
       this.popupVisible = true;
       setTimeout(() => {
         this.popupVisible = false;
-      }, 1000);
+      }, 2000);
     });
   },
   data: function() {
@@ -37,8 +39,15 @@ export default {
   components: {
     popup: Popup
   },
+  methods: {
+    gotoNotifyPage: function() {
+      this.$router.push({ name: "notify" });
+      this.popupVisible = false;
+    }
+  },
   watch: {
     $route(to, from) {
+      console.log(this.$route,to,from)
       const toDepth = to.path.split("/").length;
       const fromDepth = from.path.split("/").length;
       this.transitionName = toDepth > fromDepth ? "forwardMov" : "backMov";
@@ -48,7 +57,7 @@ export default {
 </script>
 
 <style>
-.feed-top-popup {
+.feed-top-popup-item1 {
   width: 100vw;
   height: 12vw;
   line-height: 12vw;
@@ -56,6 +65,7 @@ export default {
   color: white;
   text-align: center;
   z-index: 5000;
+  background-color: #292929b6;
 }
 div {
   -moz-user-select: none;

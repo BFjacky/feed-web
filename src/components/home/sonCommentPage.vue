@@ -72,8 +72,14 @@ import postBar from "./components/postBar";
 import { Toast } from "mint-ui";
 export default {
   activated: async function() {
+    if (!this.$route.query.comment._id) {
+      //路由回退不带参数
+      console.log(`从其他路由回退过来`);
+      return;
+    }
+
     this.comment = this.$route.query.comment;
-    console.log("传过来的comment", this.comment);
+
     await this.initComments();
     this.comment = helper.parseDate([this.comment])[0];
     //获得图片宽高

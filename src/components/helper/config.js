@@ -15,5 +15,5 @@ export default {
         focus: [],
         followers: [],
         shields: [],
-    }
+    },
 }

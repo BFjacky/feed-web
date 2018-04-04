@@ -43,6 +43,7 @@
 <script>
 import axios from "axios";
 import config from "../helper/config";
+import store from "../helper/store";
 import pageHelper from "./helper";
 import events from "../helper/events";
 export default {
@@ -90,12 +91,15 @@ export default {
         }, 100);
       });
     }
+    this.notifies = store.notify.notifies;
 
     await checkPrepared();
 
+    //接收服务器推送的 notify 消息
     this.$options.sockets.res = data => {
-      this.notifies = data;
-      events.$emit('newNotifies',this.notifies)
+      store.notify.notifies = data;
+      this.notifies = store.notify.notifies;
+      events.$emit("newNotifies", store.notify.notifies);
     };
     this.followers = config.user.followers;
   },
@@ -104,9 +108,9 @@ export default {
       avatarUrl: "",
       nickName: "点我登陆",
       gender: -1,
-      notifies: [],
       prepared: false,
-      followers: []
+      followers: [],
+      notifies: []
     };
   },
   methods: {
@@ -117,8 +121,7 @@ export default {
       this.$router.push({ name: "mine" });
     },
     item2Click: function() {
-      this.$router.push({ name: "notify", query: { notifies: this.notifies } });
-      this.notifies = [];
+      this.$router.push({ name: "notify" });
     },
     item3Click: function() {
       this.$router.push({ name: "focusPage" });

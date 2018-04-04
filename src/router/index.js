@@ -16,11 +16,6 @@ const router = new Router({
   // mode: 'history',
   routes: [
     {
-      path: '/postBar',
-      name: 'postBar',
-      component: postBar
-    },
-    {
       path: '/',
       name: 'index',
       component: index
@@ -46,7 +41,7 @@ const router = new Router({
       component: mine,
     },
     {
-      path: '/index/notify',
+      path: '/index/person/deep/notify',
       name: 'notify',
       component: notify,
     },

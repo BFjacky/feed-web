@@ -47,6 +47,9 @@
                       </div>
                     </div>
                     <div class="main">{{comment.content}}</div>
+                    <div class="imgs-part" v-if="comment.imgs.length>0">
+                      <img @click.stop="previewImage(img)"  class="img" v-for="img in comment.imgs" v-bind:src="img.url"></img>
+                    </div>
                     <div class="footer"  v-if="comment.commentInfo.length>0" v-on:click.stop="goToSonCommentPage(comment)">
                       <div class="footer-comment" v-for="(subComment,index) in comment.commentInfo"  v-if="index<comment.maxNumber">
                         <div class="name">{{subComment.nickName}}:</div>
@@ -73,6 +76,9 @@
                       </div>
                     </div>
                     <div class="main">{{comment.content}}</div>
+                    <div class="imgs-part" v-if="comment.imgs.length>0">
+                      <img @click.stop="previewImage(img)"  class="img" v-for="img in comment.imgs" v-bind:src="img.url"></img>
+                    </div>
                     <div class="footer"  v-if="comment.commentInfo.length>0" v-on:click.stop="goToSonCommentPage(comment)">
                       <div class="footer-comment" v-for="(subComment,index) in comment.commentInfo"  v-if="index<comment.maxNumber">
                         <div class="name">{{subComment.nickName}}:</div>
@@ -315,7 +321,7 @@ export default {
         withCredentials: true,
         data: {
           _id: this.sourse === "thread" ? this.thread._id : this.commentId,
-          comment: { content, imgs},
+          comment: { content, imgs },
           sourse: this.sourse
         }
       });
@@ -721,6 +727,18 @@ export default {
         margin-top: 2vw;
         text-align: left;
         font-size: 3.5vw;
+      }
+      .imgs-part {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        margin-top: calc(2vw*16/9);
+        .img {
+          height: 28vw;
+          width: 28vw;
+          margin-left: 1vw;
+          margin-bottom: 1vw;
+        }
       }
       .footer {
         width: 75vw;

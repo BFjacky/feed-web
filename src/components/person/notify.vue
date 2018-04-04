@@ -29,13 +29,15 @@
 import axios from "axios";
 import helper from "../helper/helper";
 import config from "../helper/config";
+import store from "../helper/store";
 import { Popup } from "mint-ui";
 export default {
   activated: async function() {
+    console.log(`进入了notify页面`, this.notifies, store.notify.notifies);
     //获得 notifies
-    this.notifies = this.$route.query.notifies;
-
-    console.log(`获得了notifies`, this.notifies);
+    this.notifies = store.notify.notifies;
+    store.notify.notifies = [];
+    // console.log(`获得了notifies`, this.notifies);
     this.notifies = helper.parseDate(this.notifies);
 
     //将所有notifies 设为已读
@@ -221,7 +223,7 @@ export default {
       line-height: 4vw;
       max-height: 31vw;
       max-width: 20vw;
-      overflow: hidden;
+      overflow: auto;
       text-overflow: ellipsis;
     }
   }
