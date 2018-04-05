@@ -6,8 +6,12 @@
       </keep-alive>
     </transition>
 
-    <popup v-model="popupVisible"  position="top" :modal="realFalse">
+    <popup v-model="popupVisible"  style="opacity:0.85;" position="top" :modal="realFalse">
       <div class="feed-top-popup-item1" @click="gotoNotifyPage">你有新的通知</div>
+    </popup>
+
+    <popup v-model="popupVisibleMid">
+      <div class="feed-mid-popup-item" v-for="item in itemList" @click="clickPopupItem(item)">{{item.text}}</div>
     </popup>
   </div>
 </template>
@@ -28,11 +32,17 @@ export default {
         this.popupVisible = false;
       }, 2000);
     });
+    events.$on("show-popup-mid", itemList => {
+      this.itemList = itemList;
+      this.popupVisibleMid = true;
+    });
   },
   data: function() {
     return {
       realFalse: false,
       popupVisible: false,
+      popupVisibleMid: false,
+      itemList: [],
       transitionName: "forwardMov"
     };
   },
@@ -43,14 +53,24 @@ export default {
     gotoNotifyPage: function() {
       this.$router.push({ name: "notify" });
       this.popupVisible = false;
+    },
+    clickPopupItem: function(item) {
+      this.popupVisibleMid = false;
+      this.itemList = [];
+      events.$emit("click-popup-mid", item);
     }
   },
   watch: {
     $route(to, from) {
-      console.log(this.$route,to,from)
+      console.log(this.$route, to, from);
       const toDepth = to.path.split("/").length;
       const fromDepth = from.path.split("/").length;
       this.transitionName = toDepth > fromDepth ? "forwardMov" : "backMov";
+    },
+    popupVisibleMid: function() {
+      if (!this.popupVisibleMid) {
+        events.$emit("click-popup-mid");
+      }
     }
   }
 };
@@ -65,7 +85,17 @@ export default {
   color: white;
   text-align: center;
   z-index: 5000;
-  background-color: #292929b6;
+  background-color: #292929;
+}
+.feed-mid-popup-item {
+  width: 50vw;
+  height: 12vw;
+  line-height: 12vw;
+  font-size: 4vw;
+  text-align: center;
+  z-index: 5000;
+  background-color: white;
+  border-bottom: 1px solid rgb(199, 199, 199);
 }
 div {
   -moz-user-select: none;

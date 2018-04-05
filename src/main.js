@@ -8,7 +8,7 @@ import config from "./components/helper/config"
 import { InfiniteScroll } from 'mint-ui';
 import VueSocketio from 'vue-socket.io';
 
-Vue.use(VueSocketio,`${config.url.feedUrl}`);
+Vue.use(VueSocketio,`${config.url.socketUrl}`);
 Vue.use(lodash)
 Vue.use(InfiniteScroll)
 // import ElementUI from 'element-ui';

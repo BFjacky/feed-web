@@ -169,7 +169,7 @@ export default {
     background-color: white;
   }
   100% {
-    background-color: #e4c66371;
+    background-color: #e0e0e0;
   }
 }
 .itemChosen {

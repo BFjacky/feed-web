@@ -6,10 +6,12 @@ import commentPage from '@/components/home/commentPage'
 import sonCommentPage from '@/components/home/sonCommentPage'
 import shieldPage from "@/components/person/shieldPage"
 import focusPage from "@/components/person/focusPage"
+import fansPage from "@/components/person/fansPage"
 import mine from '@/components/person/mine'
 import notify from '@/components/person/notify'
 import store from "@/components/helper/store"
-import postBar from "@/components/home/components/postBar"
+import postBar from "@/components/home/components/postBar";
+import myPopup from "@/components/myPopup";
 Vue.use(Router)
 
 const router = new Router({
@@ -54,6 +56,11 @@ const router = new Router({
       path: '/index/focusPage',
       name: 'focusPage',
       component: focusPage,
+    },
+    {
+      path: '/index/fansPage',
+      name: 'fansPage',
+      component: fansPage,
     }
   ]
 })

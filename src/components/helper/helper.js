@@ -1,5 +1,6 @@
 const qiniu = require('qiniu-js');
 import myconfig from './config'
+import events from "./events"
 import axios from 'axios'
 export default {
     async wxinit() {
@@ -29,7 +30,7 @@ export default {
 
             wx.config({
                 debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-                appId: 'wx9fd6bbc89436a5ee', // 必填，公众号的唯一标识
+                appId: myconfig.url.appId, // 必填，公众号的唯一标识
                 timestamp, // 必填，生成签名的时间戳
                 nonceStr, // 必填，生成签名的随机串
                 signature,// 必填，签名
@@ -118,6 +119,14 @@ export default {
             }, time);
         });
     },
+    popup(items) {
+        return new Promise((resolve, reject) => {
+            events.$emit("show-popup-mid", items);
+            events.$once("click-popup-mid", (item) => {
+                resolve(item);
+            })
+        })
+    },
     //解析日期时间
     parseDate(array) {
         for (const ele of array) {
@@ -132,16 +141,12 @@ export default {
             if (minute < 10) {
                 minute = '0' + minute;
             }
-            if (now.getDate() - ele.createdAt.getDate() <= 0) {
+            if (now.getDate() === ele.createdAt.getDate() && now.getMonth() === ele.createdAt.getMonth() && now.getYear() === ele.createdAt.getYear()) {
                 // 一天内 :只显示:小时:分钟
                 ele.createdAt = `${ele.createdAt.getHours()}:${minute}`;
             }
-            else if (now.getDate() - ele.createdAt.getDate() <= 1) {
-                ele.createdAt = `昨天  ${ele.createdAt.getHours()}:${minute}`;
-                //超过一天,不超过两天:显示昨天
-            } else {
+            else {
                 ele.createdAt = `${ele.createdAt.getMonth() + 1}月${ele.createdAt.getDate()}日  ${ele.createdAt.getHours()}:${minute}`;
-                //超过两天，显示日期和时间
             }
         }
         return array;

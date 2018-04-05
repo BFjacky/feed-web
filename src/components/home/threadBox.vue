@@ -39,7 +39,7 @@ import axios from "axios";
 import config from "../helper/config";
 import helper from "../helper/helper";
 import events from "../helper/events";
-import { Toast, Popup } from "mint-ui";
+import { Toast, MessageBox } from "mint-ui";
 export default {
   props: ["thread"],
   created: async function() {
@@ -73,8 +73,7 @@ export default {
     });
   },
   components: {
-    Toast,
-    popup: Popup
+    Toast
   },
   data: function() {
     return {
@@ -83,7 +82,9 @@ export default {
       singleImgStyle: {},
       fade: false,
       isDelete: false,
-      isShield: false
+      isShield: false,
+      item1Text: "",
+      myself: false
     };
   },
   methods: {
@@ -152,23 +153,139 @@ export default {
       }
       wx.previewImage({ current, urls });
     },
-    clickBox: function() {
-      events.$emit("clickBox", this.thread);
-      //点击了箱子 添加动画效果
-      this.fade = true;
-      setTimeout(() => {
-        this.fade = false;
-      }, 500);
-    },
     share: async function() {
       // helper.wxShare();
       alert("暂无分享功能");
+    },
+    clickBox: function() {
+      //查看该用户是否已经关注了此用户
+      this.item1Text = "关注此用户";
+      for (const focusUser of config.user.focus) {
+        if (focusUser.uid == this.thread.uid) {
+          this.item1Text = "取消关注此用户";
+          break;
+        }
+      }
+      //查看此用户是否为自己，若为自己则不显示关注或屏蔽
+      if (this.thread.uid == config.user._id) {
+        this.myself = true;
+      } else {
+        this.myself = false;
+      }
+
+      let items = [];
+      if (this.myself) {
+        items = [{ text: "删除这条动态" }];
+      } else {
+        items = [{ text: this.item1Text }, { text: "屏蔽此人的动态" }];
+      }
+      helper.popup(items).then(async item => {
+        if (item) {
+          switch (item.text) {
+            case "删除这条动态":
+              await this.deleteThis();
+              break;
+            case "屏蔽此人的动态":
+              await this.shieldThis();
+              break;
+            case "关注此用户":
+              await this.focusThis();
+              break;
+            case "取消关注此用户":
+              await this.focusThis();
+              break;
+          }
+        }
+      });
+    },
+    focusThis: async function() {
+      if (this.item1Text === "关注此用户") {
+        const res = await axios({
+          url: `${config.url.feedUrl}/user/focus`,
+          method: "post",
+          withCredentials: true,
+          data: {
+            uid: this.thread.uid
+          }
+        });
+        //更新本地的
+        const { focus } = res.data;
+        if (focus !== undefined) {
+          config.user.focus = focus;
+        }
+      } else {
+        const res = await axios({
+          url: `${config.url.feedUrl}/user/cancelFocus`,
+          method: "post",
+          withCredentials: true,
+          data: {
+            uid: this.thread.uid
+          }
+        });
+        //更新本地的
+        const { focus } = res.data;
+        if (focus !== undefined) {
+          config.user.focus = focus;
+        }
+      }
+    },
+    shieldThis: async function() {
+      const _this = this;
+      MessageBox.confirm("以后将无法查看此用户的状态")
+        .then(async action => {
+          if (action === "confirm") {
+            const res = await axios({
+              url: `${config.url.feedUrl}/user/shields`,
+              method: "post",
+              withCredentials: true,
+              data: {
+                uid: _this.thread.uid
+              }
+            });
+            //更新本地的
+            const { shields } = res.data;
+            if (shields !== undefined) {
+              config.user.shields = shields;
+            }
+            events.$emit("shieldThread", _this.thread.uid);
+          }
+        })
+        .catch(() => {});
+    },
+    deleteThis: async function() {
+      const _this = this;
+      MessageBox.confirm("删除后将不会出现在你或其他人的动态中")
+        .then(async action => {
+          if (action === "confirm") {
+            const res = await axios({
+              url: `${config.url.feedUrl}/thread/deleteThread`,
+              method: "post",
+              withCredentials: true,
+              data: {
+                thread: _this.thread
+              }
+            });
+            //更新本地的
+            console.log("删除完了:", res.data);
+            events.$emit("deleteThread", _this.thread._id);
+          }
+        })
+        .catch(() => {});
     }
   }
 };
 </script>
 
 <style lang="less" scoped>
+// .mask {
+//   height: 100vh;
+//   width: 100vw;
+//   background-color: black;
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   z-index: 10000;
+// }
 @keyframes fade-in-out {
   0% {
     background-color: #d4d4d400;

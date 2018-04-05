@@ -28,11 +28,11 @@
         <div class="icon icon4"></div>
         <div class="text">黑名单</div>
       </div>
-      <!-- <div class="item button">
-        <div class="icon icon3"></div>
-        <div class="text">我收到的点赞</div>
+      <div class="item button"  @click="item5Click">
+        <div class="icon icon4"></div>
+        <div class="text">我的粉丝</div>
       </div>
-      <div class="item button">
+      <!-- <div class="item button">
         <div class="icon icon4"></div>
         <div class="text">我发出的回复</div>
       </div> -->
@@ -55,7 +55,8 @@ export default {
     config.user.fetching = false;
     this.prepared = true;
     if (!userGet.data || !userGet.data._id) {
-      //未能获取到用户信息
+      window.location.href = config.url.oauthUrl;
+      //未能获取到用户信息，location
       return;
     }
     const {
@@ -128,6 +129,9 @@ export default {
     },
     item4Click: function() {
       this.$router.push({ name: "shieldPage" });
+    },
+    item5Click: function() {
+      this.$router.push({ name: "fansPage" });
     }
   }
 };

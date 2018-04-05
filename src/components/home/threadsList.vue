@@ -25,7 +25,7 @@ import store from "../helper/store";
 import events from "../helper/events";
 import { Spinner, Loadmore } from "mint-ui";
 export default {
-  props: ["type"],
+  props: ["type", "uid"],
   components: {
     threadBox,
     spinner: Spinner,
@@ -89,7 +89,9 @@ export default {
           url: `${config.url.feedUrl}/thread/getThreadByUser`,
           method: "post",
           withCredentials: true,
-          data: {}
+          data: {
+            uid: this.uid
+          }
         });
         this.threads = userThreads.data.threads;
         this.threads = helper.parseDate(this.threads);
@@ -111,23 +113,6 @@ export default {
           this.threads = helper.parseDate(this.threads);
           break;
         }
-    }
-
-    //判断一下初始够不够5个显示在桌面上，不够的话就继续请求
-    let numbers = 0;
-    for (const thread of this.threads) {
-      if (!thread.needShield) {
-        numbers++;
-      }
-    }
-    while (numbers < 5 && !this.nomore) {
-      await this.myloadMore();
-      numbers = 0;
-      for (const thread of this.threads) {
-        if (!thread.needShield) {
-          numbers++;
-        }
-      }
     }
   },
   activated: async function() {
@@ -209,110 +194,12 @@ export default {
     };
   },
   methods: {
-    myloadMore: async function() {
-      switch (this.type) {
-        case "最新": {
-          const threads = await axios({
-            url: `${config.url.feedUrl}/thread/getThread`,
-            withCredentials: true,
-            params: {
-              objectId: this.threads[this.threads.length - 1]._id
-            }
-          });
-          this.threads = this.threads.concat(threads.data.threads);
-          this.threads = helper.parseDate(this.threads);
-          if (threads.data.threads.length < 5) {
-            this.nomore = true;
-            return;
-          }
-          break;
-        }
-        case "热门": {
-          const objectIds = [];
-          //获得所有已经在客户端的threadsId
-          for (const thread of this.threads) {
-            objectIds.push(thread._id);
-          }
-          const threads = await axios({
-            url: `${config.url.feedUrl}/thread/getHotThread`,
-            method: "post",
-            withCredentials: true,
-            data: {
-              objectIds
-            }
-          });
-          this.threads = this.threads.concat(threads.data.threads);
-          this.threads = helper.parseDate(this.threads);
-          if (threads.data.threads.length < 5) {
-            this.nomore = true;
-            return;
-          }
-          break;
-        }
-        case "关注":
-          const threads = await axios({
-            url: `${config.url.feedUrl}/thread/getFocusThread`,
-            withCredentials: true,
-            data: {
-              objectId: this.threads[this.threads.length - 1]._id
-            },
-            method: "post"
-          });
-          this.threads = this.threads.concat(threads.data.threads);
-          this.threads = helper.parseDate(this.threads);
-          if (threads.data.threads.length < 5) {
-            this.nomore = true;
-            return;
-          }
-          break;
-        case "用户": {
-          const threads = await axios({
-            url: `${config.url.feedUrl}/thread/getThreadByUser`,
-            withCredentials: true,
-            method: "post",
-            data: {
-              objectId: this.threads[this.threads.length - 1]._id
-            }
-          });
-          this.threads = this.threads.concat(threads.data.threads);
-          this.threads = helper.parseDate(this.threads);
-          if (threads.data.threads.length < 5) {
-            this.nomore = true;
-            return;
-          }
-          break;
-        }
-        default: {
-          //根据主题获得thread
-          if (this.type === "") {
-            return;
-          } else {
-            const threads = await axios({
-              url: `${config.url.feedUrl}/thread/getThreadByType`,
-              withCredentials: true,
-              method: "post",
-              data: {
-                objectId: this.threads[this.threads.length - 1]._id,
-                themeText: this.type
-              }
-            });
-            this.threads = this.threads.concat(threads.data.threads);
-            this.threads = helper.parseDate(this.threads);
-            if (threads.data.threads.length < 5) {
-              this.nomore = true;
-              return;
-            }
-            break;
-          }
-        }
-      }
-    },
     loadMore: async function() {
       console.log(`触发了loadmore`);
       if (this.threads.length === 0) {
         return;
       }
-      if (this.busy) {
+      if (this.busy || this.nomore) {
         return;
       }
       switch (this.type) {
@@ -386,7 +273,8 @@ export default {
             withCredentials: true,
             method: "post",
             data: {
-              objectId: this.threads[this.threads.length - 1]._id
+              objectId: this.threads[this.threads.length - 1]._id,
+              uid: this.uid
             }
           });
           this.threads = this.threads.concat(threads.data.threads);
@@ -469,7 +357,9 @@ export default {
             url: `${config.url.feedUrl}/thread/getThreadByUser`,
             method: "post",
             withCredentials: true,
-            data: {}
+            data: {
+              uid: this.uid
+            }
           });
           this.threads = [];
           await helper.wait(10);
@@ -501,23 +391,6 @@ export default {
       this.nomore = false;
       this.busy = false;
       this.$refs.loadmore.onTopLoaded();
-
-      //判断一下初始够不够5个显示在桌面上，不够的话就继续请求
-      let numbers = 0;
-      for (const thread of this.threads) {
-        if (!thread.needShield) {
-          numbers++;
-        }
-      }
-      while (numbers < 5 && !this.nomore) {
-        await this.myloadMore();
-        numbers = 0;
-        for (const thread of this.threads) {
-          if (!thread.needShield) {
-            numbers++;
-          }
-        }
-      }
     },
     topStatusChange: function(e) {
       this.topStatus = e;
