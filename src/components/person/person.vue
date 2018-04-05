@@ -17,8 +17,8 @@
       </div>
       <div class="item button" @click="item2Click">
         <div class="icon icon2"></div>
-        <div class="text">未读通知</div>
-        <div class="number-text">{{notifies.length}}</div>
+        <div class="text">通知</div>
+        <div class="number-text" v-show="notifies.length>0">{{notifies.length>99?'···':notifies.length}}</div>
       </div>
       <div class="item button" @click="item3Click">
         <div class="icon icon3"></div>
@@ -29,7 +29,7 @@
         <div class="text">黑名单</div>
       </div>
       <div class="item button"  @click="item5Click">
-        <div class="icon icon4"></div>
+        <div class="icon icon5"></div>
         <div class="text">我的粉丝</div>
       </div>
       <!-- <div class="item button">
@@ -209,13 +209,12 @@ export default {
     width: 4vh;
   }
   .number-text {
-    padding: 0.5vw;
-    height: 3.5vw;
-    min-width: 3.5vw;
+    height: 4.5vw;
+    width: 4.5vw;
     background-color: rgb(248, 94, 94);
-    border-radius: 1.75vw;
-    line-height: 3.5vw;
-    font-size: 3.5vw;
+    border-radius: 50%;
+    line-height: 4.5vw;
+    font-size: 3vw;
     color: white;
     text-align: center;
     position: relative;
@@ -236,6 +235,9 @@ export default {
   }
   .icon4 {
     background-image: url("../../assets/blackList.png");
+  }
+  .icon5 {
+    background-image: url("../../assets/fans.png");
   }
 }
 .button:active {

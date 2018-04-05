@@ -42,7 +42,10 @@ export default {
                 await this.cancelShield();
                 break;
               case "查看他的状态":
-                console.log("查看他的状态");
+                this.$router.push({
+                  name: "userThreadList",
+                  query: { uid: this.choiseUser._id }
+                });
                 break;
             }
           }

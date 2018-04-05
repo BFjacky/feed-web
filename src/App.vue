@@ -62,10 +62,10 @@ export default {
   },
   watch: {
     $route(to, from) {
-      console.log(this.$route, to, from);
+      console.log(window.history.length)
       const toDepth = to.path.split("/").length;
       const fromDepth = from.path.split("/").length;
-      this.transitionName = toDepth > fromDepth ? "forwardMov" : "backMov";
+      this.transitionName = toDepth >= fromDepth ? "forwardMov" : "backMov";
     },
     popupVisibleMid: function() {
       if (!this.popupVisibleMid) {

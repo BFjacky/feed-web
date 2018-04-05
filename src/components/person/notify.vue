@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <div class="header">我的通知</div>
+  <div class="container" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="100">
+    <div class="header">未读通知({{notifies.length}})</div>
     <div class="notifies-container">
       <div class="notify-box" v-for="(notify,index) in notifies" @click="clickNotifyBox(notify,index)" v-bind:class="clickingAni[index]">
         <div class="left">
@@ -18,11 +18,31 @@
           <div class="content-box">{{notify.sourceContent}}</div>
         </div>
       </div>
-      <div class="nomore-remind">没有更多了</div>
+      <div style="color: #888888;text-align: center;width: 100vw;padding:3vw 0">没有更多了...</div>
     </div>
-    <popup v-model="popupVisible" class="popup" >
-      <div class="item" @click="gotoCommentPage">查看此条动态</div>
-    </popup>
+    <div class="header">已读通知</div>
+    <div class="notifies-container" >
+      <div class="notify-box" v-for="(notify,index) in oldNotifies" @click="clickNotifyBox(notify,index)" v-bind:class="clickingAni[index]">
+        <div class="left">
+          <div class="head">
+            <div class="avatar" v-bind:style="{backgroundImage:`url(${notify.commentInfo.avatarUrl})`}"></div>
+            <div class="title">
+              <div class="name">{{notify.commentInfo.nickName}}</div>
+              <div class="text"> 回复了你</div>
+            </div>
+          </div>
+          <div class="main">{{notify.commentInfo.content}}</div>
+          <div class="footer">{{notify.createdAt}}</div>
+        </div>
+        <div class="right">
+          <div class="content-box">{{notify.sourceContent}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="spinner-box">
+        <spinner type="triple-bounce" color="#32a8fc" v-if="busy"></spinner>
+        <div class="text-line" v-if="nomore">没有更多了...</div>
+    </div>
   </div>
 </template>
 <script>
@@ -30,15 +50,28 @@ import axios from "axios";
 import helper from "../helper/helper";
 import config from "../helper/config";
 import store from "../helper/store";
-import { Popup } from "mint-ui";
+import { Spinner } from "mint-ui";
 export default {
   activated: async function() {
     console.log(`进入了notify页面`, this.notifies, store.notify.notifies);
     //获得 notifies
     this.notifies = store.notify.notifies;
     store.notify.notifies = [];
-    // console.log(`获得了notifies`, this.notifies);
     this.notifies = helper.parseDate(this.notifies);
+
+    //首次获得oldNotifies的时候，将busy设置为true,禁用loadmore
+    this.busy = true;
+    //获得oldNotifies
+    const oldNotifiesRes = await axios({
+      method: "get",
+      url: `${config.url.feedUrl}/user/getOldNotifies`,
+      withCredentials: true,
+      params: {}
+    });
+    let oldNotifies = oldNotifiesRes.data.oldNotifies;
+    oldNotifies = helper.parseDate(oldNotifies);
+    this.oldNotifies = oldNotifies;
+    this.busy = false;
 
     //将所有notifies 设为已读
     const res = await axios({
@@ -49,72 +82,70 @@ export default {
         notifies: this.notifies
       }
     });
-
-    console.log(res);
   },
   components: {
-    popup: Popup
+    spinner: Spinner
   },
   data: function() {
     return {
       notifies: [],
+      oldNotifies: [],
       choosedNotify: "",
       clickingAni: [],
-      popupVisible: false
+      busy: false,
+      nomore: false
     };
   },
   methods: {
     clickNotifyBox: function(notify, index) {
-      //显示动画效果
-      this.$set(this.clickingAni, index, "fade");
-      setTimeout(() => {
-        this.$set(this.clickingAni, index, "");
-      }, 500);
-      //显示toast
-      this.popupVisible = true;
       this.choosedNotify = notify;
+      helper.popup([{ text: "查看此条状态" }]).then(async item => {
+        if (item) {
+          switch (item.text) {
+            case "查看此条状态":
+              await this.gotoCommentPage();
+              break;
+          }
+        }
+      });
+    },
+    loadMore: async function() {
+      if (this.nomore) {
+        return;
+      }
+      this.busy = true;
+      const oldNotifiesRes = await axios({
+        method: "get",
+        url: `${config.url.feedUrl}/user/getOldNotifies`,
+        withCredentials: true,
+        params: {
+          objectId: this.oldNotifies[this.oldNotifies.length - 1]._id
+        }
+      });
+      let oldNotifies = oldNotifiesRes.data.oldNotifies;
+      oldNotifies = helper.parseDate(oldNotifies);
+      if (oldNotifies.length <= 5) {
+        this.nomore = true;
+      }
+      this.oldNotifies = this.oldNotifies.concat(oldNotifies);
+      this.busy = false;
     },
     gotoCommentPage: async function() {
-      //popupVisible
-      this.popupVisible = false;
-
       let thread;
-      if (this.choosedNotify.threadSourceId) {
-        const threadData = await axios({
-          method: "post",
-          url: `${config.url.feedUrl}/thread/getOneThread`,
-          withCredentials: true,
-          data: {
-            threadId: this.choosedNotify.threadSourceId
-          }
-        });
-        thread = threadData.data.thread;
-      }
+      const threadData = await axios({
+        method: "post",
+        url: `${config.url.feedUrl}/thread/getSourceThread`,
+        withCredentials: true,
+        data: {
+          commentId: this.choosedNotify.commentId
+        }
+      });
+      thread = threadData.data.thread;
 
-      //commment 连套问题 FIX ME
-      if (this.choosedNotify.commentSourceId) {
-        const commentData = await axios({
-          method: "post",
-          url: `${config.url.feedUrl}/comment/getOneComment`,
-          withCredentials: true,
-          data: {
-            commentId: this.choosedNotify.commentSourceId
-          }
-        });
-        const comment = commentData.data.comment;
-        const threadData = await axios({
-          method: "post",
-          url: `${config.url.feedUrl}/thread/getOneThread`,
-          withCredentials: true,
-          data: {
-            threadId: comment.threadSourceId
-          }
-        });
-        thread = threadData.data.thread;
-      }
+      console.log("跳转钱获得了thread了吧:", thread);
       //  获得点击的目标thread;
       this.$router.push({
-        path: "/index/commentPage",
+        name: "commentPage",
         query: {
           thread
         }
@@ -160,10 +191,10 @@ export default {
   height: 6vh;
   line-height: 6vh;
   color: #555555;
-  box-shadow: 0 2px 1px 1px rgb(207, 207, 207);
+  border-top: 1px solid rgb(223, 223, 223);
+  box-shadow: 0 2px 1px 1px rgb(204, 204, 204);
 }
 .notifies-container {
-  height: 94vh;
   width: 100vw;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
@@ -242,16 +273,14 @@ export default {
     opacity: 1;
   }
 }
-.popup {
-  animation: fade-in 0.3s ease-in-out forwards;
-  height: 8vh;
-  width: 60vw;
-  .item {
-    height: 8vh;
-    width: 100%;
+.spinner-box {
+  height: 10vh;
+  width: 100vw;
+  .text-line {
+    color: #888888;
     text-align: center;
-    line-height: 8vh;
-    font-size: 4.5vw;
+    width: 100vw;
+    padding: 2vw 0;
   }
 }
 </style>

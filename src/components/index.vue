@@ -59,7 +59,7 @@ export default {
       if (!res) {
         return;
       }
-      this.$router.push({ path: "/index/postThread" });
+      this.$router.push({ name: "postThread" });
     }
   },
   watch: {},

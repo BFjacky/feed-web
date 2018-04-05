@@ -139,7 +139,7 @@ export default {
         return;
       }
       this.$router.push({
-        path: "/index/commentPage",
+        name: "commentPage",
         query: {
           thread: this.thread
         }

@@ -28,22 +28,22 @@ const router = new Router({
       component: postThread,
     },
     {
-      path: '/index/commentPage',
+      path: '/index/deep/deep/commentPage',
       name: 'commentPage',
       component: commentPage,
     },
     {
-      path: '/index/commentPage/sonCommentPage',
+      path: '/index/deep/deep/commentPage/sonCommentPage',
       name: 'sonCommentPage',
       component: sonCommentPage,
     },
     {
-      path: '/index/userThreadList',
+      path: '/index/deep/userThreadList',
       name: 'userThreadList',
       component: userThreadList,
     },
     {
-      path: '/index/person/deep/notify',
+      path: '/index/notify',
       name: 'notify',
       component: notify,
     },
