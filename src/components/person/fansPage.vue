@@ -8,9 +8,6 @@
       </div>
     </div>
     <div class="nomore-text">{{remindText}}</div>
-    <popup class="popup" v-model="popupVisible" pop-transition="popup-fade">
-      <div class="item" @click="readThread">查看他的动态</div>
-    </popup>
   </div>
 </template>
 <script>
@@ -24,12 +21,8 @@ export default {
     return {
       users: [],
       choiseUser: {},
-      popupVisible: false,
       remindText: "没有数据了..."
     };
-  },
-  components: {
-    popup: Popup
   },
   activated: async function() {
     const res = await axios({
@@ -43,13 +36,22 @@ export default {
   },
   methods: {
     clickUserBox: function(user) {
-      this.popupVisible = true;
       this.choiseUser = user;
+      helper.popup([{ text: "查看他的状态" }]).then(async item => {
+        if (item) {
+          switch (item.text) {
+            case "查看他的状态":
+              this.$router.push({
+                name: "userThreadList",
+                query: { uid: this.choiseUser._id }
+              });
+              break;
+          }
+        }
+      });
     },
     //跳转到该user的动态页面
-    readThread: async function() {
-         
-    }
+    readThread: async function() {}
   }
 };
 </script>

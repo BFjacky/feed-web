@@ -48,77 +48,20 @@ export default {
         this.threads = typeThreads.data.threads;
         this.threads = helper.parseDate(this.threads);
       }
+    },
+    uid:async function(){
+      await this.refresh();
     }
   },
-  created: async function() {
+  activated: async function() {
+    console.log(`进到了 threadsList`)
     //等待取回用户
     while (!config.user._id && config.user.fetching) {
       await helper.wait(50);
     }
-    switch (this.type) {
-      case "最新":
-        const threads = await axios({
-          url: `${config.url.feedUrl}/thread/getThread`,
-          withCredentials: true
-        });
-        this.threads = threads.data.threads;
-        this.threads = helper.parseDate(this.threads);
-        break;
-      case "热门":
-        const hotThreads = await axios({
-          url: `${config.url.feedUrl}/thread/getHotThread`,
-          method: "post",
-          withCredentials: true,
-          data: {}
-        });
-        this.threads = hotThreads.data.threads;
-        this.threads = helper.parseDate(this.threads);
-        break;
-      case "关注":
-        const focusThreads = await axios({
-          url: `${config.url.feedUrl}/thread/getFocusThread`,
-          method: "post",
-          withCredentials: true,
-          data: {}
-        });
-        this.threads = focusThreads.data.threads;
-        this.threads = helper.parseDate(this.threads);
-        break;
-      case "用户":
-        const userThreads = await axios({
-          url: `${config.url.feedUrl}/thread/getThreadByUser`,
-          method: "post",
-          withCredentials: true,
-          data: {
-            uid: this.uid
-          }
-        });
-        this.threads = userThreads.data.threads;
-        this.threads = helper.parseDate(this.threads);
-        break;
-      default:
-        //根据主题获得thread
-        if (this.type === "") {
-          return;
-        } else {
-          const typeThreads = await axios({
-            url: `${config.url.feedUrl}/thread/getThreadByType`,
-            method: "post",
-            withCredentials: true,
-            data: {
-              themeText: this.type
-            }
-          });
-          this.threads = typeThreads.data.threads;
-          this.threads = helper.parseDate(this.threads);
-          break;
-        }
-    }
-  },
-  activated: async function() {
-    if (store.index.needRefresh) {
+    if (store.threadsList.needRefresh) {
       await this.refresh();
-      store.index.needRefresh = false;
+      store.threadsList.needRefresh = false;
     }
     //重新获得scrollTop;
     const elements = $(".load-more-box");
@@ -371,7 +314,6 @@ export default {
           if (this.type === "") {
             return;
           } else {
-            console.log("here");
             const typeThreads = await axios({
               url: `${config.url.feedUrl}/thread/getThreadByType`,
               method: "post",
@@ -440,3 +382,65 @@ export default {
   animation: rotate 0.1s ease-in-out forwards;
 }
 </style>
+
+
+
+    // switch (this.type) {
+    //   case "最新":
+    //     const threads = await axios({
+    //       url: `${config.url.feedUrl}/thread/getThread`,
+    //       withCredentials: true
+    //     });
+    //     this.threads = threads.data.threads;
+    //     this.threads = helper.parseDate(this.threads);
+    //     break;
+    //   case "热门":
+    //     const hotThreads = await axios({
+    //       url: `${config.url.feedUrl}/thread/getHotThread`,
+    //       method: "post",
+    //       withCredentials: true,
+    //       data: {}
+    //     });
+    //     this.threads = hotThreads.data.threads;
+    //     this.threads = helper.parseDate(this.threads);
+    //     break;
+    //   case "关注":
+    //     const focusThreads = await axios({
+    //       url: `${config.url.feedUrl}/thread/getFocusThread`,
+    //       method: "post",
+    //       withCredentials: true,
+    //       data: {}
+    //     });
+    //     this.threads = focusThreads.data.threads;
+    //     this.threads = helper.parseDate(this.threads);
+    //     break;
+    //   case "用户":
+    //     const userThreads = await axios({
+    //       url: `${config.url.feedUrl}/thread/getThreadByUser`,
+    //       method: "post",
+    //       withCredentials: true,
+    //       data: {
+    //         uid: this.uid
+    //       }
+    //     });
+    //     this.threads = userThreads.data.threads;
+    //     this.threads = helper.parseDate(this.threads);
+    //     break;
+    //   default:
+    //     //根据主题获得thread
+    //     if (this.type === "") {
+    //       return;
+    //     } else {
+    //       const typeThreads = await axios({
+    //         url: `${config.url.feedUrl}/thread/getThreadByType`,
+    //         method: "post",
+    //         withCredentials: true,
+    //         data: {
+    //           themeText: this.type
+    //         }
+    //       });
+    //       this.threads = typeThreads.data.threads;
+    //       this.threads = helper.parseDate(this.threads);
+    //       break;
+    //     }
+    // }

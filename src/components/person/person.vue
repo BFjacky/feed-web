@@ -119,7 +119,7 @@ export default {
       window.location.href = config.url.oauthUrl;
     },
     item1Click: function() {
-      this.$router.push({ name: "mine" });
+      this.$router.push({ name: "userThreadList" });
     },
     item2Click: function() {
       this.$router.push({ name: "notify" });

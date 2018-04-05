@@ -15,11 +15,13 @@ export default {
         list5: {
             scrollTop: '',
         },
-        needRefresh: false,
         pupup: {
             // show: false,
             // thread: {},
         }
+    },
+    threadsList: {
+        needRefresh: true,
     },
     commentPage: {
         x: 0,

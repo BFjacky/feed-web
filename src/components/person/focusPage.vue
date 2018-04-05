@@ -8,9 +8,9 @@
       </div>
     </div>
     <div class="nomore-text">{{remindText}}</div>
-    <popup class="popup" v-model="popupVisible" pop-transition="popup-fade">
+    <!-- <popup class="popup" v-model="popupVisible" pop-transition="popup-fade">
       <div class="item" @click="cancelFocus">取消关注</div>
-    </popup>
+    </popup> -->
   </div>
 </template>
 <script>
@@ -18,18 +18,13 @@ import axios from "axios";
 import config from "../helper/config";
 import events from "../helper/events";
 import helper from "../helper/helper";
-import { Popup } from "mint-ui";
 export default {
   data: function() {
     return {
       users: [],
       choiseUser: {},
-      popupVisible: false,
       remindText: "没有数据了..."
     };
-  },
-  components: {
-    popup: Popup
   },
   activated: async function() {
     const res = await axios({
@@ -40,11 +35,23 @@ export default {
   },
   methods: {
     clickUserBox: function(user) {
-      this.popupVisible = true;
       this.choiseUser = user;
+      helper
+        .popup([{ text: "取消关注" }, { text: "查看他的状态" }])
+        .then(async item => {
+          if (item) {
+            switch (item.text) {
+              case "取消关注":
+                await this.cancelFocus();
+                break;
+              case "查看他的状态":
+                console.log("查看他的状态");
+                break;
+            }
+          }
+        });
     },
     cancelFocus: async function() {
-      this.popupVisible = false;
       const cancelRes = await axios({
         method: "post",
         url: `${config.url.feedUrl}/user/cancelFocus`,

@@ -2,7 +2,7 @@
   <div class="container">
     <div class="head-bar">我的动态</div>
     <div class="main">
-        <threads-list  type="用户"></threads-list>
+        <threads-list  type="用户" :uid="uid"></threads-list>
     </div>
   </div>
 </template>
@@ -15,18 +15,15 @@ export default {
   components: {
     threadsList
   },
-  activated: async function() {
-    //获得所有该用户发出的thread
-    const threadsRes = await axios({
-      url: `${config.url.feedUrl}/thread/getThreadByUser`,
-      method: "post",
-      withCredentials: true,
-      data: {}
-    });
-    console.log('进入我的动态页面,获得所有我发出的动态',threadsRes.data.threads);
+  data: function() {
+    return {
+      uid: ""
+    };
   },
-  deactivated: function() {
-  }
+  activated: async function() {
+    this.uid = this.$route.query.uid;
+  },
+  deactivated: function() {}
 };
 </script>
 <style lang="less" scoped>

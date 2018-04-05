@@ -128,7 +128,7 @@ export default {
 
         setTimeout(() => {
           this.hasSent = false;
-          store.index.needRefresh = true;
+          store.threadsList.needRefresh = true;
           store.index.list1.scrollTop = 0;
           store.postThread.hasSent = true;
           this.$router.go(-1);

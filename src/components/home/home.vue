@@ -110,8 +110,8 @@ export default {
     };
   },
   activated: async function() {
-    //刚发完一条状态的时候,将type切换到最新
-    if (store.index.needRefresh) {
+    //刚发完一条状态的时候,将type切换到最新,并刷新 最新 页面的内容
+    if (store.threadsList.needRefresh) {
       this.oldSelectItem = this.selectItem;
       this.selectItem = "0";
     }

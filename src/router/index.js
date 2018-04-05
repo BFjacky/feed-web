@@ -7,7 +7,7 @@ import sonCommentPage from '@/components/home/sonCommentPage'
 import shieldPage from "@/components/person/shieldPage"
 import focusPage from "@/components/person/focusPage"
 import fansPage from "@/components/person/fansPage"
-import mine from '@/components/person/mine'
+import userThreadList from '@/components/person/userThreadList'
 import notify from '@/components/person/notify'
 import store from "@/components/helper/store"
 import postBar from "@/components/home/components/postBar";
@@ -38,9 +38,9 @@ const router = new Router({
       component: sonCommentPage,
     },
     {
-      path: '/index/mine',
-      name: 'mine',
-      component: mine,
+      path: '/index/userThreadList',
+      name: 'userThreadList',
+      component: userThreadList,
     },
     {
       path: '/index/person/deep/notify',
