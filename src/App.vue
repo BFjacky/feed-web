@@ -10,7 +10,7 @@
       <div class="feed-top-popup-item1" @click="gotoNotifyPage">你有新的通知</div>
     </popup>
 
-    <popup v-model="popupVisibleMid">
+    <popup v-model="popupVisibleMid" position="bottom">
       <div class="feed-mid-popup-item" v-for="item in itemList" @click="clickPopupItem(item)">{{item.text}}</div>
     </popup>
   </div>
@@ -88,10 +88,10 @@ export default {
   background-color: #292929;
 }
 .feed-mid-popup-item {
-  width: 50vw;
+  width: 100vw;
   height: 12vw;
   line-height: 12vw;
-  font-size: 4vw;
+  font-size: 5vw;
   text-align: center;
   z-index: 5000;
   background-color: white;

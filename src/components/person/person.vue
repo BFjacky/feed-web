@@ -63,6 +63,7 @@ export default {
       avatarUrl,
       nickName,
       gender,
+      pass,
       _id,
       focus,
       followers,
@@ -76,6 +77,7 @@ export default {
     config.user.shields = shields;
     config.user.oauth = true;
     config.user._id = _id;
+    config.user.pass = pass;
     //web-socket 通过 之前的http请求获得了该用户的用户信息后,发送一条socket消息;
     this.$socket.emit("init", _id);
   },

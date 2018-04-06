@@ -15,6 +15,7 @@ export default {
         //前端页面正在从后台服务器获取用户信息
         fetching: false,
         _id: '',
+        pass: false,
         focus: [],
         followers: [],
         shields: [],

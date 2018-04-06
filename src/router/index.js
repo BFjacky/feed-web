@@ -12,6 +12,7 @@ import notify from '@/components/person/notify'
 import store from "@/components/helper/store"
 import postBar from "@/components/home/components/postBar";
 import myPopup from "@/components/myPopup";
+import exampages from "@/components/exam/exampages";
 Vue.use(Router)
 
 const router = new Router({
@@ -20,7 +21,7 @@ const router = new Router({
     {
       path: '/',
       name: 'index',
-      component: index
+      component: exampages
     },
     {
       path: '/index/postThread',

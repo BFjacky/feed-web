@@ -44,7 +44,7 @@ export default {
   data: function() {
     return {
       realFalse: false,
-      itemSelect: "0",
+      itemSelect: "0"
     };
   },
   created: async function() {
@@ -57,6 +57,23 @@ export default {
     gotoPostPage: async function() {
       const res = await helper.checkOauth();
       if (!res) {
+        return;
+      }
+      //检查该用户是否通过了答题测试
+      if (!config.user.pass) {
+        MessageBox({
+          title: "Jser",
+          message:
+            "还没有完成Jser团队提供的题目测试，完成题目测试后才可发状态哟~",
+          showCancelButton: true,
+          confirmButtonText: "现在去答题",
+          cancelButtonText: "算了吧"
+        })
+          .then(async action => {
+            if (action === "confirm") {
+            }
+          })
+          .catch(() => {});
         return;
       }
       this.$router.push({ name: "postThread" });
@@ -126,5 +143,4 @@ export default {
     width: 100vw;
   }
 }
-
 </style>
