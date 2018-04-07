@@ -13,7 +13,7 @@
       <div class="main">
           <div class="content-text">{{thread.content}}</div>
           <div class="content-buttons"></div>
-          <video x5-video-player-type="h5" x-webkit-airplay="true" playsinline webkit-playsinline="true" v-if="thread.video" class="video" :src="thread.video.sourceUrl" controls="controls"></video>
+          <video playsinline webkit-playsinline="true" x5-video-player-type="h5" x-webkit-airplay="true" v-if="thread.video" class="video" :src="thread.video.sourceUrl" controls="controls"></video>
           <div class="imgs-part">
             <img @click.stop="previewImage(img)" :style="singleImgStyle"  class="img"  v-for="img in thread.imgs" v-bind:src="thread.imgs.length===1?img.urlMiddle:img.url"></img>
           </div>
