@@ -7,14 +7,17 @@
       <div class="imgs-area">
         <img-view-box v-for="img in imgs" :img="img" :key="index" v-on:uploadImg="uploadHandler" v-on:deleteImg="deleteHandler" v-on:viewImage="viewImageHandler"></img-view-box>
       </div>
+      <video-view-box :video="video" v-on:uploaded="uploadVideoHandler"></video-view-box>
       <div class="bottom-bar">
           <div class="functions">
             <div class="function-button photo-button" @click="addImage"></div>
+            <div class="function-button video-button" @click="addVideo"></div>
             <div class="function-button theme-button" @click="showThemes">{{themeText==='无主题'?'主题':themeText}}</div>
           </div>
           <div class="function-button send-button" @click="confirmToSend">发送</div>
       </div>
-      <input class="hide-button" ref="filesButton" type="file" multiple="multiple" accept="image/*" @change="chooseFile($event)"></input>
+      <input v-if="refreInput" class="hide-button" ref="imageFileButton" type="file" multiple="multiple" accept="image/*" @change="chooseFile($event)"></input>
+      <input v-if="refreInput" class="hide-button" ref="videoFileButton" type="file" accept="video/*" @change="chooseVideo($event)"></input>      
       <popup v-model="popupVisible" position="right" class="popup-area">
         <div class="popup-item" v-for="theme in themes" @click="chooseTheme(theme.text)">
           <div class="item-icon" :style="{backgroundImage:`url(${theme.icon})`}"></div>
@@ -25,6 +28,7 @@
 </template>
 <script>
 import { MessageBox, Spinner, Popup, Toast } from "mint-ui";
+import videoViewBox from "./videoViewBox";
 import imgViewBox from "./imgViewBox";
 import helper from "../helper/helper";
 import config from "../helper/config";
@@ -36,7 +40,34 @@ export default {
   },
   methods: {
     addImage: function() {
-      this.$refs.filesButton.click();
+      if (this.video) {
+        Toast({
+          message: "视频和图片无法同时上传",
+          position: "middle",
+          duration: 1000
+        });
+        return;
+      }
+      this.$refs.imageFileButton.click();
+    },
+    addVideo: function() {
+      if (this.imgs.length !== 0) {
+        Toast({
+          message: "视频和图片无法同时上传",
+          position: "middle",
+          duration: 1000
+        });
+        return;
+      }
+      if (this.video) {
+        Toast({
+          message: "只能选择一个视频",
+          position: "middle",
+          duration: 1000
+        });
+        return;
+      }
+      this.$refs.videoFileButton.click();
     },
     chooseFile: async function(event) {
       const newFiles = [];
@@ -48,6 +79,29 @@ export default {
         MessageBox.alert(`最多选择${this.maxImgNumbers}张图片`, "提示");
         this.imgs = this.imgs.slice(0, 9);
       }
+
+      this.refreInput = false;
+      this.refreInput = true;
+    },
+    chooseVideo: async function() {
+      console.log("点击了这里");
+      //大于20m的视频不让传
+      if (event.target.files[0].size / 1024 / 1024 > 20) {
+        Toast({
+          message: "请选择大小不超过20M的视频",
+          position: "middle",
+          duration: 1000
+        });
+        return;
+      }
+      this.video = event.target.files[0];
+      this.refreInput = false;
+      await helper.wait(10);
+      this.refreInput = true;
+    },
+    uploadVideoHandler: function(video) {
+      this.videoUploaded = true;
+      this.finalVideo = video;
     },
     uploadHandler: function(img) {
       this.finalImgs.push(img);
@@ -83,11 +137,11 @@ export default {
       if (this.hasSent) {
         return;
       }
-      console.log(`即将发布`, this.content, this.finalImgs, this.imgs);
       if (
         this.content == "" &&
         this.finalImgs.length === 0 &&
-        this.imgs.length === 0
+        this.imgs.length === 0 &&
+        this.video === undefined
       ) {
         MessageBox.alert(`写点内容再发布吧~`, "提示");
         return;
@@ -97,6 +151,14 @@ export default {
           `还差${this.imgs.length - this.finalImgs.length}张图片没有上传完`,
           "提示"
         );
+        return;
+      }
+      if (!this.videoUploaded) {
+        Toast({
+          message: "请等待视频上传完成",
+          position: "middle",
+          duration: 1000
+        });
         return;
       }
 
@@ -109,7 +171,8 @@ export default {
           thread: {
             imgs: _this.finalImgs,
             themeText: _this.themeText,
-            content: _this.content
+            content: _this.content,
+            video: _this.finalVideo
           }
         },
         withCredentials: true
@@ -125,6 +188,8 @@ export default {
         this.imgs = [];
         this.finalImgs = [];
         this.themeText = "无主题";
+        this.video = undefined;
+        this.finalVideo = undefined;
 
         setTimeout(() => {
           this.hasSent = false;
@@ -173,7 +238,15 @@ export default {
       });
     }
   },
-
+  deactivated: function() {
+    //清空内容
+    this.content = "";
+    this.imgs = [];
+    this.finalImgs = [];
+    this.themeText = "无主题";
+    this.video = undefined;
+    this.finalVideo = undefined;
+  },
   created: function() {},
   data: function() {
     return {
@@ -191,7 +264,11 @@ export default {
         { icon: require("../../assets/learning.png"), text: "寻找研友" }
       ],
       content: "",
-      hasSent: false
+      hasSent: false,
+      video: undefined,
+      videoUploaded: false,
+      finalVideo: undefined,
+      refreInput: true
     };
   },
   components: {
@@ -199,7 +276,8 @@ export default {
     spinner: Spinner,
     imgViewBox,
     popup: Popup,
-    Toast
+    Toast,
+    videoViewBox
   }
 };
 </script>
@@ -276,13 +354,20 @@ export default {
     width: 10vw;
     height: 10vw;
   }
+  .video-button {
+    background-image: url(../../assets/video.png);
+    background-size: 90% 90%;
+    background-repeat: no-repeat;
+    margin-left: 5vw;
+    width: 10vw;
+    height: 10vw;
+  }
   .theme-button {
     line-height: 7vw;
     height: 7vw;
-    margin: auto auto;
+    margin: auto 0;
     font-size: 4vw;
     color: #32a8fc;
-    margin-left: 6vw;
     border: 0px solid #32a8fc;
     width: 20vw;
     border-radius: 3.5vw;

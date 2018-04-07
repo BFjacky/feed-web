@@ -15,6 +15,7 @@
           <div class="main">
               <div class="content-text">{{thread.content}}</div>
               <div class="content-buttons"></div>
+              <video v-if="thread.video" class="video" :src="thread.video.sourceUrl" controls="controls"></video>
               <div class="imgs-part">
                 <img @click.stop="previewImage(img)"  class="img" :style="singleImgStyle" v-for="img in thread.imgs" v-bind:src="thread.imgs.length===1?img.urlMiddle:img.url"></img>
               </div>
@@ -510,6 +511,13 @@ export default {
     margin-top: calc(2vw*16/9);
     .content-text {
       text-align: left;
+    }
+    .video {
+      margin-top: 5vw;
+      margin-left: 1vw;
+      box-shadow: 1px 1px 1px 1px #dadada;
+      width: 90vw;
+      height: calc(90vw*9/16);
     }
     .imgs-part {
       display: flex;

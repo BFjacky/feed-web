@@ -68,11 +68,14 @@ export default {
       withCredentials: true,
       params: {}
     });
+    console.log(`获得旧的notify`, oldNotifiesRes);
     let oldNotifies = oldNotifiesRes.data.oldNotifies;
     oldNotifies = helper.parseDate(oldNotifies);
     this.oldNotifies = oldNotifies;
+    if (this.oldNotifies.length < 15) {
+      this.nomore = true;
+    }
     this.busy = false;
-
     //将所有notifies 设为已读
     const res = await axios({
       method: "post",
