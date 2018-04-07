@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="head-bar">我的动态</div>
+    <!-- <div class="head-bar">我的动态</div> -->
     <div class="main">
         <threads-list  type="用户" :uid="uid"></threads-list>
     </div>

@@ -71,6 +71,8 @@ export default {
         })
           .then(async action => {
             if (action === "confirm") {
+              this.$router.push({ name: "exampages" });
+              return;
             }
           })
           .catch(() => {});

@@ -21,6 +21,7 @@
 </template>
 <script>
 import examEvents from "./examEvents";
+import config from "../helper/config";
 import { MessageBox } from "mint-ui";
 export default {
   props: ["question", "qlength"],
@@ -80,14 +81,17 @@ export default {
           .then(async action => {
             if (action === "confirm") {
               examEvents.$emit("checkAnswer");
-              //examEvents
-              setTimeout(() => {
-                //200ms通知exampages结算结果
-                examEvents.$emit("overAnswer");
-              }, 200);
+              (this.button2Text = "再来一次"),
+                //examEvents
+                setTimeout(() => {
+                  //200ms通知exampages结算结果
+                  examEvents.$emit("overAnswer");
+                }, 200);
             }
           })
           .catch(() => {});
+      } else if ((this.button2Text = "再来一次")) {
+        examEvents.$emit("again");
       }
     },
     chooseThisOption: function(index) {

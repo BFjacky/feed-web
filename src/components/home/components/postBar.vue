@@ -101,6 +101,10 @@ export default {
   bottom: 0;
   width: 100vw;
   .img-area {
+    margin-left:1vw;
+    margin-bottom:1px;
+    background-color: white;
+    box-shadow: 1px 1px 1px 1px #b3b3b3;
     height: 30vw;
     width: 30vw;
   }

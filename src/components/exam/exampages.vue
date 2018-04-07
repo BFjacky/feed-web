@@ -7,129 +7,75 @@
 </template>
 <script>
 import question from "./question";
+import config from "../helper/config";
+import helper from "../helper/helper";
 import examEvents from "./examEvents";
+import Questions from "./questions.js";
+import axios from "axios";
 import { MessageBox } from "mint-ui";
 export default {
   data: function() {
     return {
-      questions: [
-        {
-          show: true,
-          order: 1,
-          text: "Jser以哪门编程语言为基石",
-          animation: "",
-          options: [
-            { hasChosen: false, text: "Javascript" },
-            { hasChosen: false, text: "Java" },
-            { hasChosen: false, text: "Python" },
-            { hasChosen: false, text: "由Jser俱乐部自创的Jser编程语言" }
-          ],
-          answer: { text: "Javascript" }
-        },
-        {
-          show: false,
-          order: 2,
-          text: "谁是Jser俱乐部的创始人",
-          animation: "",
-          options: [
-            { hasChosen: false, text: "费滕" },
-            { hasChosen: false, text: "李宇春" },
-            { hasChosen: false, text: "扎克伯格" },
-            { hasChosen: false, text: "费腾" }
-          ],
-          answer: { text: "费腾" }
-        },
-        {
-          show: false,
-          order: 3,
-          text: "px是什么计量单位",
-          animation: "",
-          options: [
-            { hasChosen: false, text: "厘米" },
-            { hasChosen: false, text: "流明" },
-            { hasChosen: false, text: "像素" },
-            { hasChosen: false, text: "楼层" }
-          ],
-          answer: { text: "像素" }
-        },
-        {
-          show: false,
-          order: 4,
-          text: "Jser俱乐部的地址",
-          animation: "",
-          options: [
-            { hasChosen: false, text: "哈尔滨大学科技楼503" },
-            { hasChosen: false, text: "东北大学东门教师公寓5号2单元2603" },
-            { hasChosen: false, text: "哈尔滨工业大学男生第5寝室303" },
-            { hasChosen: false, text: "东北农业大学东门教师公寓5号2单元2603" }
-          ],
-          answer: { text: "东北农业大学东门教师公寓5号2单元2603" }
-        },
-        {
-          show: false,
-          order: 5,
-          text: "Jser俱乐部的传销头目",
-          animation: "",
-          options: [
-            { hasChosen: false, text: "刘秉南" },
-            { hasChosen: false, text: "王卫国" },
-            { hasChosen: false, text: "刘秉楠" },
-            { hasChosen: false, text: "杰森" }
-          ],
-          answer: { text: "刘秉楠" }
-        },
-        {
-          show: false,
-          order: 6,
-          text: "Oppo品牌logo的底板颜色是什么",
-          animation: "",
-          options: [
-            { hasChosen: false, text: "绿色" },
-            { hasChosen: false, text: "蓝色" },
-            { hasChosen: false, text: "红色" },
-            { hasChosen: false, text: "黄色" }
-          ],
-          answer: { text: "绿色" }
-        },
-        {
-          show: false,
-          order: 7,
-          text: "Jser俱乐部一张桌子的尺寸是多大",
-          animation: "",
-          options: [
-            { hasChosen: false, text: "长:240cm,宽:120cm" },
-            { hasChosen: false, text: "长:240cm,宽:80cm" },
-            { hasChosen: false, text: "长:260cm,宽:120cm" },
-            { hasChosen: false, text: "长:260cm,宽:80cm" }
-          ],
-          answer: { text: "长:240cm,宽:120cm" }
-        },
-        {
-          show: false,
-          order: 8,
-          text: "以下几组成员中全是Jser俱乐部成员的选项是",
-          animation: "",
-          options: [
-            { hasChosen: false, text: "曾锐 蓝标 崔航 沈星移 贺言" },
-            { hasChosen: false, text: "吴桐 徐菩 刘培杰 杨钦钦 马天睿" },
-            { hasChosen: false, text: "刘斯琦 葛天 高敏 施心平 刘秉楠" },
-            { hasChosen: false, text: "韩慧鹏 卢绿萍 周莹 赵白石 郭华鑫" }
-          ],
-          answer: { text: "吴桐 徐菩 刘培杰 杨钦钦 马天睿" }
-        },
-        {
-          show: false,
-          order: 9,
-          text: "JS中Math.random()的作用的是",
-          animation: "",
-          options: [
-            { hasChosen: false, text: "随机出一道多元方程数学题" },
-            { hasChosen: false, text: "生成0-100的随机数" },
-            { hasChosen: false, text: "生成一个二维码...." },
-            { hasChosen: false, text: "生成0-1的随机数" }
-          ],
-          answer: { text: "生成0-1的随机数" }
-        },
+      questions: [],
+      rightNumber: 0
+    };
+  },
+  created: function() {
+    this.initQuestions();
+    examEvents.$on("correct", order => {
+      this.rightNumber++;
+    });
+    examEvents.$on("overAnswer", async () => {
+      if (this.rightNumber >= 6) {
+        //更新本地config.user.pass 为true
+        config.user.pass = true;
+        MessageBox({
+          title: "恭喜",
+          message: `做对了${this.rightNumber}个题目,恭喜你通过啦`,
+          confirmButtonText: "哈哈哈"
+        }).then(action => {
+          if (action === "confirm") {
+            this.$router.go(-1);
+          }
+        });
+        //发送后端请求，告知服务端此用户通过测试
+        const passRes = await axios({
+          url: `${config.url.feedUrl}/user/userpass`,
+          withCredentials: true,
+          params: {}
+        });
+      } else {
+        MessageBox({
+          title: "遗憾",
+          message: `做对了${
+            this.rightNumber
+          }个题目,做对6个即可通过，不要灰心，加油!`,
+          showCancelButton: true,
+          confirmButtonText: "再来一次",
+          cancelButtonText: "不来了"
+        }).then(action => {
+          if (action === "confirm") {
+            examEvents.$emit("again");
+          }
+        });
+      }
+    });
+    examEvents.$on("again", () => {
+      //再来一次则还原题库
+      this.initQuestions();
+    });
+  },
+  components: {
+    question
+  },
+  methods: {
+    initQuestions: async function() {
+      //初始化问题
+      const tempQuestions = Questions(10);
+      const newQuestions = this.$lodash.cloneDeep(tempQuestions);
+      //将答对的题目数量置为0
+      this.rightNumber = 0;
+      /*为每一项问题加上order,show,animation等是其结构变为这样
         {
           show: false,
           order: 10,
@@ -143,43 +89,30 @@ export default {
           ],
           answer: { text: "localhost:8080" }
         }
-      ],
-      rightNumber: 0
-    };
-  },
-  created: function() {
-    examEvents.$on("correct", order => {
-      this.rightNumber++;
-    });
-    examEvents.$on("overAnswer", () => {
-      let remindtext;
-      if (this.rightNumber >= 6) {
-        MessageBox({
-          title: "恭喜",
-          message: `做对了${this.rightNumber}个题目,恭喜你通过啦`,
-          confirmButtonText: "哈哈哈"
-        }).then(action => {});
-      } else {
-        MessageBox({
-          title: "遗憾",
-          message: `做对了${
-            this.rightNumber
-          }个题目,做对6个即可通过，不要灰心，加油!`,
-          showCancelButton: true,
-          confirmButtonText: "再来一次",
-          cancelButtonText: "不来了"
-        }).then(action => {
-          if (action === "confirm") {
-            console.log("再来一次");
-          }
-        });
+      */
+      let index = 0;
+      for (const question of newQuestions) {
+        index++;
+        question.show = false;
+        question.order = index;
+        question.animation = "";
+        //将answer变为对象形式
+        const answerText = question.answer;
+        question.answer = { text: answerText };
+        //将选项变为对象形式
+        const newOptions = [];
+        for (let option of question.options) {
+          let objOption = { hasChosen: false, text: option };
+          newOptions.push(objOption);
+        }
+        question.options = newOptions;
       }
-    });
-  },
-  components: {
-    question
-  },
-  methods: {
+      //显示第一个question
+      newQuestions[0].show = true;
+      this.questions = [];
+      await helper.wait(10);
+      this.questions = newQuestions;
+    },
     previous: function() {
       //找到当前显示的index
       let index = -1;
@@ -189,9 +122,6 @@ export default {
           break;
         }
       }
-
-      //如果显示的为最后一页
-      //code....
 
       //将本题向上弹出
       this.questions[index].animation = "leaveUp";
@@ -238,13 +168,15 @@ div {
   position: fixed;
 }
 .container {
+  background: linear-gradient(rgb(209, 209, 209), rgb(236, 236, 236));
   height: 100vh;
   width: 100vw;
   .questions-box {
     height: 100vh;
     width: 100vw;
-    .question{
-        left:5vw;
+    .question {
+      left: 5vw;
+      top: 10vh;
     }
   }
 }

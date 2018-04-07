@@ -21,7 +21,7 @@ const router = new Router({
     {
       path: '/',
       name: 'index',
-      component: exampages
+      component: index
     },
     {
       path: '/index/postThread',
@@ -62,6 +62,11 @@ const router = new Router({
       path: '/index/fansPage',
       name: 'fansPage',
       component: fansPage,
+    },
+    {
+      path: '/index/deep/deep/deep/deep/exampages',
+      name: 'exampages',
+      component: exampages,
     }
   ]
 })
