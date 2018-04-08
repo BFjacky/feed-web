@@ -1,6 +1,6 @@
 <template>
   <div class="container" v-show="display" @click="undisplay" v-bind:class="animation">
-      <video class="myvideo" :src=videoSrc autoplay="autoplay" controls="controls" v-on:webkitendfullscreen="exitFullScreen" v-on:x5videoexitfullscreen="exitFullScreen" ref="video"></video>
+      <video class="myvideo"  v-show="display" :src=videoSrc autoplay="autoplay" controls="controls" v-on:webkitendfullscreen="exitFullScreen" v-on:x5videoexitfullscreen="exitFullScreen" ref="video"></video>
   </div>
 </template>
 <script>
