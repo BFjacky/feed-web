@@ -15,7 +15,9 @@
           <div class="main">
               <div class="content-text">{{thread.content}}</div>
               <div class="content-buttons"></div>
-              <video v-if="thread.video" class="video" :src="thread.video.sourceUrl" controls="controls"></video>
+              <div class="playVideo"  v-if="thread.video" @click.stop="playVideo">
+                <div class="play-button"></div>
+              </div>
               <div class="imgs-part">
                 <img @click.stop="previewImage(img)"  class="img" :style="singleImgStyle" v-for="img in thread.imgs" v-bind:src="thread.imgs.length===1?img.urlMiddle:img.url"></img>
               </div>
@@ -175,6 +177,9 @@ export default {
     }
   },
   methods: {
+    playVideo: function() {
+      events.$emit("displayVideo", this.thread.video.sourceUrl);
+    },
     // ---------threads 方法
     praiseThread: async function() {
       const res = await helper.checkOauth();
@@ -512,13 +517,24 @@ export default {
     .content-text {
       text-align: left;
     }
-    .video {
-      margin-top: 5vw;
-      margin-left: 1vw;
-      box-shadow: 1px 1px 1px 1px #dadada;
-      width: 90vw;
-      height: calc(90vw*9/16);
+    .playVideo {
+      height: 50vw;
+      width: 50vw;
+      background-size: 100% 100%;
+      border: 0px solid black;
+      background-image: url("../../assets/video.png");
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .play-button {
+        background-image: url("../../assets/play-button.png");
+        opacity: 0.6;
+        height: 10vw;
+        width: 10vw;
+        background-size: 100%;
+      }
     }
+
     .imgs-part {
       display: flex;
       flex-wrap: wrap;

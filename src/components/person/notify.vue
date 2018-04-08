@@ -194,8 +194,10 @@ export default {
   height: 6vh;
   line-height: 6vh;
   color: #555555;
+  background-color: #fafafa;
   border-top: 1px solid rgb(223, 223, 223);
-  box-shadow: 0 2px 1px 1px rgb(204, 204, 204);
+  border-bottom: 1px solid rgb(223, 223, 223);
+  // box-shadow: 0 2px 1px 1px rgb(204, 204, 204);
 }
 .notifies-container {
   width: 100vw;

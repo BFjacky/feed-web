@@ -13,11 +13,14 @@
     <popup v-model="popupVisibleMid" position="bottom">
       <div class="feed-mid-popup-item" v-for="item in itemList" @click="clickPopupItem(item)">{{item.text}}</div>
     </popup>
+
+    <my-video></my-video>
   </div>
 </template>
 
 <script>
 import events from "./components/helper/events";
+import myVideo from "./components/home/video";
 import { Popup } from "mint-ui";
 export default {
   name: "App",
@@ -47,7 +50,8 @@ export default {
     };
   },
   components: {
-    popup: Popup
+    popup: Popup,
+    myVideo
   },
   methods: {
     gotoNotifyPage: function() {

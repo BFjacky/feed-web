@@ -32,5 +32,8 @@ export default {
     },
     notify: {
         notifies: [],
+    },
+    video: {
+        displaying: false,
     }
 }

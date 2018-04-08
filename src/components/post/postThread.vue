@@ -153,7 +153,7 @@ export default {
         );
         return;
       }
-      if (!this.videoUploaded) {
+      if (this.video != undefined && !this.videoUploaded) {
         Toast({
           message: "请等待视频上传完成",
           position: "middle",

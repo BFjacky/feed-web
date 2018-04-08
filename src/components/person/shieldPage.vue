@@ -20,7 +20,7 @@ export default {
     return {
       users: [],
       choiseUser: {},
-      remindText: "没有数据了..."
+      remindText: "空空如野..."
     };
   },
   activated: async function() {
