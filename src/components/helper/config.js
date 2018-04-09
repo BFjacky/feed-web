@@ -9,6 +9,7 @@ export default {
         socketUrl: "ws://feedServer.feit.me",
         appId: 'wx9fd6bbc89436a5ee',
     },
+    videoVframe: '&vframe/jpg/offset/0/rotate/auto',
     //全局user
     user: {
         oauth: false,

@@ -15,7 +15,7 @@
           <div class="main">
               <div class="content-text">{{thread.content}}</div>
               <div class="content-buttons"></div>
-              <div class="playVideo"  v-if="thread.video" @click.stop="playVideo">
+              <div class="playVideo"  v-if="thread.video" @click.stop="playVideo" :style="{backgroundImage:`url(${thread.video.sourceUrl}${videoVframe})`}">
                 <div class="play-button"></div>
               </div>
               <div class="imgs-part">
@@ -107,6 +107,8 @@ import postBar from "./components/postBar";
 import { Toast } from "mint-ui";
 export default {
   activated: async function() {
+    //将vFrame置入本地的data中
+    this.videoVframe = config.videoVframe;
     if (!this.$route.query.thread._id) {
       //没有路由参数，为回退路由,不初始化数据
       return;
@@ -157,7 +159,8 @@ export default {
       sending: false,
       fades: [],
       hotFades: [],
-      singleImgStyle: {}
+      singleImgStyle: {},
+      videoVframe: ""
     };
   },
   watch: {
@@ -520,15 +523,14 @@ export default {
     .playVideo {
       height: 50vw;
       width: 50vw;
+      margin-top:3vw;
       background-size: 100% 100%;
       border: 0px solid black;
-      background-image: url("../../assets/video.png");
       display: flex;
       justify-content: center;
       align-items: center;
       .play-button {
         background-image: url("../../assets/play-button.png");
-        opacity: 0.6;
         height: 10vw;
         width: 10vw;
         background-size: 100%;

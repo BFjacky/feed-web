@@ -13,7 +13,7 @@
       <div class="main">
           <div class="content-text">{{thread.content}}</div>
           <div class="content-buttons"></div>
-          <div class="playVideo"  v-if="thread.video" @click.stop="playVideo">
+          <div class="playVideo"  v-if="thread.video" @click.stop="playVideo" :style="{backgroundImage:`url(${thread.video.sourceUrl}${videoVframe})`}">
             <div class="play-button"></div>
           </div>
           <div class="imgs-part">
@@ -46,6 +46,8 @@ import { Toast, MessageBox } from "mint-ui";
 export default {
   props: ["thread"],
   created: async function() {
+    //绑定本地的videoVframe
+    this.videoVframe = config.videoVframe;
     //获得图片宽高
     if (this.thread.imgs.length === 1) {
       const img = new Image();
@@ -87,12 +89,13 @@ export default {
       isDelete: false,
       isShield: false,
       item1Text: "",
-      myself: false
+      myself: false,
+      videoVframe: ""
     };
   },
   methods: {
     playVideo: function() {
-      events.$emit('displayVideo',this.thread.video.sourceUrl);
+      events.$emit("displayVideo", this.thread.video.sourceUrl);
     },
     praise: async function() {
       const res = await helper.checkOauth();
@@ -392,15 +395,14 @@ export default {
   .playVideo {
     height: 50vw;
     width: 50vw;
+    margin-top:3vw;
     background-size: 100% 100%;
     border: 0px solid black;
-    background-image: url("../../assets/video.png");
     display: flex;
     justify-content: center;
     align-items: center;
     .play-button {
       background-image: url("../../assets/play-button.png");
-      opacity: 0.6;
       height: 10vw;
       width: 10vw;
       background-size: 100%;
