@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="content-container">
-        <div class="thread-container" @click="replyFirstComment">
+        <div class="thread-container" @click="replyMainComment">
           <div class="header">
               <div class="part1" v-bind:style="{backgroundImage:`url(${comment.avatarUrl})`}"></div>
               <div class="part2">
@@ -30,33 +30,7 @@
         </div>
         <div class="comment-show">
             <div class="content-box-title">全部评论({{comments.length}})</div>
-            <div class="content-box"  v-for="(comment,index) in comments" @click="replySecondComment(comment)">
-               <div class="left" v-bind:style="{backgroundImage:`url(${comment.avatarUrl})`}"></div>
-               <div class="right">
-                    <div class="header">
-                      <div class="header-left">
-                        <div class="name">{{comment.nickName}}</div>
-                        <div class="time">{{comment.createdAt}}</div>
-                      </div>
-                      <div class="header-right">
-                        <div v-bind:class="{praise:!comment.hasPraised,'praise-after':comment.hasPraised}" v-on:click.stop="praise(comment)"></div>
-                        <div class="number">{{comment.praises}}</div>
-                      </div>
-                    </div>
-                    <div class="main">{{comment.content}}</div>
-                    <div class="imgs-part" v-if="comment.imgs.length>0">
-                      <img @click.stop="previewImage(img)"  class="img" v-for="img in comment.imgs" v-bind:src="img.url"></img>
-                    </div>
-                    <div class="footer"  v-if="comment.commentInfo.length>0">
-                      <div class="footer-comment" v-for="(subComment,index) in comment.commentInfo" v-on:click.stop="replyThirdComment(subComment)" v-if="index<comment.maxNumber">
-                        <div class="name">{{!subComment.replyFor?subComment.nickName:subComment.replyFor}}:</div>
-                        <div class="content">{{subComment.content}}</div>
-                      </div>
-                      <div class="open-button" v-on:click.stop="showComments(comment,'')" v-if="comment.commentInfo.length>=3 && comment.maxNumber<=2">还有{{comment.commentInfo.length-2}}条评论&nbsp&nbsp&nbsp>></div>
-                      <div class="open-button" v-on:click.stop="showComments(comment,'')" v-if="comment.commentInfo.length>=3 && comment.maxNumber>3">收起评论&nbsp&nbsp&nbsp>></div>
-                    </div>
-                </div>
-            </div>
+            <comment-box v-for="comment in comments" :comment="comment" @replyComment="replyComment" @replySonComment="replySonComment" type="second"></comment-box>
             <div class="divide-line"></div>
         </div>
         <post-bar v-on:sendButton="sendAcomment" :replyFor="replyFor"></post-bar>
@@ -69,6 +43,7 @@ import config from "../helper/config";
 import helper from "../helper/helper";
 import events from "../helper/events";
 import postBar from "./components/postBar";
+import commentBox from "./components/commentBox";
 import { Toast } from "mint-ui";
 export default {
   activated: async function() {
@@ -102,7 +77,8 @@ export default {
   },
   components: {
     Toast,
-    postBar
+    postBar,
+    commentBox
   },
   data: function() {
     return {
@@ -116,7 +92,8 @@ export default {
       //在输入框提示 回复谁 的文字
       replyFor: "",
       sending: false,
-      singleImgStyle: {}
+      singleImgStyle: {},
+      commentBox
     };
   },
   watch: {
@@ -236,7 +213,9 @@ export default {
           }
         }
         this.comments = newComments;
-        console.log(this.comments);
+        for (const ele of this.comments) {
+          console.log(`fsdfjaksfjaklfjaksf1~~~~~~~~~~~~~~~~~~~~~~~~~`,ele.commentInfo);
+        }
       }
     },
     sendAcomment: async function(content, imgs) {
@@ -253,6 +232,7 @@ export default {
       }
       this.sending = true;
 
+      console.log(`即将发送请求发起评论`, this.commentId);
       const sendCommentRes = await axios({
         url: `${config.url.feedUrl}/thread/newComment`,
         method: "post",
@@ -285,78 +265,20 @@ export default {
       //send comment后重新获取最新的评论信息
       await this.initComments();
     },
-    praise: async function(comment) {
-      if (this.praiseLock) {
-        Toast({
-          message: "客官慢点...",
-          position: "middle",
-          duration: 500
-        });
-        return;
-      }
-      this.praiseLock = true;
-      //如果已经点过赞了则 取消点赞
-      if (comment.hasPraised) {
-        const praiseRes = await axios({
-          url: `${config.url.feedUrl}/comment/cancelPraise`,
-          method: "post",
-          withCredentials: true,
-          data: {
-            _id: comment._id
-          }
-        });
-        comment.hasPraised = false;
-        comment.praises--;
-      } else {
-        const praiseRes = await axios({
-          url: `${config.url.feedUrl}/comment/praise`,
-          method: "post",
-          withCredentials: true,
-          data: {
-            _id: comment._id
-          }
-        });
-        comment.hasPraised = true;
-        comment.praises++;
-      }
-
-      this.praiseLock = false;
-
-      // //send comment后重新获取最新的评论信息
-      // await this.initComments();
-    },
-    //一级评论
-    replyFirstComment: function() {
+    //对主评论的回复
+    replyMainComment: function() {
       this.replyFor = ``;
       this.commentId = "";
     },
-    //二级评论
-    replySecondComment: async function(comment) {
+    //对选中评论 的 回复
+    replyComment: function(comment) {
       this.replyFor = `回复${comment.nickName}:`;
       this.commentId = comment.id;
     },
-    //三级评论
-    replyThirdComment: function(comment) {
+    //对选中子评论 的 回复
+    replySonComment: function(comment) {
       this.replyFor = `回复${comment.nickName}:`;
-      this.commentId = comment._id;
-    },
-    //展示所有comments 或收起 comments
-    showComments: async function(comment) {
-      for (const chooseComment of this.comments) {
-        //找到了Comment中对应的那个
-        if (chooseComment._id === comment._id) {
-          const tempInfo = chooseComment.commentInfo;
-          chooseComment.commentInfo = [];
-          chooseComment.commentInfo = tempInfo;
-          if (chooseComment.maxNumber === 99999) {
-            //收起
-            chooseComment.maxNumber = 2;
-            return;
-          }
-          //展开
-          chooseComment.maxNumber = 99999;
-        }
-      }
+      this.commentId = comment.id;
     }
   }
 };

@@ -36,62 +36,10 @@
         </div>
         <div class="comment-show"  v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="100">
             <div class="content-box-title">热门评论({{hotComments.length}})</div>
-            <div class="content-box" v-bind:class="hotFades[index]" v-for="(comment,index) in hotComments" @click="replyComment(comment,index,'hot')">
-               <div class="left" v-bind:style="{backgroundImage:`url(${comment.avatarUrl})`}"></div>
-               <div class="right">
-                    <div class="header">
-                      <div class="header-left">
-                        <div class="name">{{comment.nickName}}</div>
-                        <div class="time">{{comment.createdAt}}</div>
-                      </div>
-                      <div class="header-right">
-                        <div v-bind:class="{praise:!comment.hasPraised,'praise-after':comment.hasPraised}" v-on:click.stop="praise(comment)"></div>
-                        <div class="number">{{comment.praises}}</div>
-                      </div>
-                    </div>
-                    <div class="main">{{comment.content}}</div>
-                    <div class="imgs-part" v-if="comment.imgs.length>0">
-                      <img @click.stop="previewImage(img)"  class="img" v-for="img in comment.imgs" v-bind:src="img.url"></img>
-                    </div>
-                    <div class="footer"  v-if="comment.commentInfo.length>0" v-on:click.stop="goToSonCommentPage(comment)">
-                      <div class="footer-comment" v-for="(subComment,index) in comment.commentInfo"  v-if="index<comment.maxNumber">
-                        <div class="name">{{subComment.nickName}}:</div>
-                        <div class="content">{{subComment.content}}</div>
-                      </div>
-                      <div class="open-button" v-on:click.stop="showComments(comment,'hot')" v-if="comment.commentInfo.length>=3 && comment.maxNumber<=2">还有{{comment.commentInfo.length-2}}条评论&nbsp&nbsp&nbsp>></div>
-                      <div class="open-button" v-on:click.stop="showComments(comment,'hot')" v-if="comment.commentInfo.length>=3 && comment.maxNumber>3">收起评论&nbsp&nbsp&nbsp>></div>
-                    </div>
-                </div>
-            </div>
+              <comment-box v-for="comment in hotComments" :comment="comment" @replyComment="replyComment" type="first"></comment-box>
             <div class="divide-line"></div>
             <div class="content-box-title">最新评论({{comments.length}})</div>
-            <div class="content-box" v-bind:class="fades[index]" v-for="(comment,index) in comments" @click="replyComment(comment,index,'')">
-               <div class="left" v-bind:style="{backgroundImage:`url(${comment.avatarUrl})`}"></div>
-               <div class="right">
-                    <div class="header">
-                      <div class="header-left">
-                        <div class="name">{{comment.nickName}}</div>
-                        <div class="time">{{comment.createdAt}}</div>
-                      </div>
-                      <div class="header-right">
-                        <div v-bind:class="{praise:!comment.hasPraised,'praise-after':comment.hasPraised}" v-on:click.stop="praise(comment)"></div>
-                        <div class="number">{{comment.praises}}</div>
-                      </div>
-                    </div>
-                    <div class="main">{{comment.content}}</div>
-                    <div class="imgs-part" v-if="comment.imgs.length>0">
-                      <img @click.stop="previewImage(img)"  class="img" v-for="img in comment.imgs" v-bind:src="img.url"></img>
-                    </div>
-                    <div class="footer"  v-if="comment.commentInfo.length>0" v-on:click.stop="goToSonCommentPage(comment)">
-                      <div class="footer-comment" v-for="(subComment,index) in comment.commentInfo"  v-if="index<comment.maxNumber">
-                        <div class="name">{{subComment.nickName}}:</div>
-                        <div class="content">{{subComment.content}}</div>
-                      </div>
-                      <div class="open-button" v-on:click.stop="showComments(comment,'')" v-if="comment.commentInfo.length>=3 && comment.maxNumber<=2">还有{{comment.commentInfo.length-2}}条评论&nbsp&nbsp&nbsp>></div>
-                      <div class="open-button" v-on:click.stop="showComments(comment,'')" v-if="comment.commentInfo.length>=3 && comment.maxNumber>3">收起评论&nbsp&nbsp&nbsp>></div>
-                    </div>
-                </div>
-            </div>
+              <comment-box v-for="comment in comments" :comment="comment"  @replyComment="replyComment" type="first"></comment-box>
             <div class="divide-line"></div>
         </div>
          <post-bar v-on:sendButton="sendAcomment" :replyFor="replyFor"></post-bar>
@@ -104,6 +52,7 @@ import config from "../helper/config";
 import helper from "../helper/helper";
 import events from "../helper/events";
 import postBar from "./components/postBar";
+import commentBox from "./components/commentBox";
 import { Toast } from "mint-ui";
 export default {
   activated: async function() {
@@ -138,7 +87,8 @@ export default {
   },
   components: {
     Toast,
-    postBar
+    postBar,
+    commentBox
   },
   data: function() {
     return {
@@ -357,95 +307,16 @@ export default {
       //send comment后重新获取最新的评论信息
       await this.initComments();
     },
-    praise: async function(comment) {
-      if (this.praiseLock) {
-        Toast({
-          message: "客官慢点...",
-          position: "middle",
-          duration: 500
-        });
-        return;
-      }
-      this.praiseLock = true;
-      //如果已经点过赞了则 取消点赞
-      if (comment.hasPraised) {
-        const praiseRes = await axios({
-          url: `${config.url.feedUrl}/comment/cancelPraise`,
-          method: "post",
-          withCredentials: true,
-          data: {
-            _id: comment._id
-          }
-        });
-        comment.hasPraised = false;
-        comment.praises--;
-      } else {
-        const praiseRes = await axios({
-          url: `${config.url.feedUrl}/comment/praise`,
-          method: "post",
-          withCredentials: true,
-          data: {
-            _id: comment._id
-          }
-        });
-        comment.hasPraised = true;
-        comment.praises++;
-      }
-
-      this.praiseLock = false;
-
-      // //send comment后重新获取最新的评论信息
-      // await this.initComments();
-    },
     replyThread: function() {
       this.replyFor = ``;
       this.sourse = "thread";
       this.commentId = "";
     },
     //回复评论
-    replyComment: async function(comment, index, hot) {
+    replyComment: function(comment) {
       this.replyFor = `回复${comment.nickName}:`;
       this.sourse = "comment";
       this.commentId = comment.id;
-    },
-    //展示所有comments 或收起 comments
-    showComments: async function(comment, type) {
-      if (type === "hot") {
-        for (const hotComment of this.hotComments) {
-          //找到了hotComment中对应的那个
-          if (hotComment._id === comment._id) {
-            const tempInfo = hotComment.commentInfo;
-            hotComment.commentInfo = [];
-            hotComment.commentInfo = tempInfo;
-            if (hotComment.maxNumber === 999) {
-              console.log("收起");
-              hotComment.maxNumber = 2;
-              console.log(hotComment.maxNumber);
-              return;
-            }
-            hotComment.maxNumber = 999;
-          }
-        }
-      } else {
-        for (const hotComment of this.comments) {
-          //找到了hotComment中对应的那个
-          if (hotComment._id === comment._id) {
-            const tempInfo = hotComment.commentInfo;
-            hotComment.commentInfo = [];
-            hotComment.commentInfo = tempInfo;
-            if (hotComment.maxNumber === 999) {
-              console.log("收起");
-              hotComment.maxNumber = 2;
-              console.log(hotComment.maxNumber);
-              return;
-            }
-            hotComment.maxNumber = 999;
-          }
-        }
-      }
-    },
-    goToSonCommentPage: function(comment) {
-      this.$router.push({ name: "sonCommentPage", query: { comment } });
     }
   }
 };
@@ -523,7 +394,7 @@ export default {
     .playVideo {
       height: 50vw;
       width: 50vw;
-      margin-top:3vw;
+      margin-top: 3vw;
       background-size: 100% 100%;
       border: 0px solid black;
       display: flex;
