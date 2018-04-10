@@ -303,9 +303,6 @@ export default {
 .divide-line {
   border-top: 7px solid rgb(241, 241, 241);
 }
-.thread-container:active {
-  background-color: #e6e6e6;
-}
 .thread-container {
   border-bottom: 2vw solid #eeeded;
   width: 100vw;
@@ -455,9 +452,6 @@ export default {
     line-height: 10vw;
     padding-left: 10px;
   }
-  .content-box:active {
-    background-color: #e6e6e6;
-  }
   .content-box {
     padding-top: 3vw;
     border-top: 1px solid rgb(233, 233, 233);
@@ -493,9 +487,6 @@ export default {
           .name {
             height: 5vw;
             text-align: left;
-          }
-          .name:active {
-            color: #5b99b6;
           }
           .time {
             margin-top: 1vw;
@@ -559,9 +550,6 @@ export default {
         flex-direction: column;
         border-radius: 5vw;
         padding: 10px;
-        .footer-comment:active {
-          background-color: #ebebeb;
-        }
         .footer-comment {
           width: 71vw;
           margin-top: 5px;

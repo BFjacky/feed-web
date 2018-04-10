@@ -47,11 +47,13 @@ export default {
       $(".postBar-content-area").height(height + scrollTop);
     },
     deletecontent: function() {
+      console.log("初始", $(".postBar-content-area").height());
       //输入框中的内容减少时检查是否需要，缩小输入框
-      $(".postBar-content-area").height("10vw");
+      $(".postBar-content-area").height("6vw");
       const scrollTop = $(".postBar-content-area").scrollTop();
       const height = $(".postBar-content-area").height();
       $(".postBar-content-area").height(height + scrollTop);
+      console.log("跟新高度", $(".postBar-content-area").height());
     },
     addImg: function() {
       if (this.img) {
@@ -80,6 +82,9 @@ export default {
       wx.previewImage({ urls: [this.img.sourceUrl] });
     },
     sendAComment: function() {
+      //恢复输入框原来的大小，高度
+      $(".postBar-content-area").height("6vw");
+
       if (!this.img) {
         this.$emit("sendButton", this.content, []);
       } else {
@@ -101,15 +106,16 @@ export default {
   bottom: 0;
   width: 100vw;
   .img-area {
-    margin-left:1vw;
-    margin-bottom:1px;
+    margin-left: 1vw;
+    margin-bottom: 1px;
     background-color: white;
     box-shadow: 1px 1px 1px 1px #b3b3b3;
     height: 30vw;
     width: 30vw;
   }
   .comment-make {
-    box-shadow: 0 -1px 1px 1px rgb(180, 178, 178);
+    // box-shadow: 0 -1px 1px 1px rgb(180, 178, 178);
+    border-top: 1px solid rgb(243, 243, 243);
     background-color: white;
     display: flex;
     width: 100vw;
@@ -123,8 +129,9 @@ export default {
       border-width: 0;
       box-sizing: border-box;
       //   输入框初始高度10vw
+      height:6vw;
+      padding-left:1vw;
       line-height: 6vw;
-      height: 10vw;
     }
     .function-buttons {
       align-self: flex-end;
@@ -141,7 +148,9 @@ export default {
       }
       .photo-button {
         background-image: url(../../../assets/photo.png);
-        background-size: 100% 100%;
+        background-size: 80% 80%;
+        background-repeat: no-repeat;
+        background-position: center;
         width: 10vw;
         height: 10vw;
       }

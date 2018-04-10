@@ -160,9 +160,6 @@ export default {
             height: 5vw;
             text-align: left;
           }
-          .name:active {
-            color: #5b99b6;
-          }
           .time {
             margin-top: 1vw;
             height: 5vw;

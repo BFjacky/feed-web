@@ -107,8 +107,6 @@ export default {
       //在输入框提示 回复谁 的文字
       replyFor: "",
       sending: false,
-      fades: [],
-      hotFades: [],
       singleImgStyle: {},
       videoVframe: ""
     };
@@ -340,9 +338,6 @@ export default {
 .divide-line {
   border-top: 7px solid rgb(241, 241, 241);
 }
-.thread-container:active {
-  background-color: #e6e6e6;
-}
 .thread-container {
   div {
     border: 0px solid red;
@@ -518,31 +513,6 @@ export default {
     line-height: 10vw;
     padding-left: 10px;
   }
-  // 点击commentBox 的渐变动画效果
-  @keyframes fade-in-out {
-    0% {
-      background-color: #d4d4d400;
-    }
-    25% {
-      background-color: #e6e6e6;
-    }
-    50% {
-      background-color: #e6e6e6;
-    }
-    75% {
-      background-color: #e6e6e6;
-    }
-    100% {
-      background-color: #d4d4d400;
-    }
-  }
-
-  .click-fade {
-    animation: fade-in-out ease-in-out 0.3s;
-  }
-  .content-box:active {
-    background-color: #e6e6e6;
-  }
   .content-box {
     padding-top: 3vw;
     border-top: 1px solid rgb(233, 233, 233);
@@ -578,9 +548,6 @@ export default {
           .name {
             height: 5vw;
             text-align: left;
-          }
-          .name:active {
-            color: #5b99b6;
           }
           .time {
             margin-top: 1vw;
