@@ -11,7 +11,10 @@
               <div class="text"> 回复了你</div>
             </div>
           </div>
-          <div class="main">{{notify.commentInfo.content}}</div>
+          <div class="main">
+            <div class="img" v-if="notify.imgs.length!==0" :style="{backgroundImage:`url(${notify.imgs[0].url})`}" @click.stop="previewImage(notify.imgs[0].url)"></div>
+            <div class="content">{{notify.commentInfo.content}}</div>
+          </div>
           <div class="footer">{{notify.createdAt}}</div>
         </div>
         <div class="right">
@@ -31,7 +34,10 @@
               <div class="text"> 回复了你</div>
             </div>
           </div>
-          <div class="main">{{notify.commentInfo.content}}</div>
+          <div class="main">
+            <div class="img" v-if="notify.imgs.length!==0" :style="{backgroundImage:`url(${notify.imgs[0].url})`}" @click.stop="previewImage(notify.imgs[0].url)"></div>
+            <div class="content">{{notify.commentInfo.content}}</div>
+          </div>
           <div class="footer">{{notify.createdAt}}</div>
         </div>
         <div class="right">
@@ -153,6 +159,10 @@ export default {
           thread
         }
       });
+    },
+    previewImage: async function(url) {
+      const urls = [url];
+      wx.previewImage({ urls });
     }
   }
 };
@@ -237,10 +247,19 @@ export default {
     }
     .main {
       padding: 1vw;
+      padding-left: 3vw;
       margin-top: 1vw;
       width: 70vw;
       text-align: left;
       font-size: 4vw;
+      .img {
+        background-size: 100% 100%;
+        width: 28vw;
+        height: 28vw;
+      }
+      .content {
+        margin-top: 2vw;
+      }
     }
     .footer {
       margin-top: 3vw;
