@@ -136,7 +136,7 @@ export default {
             const now = new Date();
             ele.createdAt = new Date(ele.createdAt)
             //获得分钟数，如果分钟数小于10则:例如 9:01,
-            const minute = ele.createdAt.getMinutes();
+            let minute = ele.createdAt.getMinutes();
 
             if (minute < 10) {
                 minute = '0' + minute;
