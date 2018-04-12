@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-show="!isShield&&!isDelete" @click="clickBox" :class="{fade:fade}">
+  <div class="container" v-show="!isShield&&!isDelete" @click="clickBox" :class="clickAnimation">
       <div class="header">
           <div class="part1" v-bind:style="{backgroundImage:`url(${thread.avatarUrl})`}"></div>
           <div class="part2">
@@ -13,7 +13,7 @@
       <div class="main">
           <div class="content-text">{{thread.content}}</div>
           <div class="content-buttons"></div>
-          <div class="playVideo"  v-if="thread.video" @click.stop="playVideo" :style="{backgroundImage:`url(${thread.video.sourceUrl}${videoVframe})`}">
+          <div class="playVideo"  v-if="thread.video" @click.stop="playVideo" :style="singleVideoStyle">
             <div class="play-button"></div>
           </div>
           <div class="imgs-part">
@@ -42,6 +42,7 @@ import axios from "axios";
 import config from "../helper/config";
 import helper from "../helper/helper";
 import events from "../helper/events";
+import common from "../helper/common.css";
 import { Toast, MessageBox } from "mint-ui";
 export default {
   props: ["thread"],
@@ -65,7 +66,31 @@ export default {
         };
       }
     }
-
+    //获得video 封面图片宽高
+    if (this.thread.video) {
+      const img = new Image();
+      img.src = `${this.thread.video.sourceUrl}${this.videoVframe}`;
+      if (img.complete) {
+        const height = 65 * img.height / img.width + "vw";
+        const width = "65vw";
+        this.singleVideoStyle = {
+          height: height,
+          width: width,
+          backgroundImage: `url(${img.src})`
+        };
+      } else {
+        img.onload = () => {
+          const height = 65 * img.height / img.width + "vw";
+          const width = "65vw";
+          this.singleVideoStyle = {
+            height: height,
+            width: width,
+            backgroundImage: `url(${img.src})`
+          };
+          img.onload = null; //避免重复加载
+        };
+      }
+    }
     events.$on("deleteThread", threadId => {
       if (this.thread._id === threadId) {
         this.isDelete = true;
@@ -85,12 +110,13 @@ export default {
       //避免用户频繁点赞，过度消耗资源
       praiseLock: false,
       singleImgStyle: {},
-      fade: false,
+      singleVideoStyle: {},
       isDelete: false,
       isShield: false,
       item1Text: "",
       myself: false,
-      videoVframe: ""
+      videoVframe: "",
+      clickAnimation: ""
     };
   },
   methods: {
@@ -167,6 +193,11 @@ export default {
       alert("暂无分享功能");
     },
     clickBox: function() {
+      //显示点击动画
+      this.clickAnimation = "clickFade";
+      setTimeout(() => {
+        this.clickAnimation = "";
+      }, 300);
       //查看该用户是否已经关注了此用户
       this.item1Text = "关注此用户";
       for (const focusUser of config.user.focus) {
@@ -295,54 +326,7 @@ export default {
 //   left: 0;
 //   z-index: 10000;
 // }
-@keyframes fade-in-out {
-  0% {
-    background-color: #d4d4d400;
-  }
-  25% {
-    background-color: #e6e6e6;
-  }
-  50% {
-    background-color: #e6e6e6;
-  }
-  75% {
-    background-color: #e6e6e6;
-  }
-  100% {
-    background-color: #d4d4d400;
-  }
-}
-.fade {
-  animation: fade-in-out ease-in-out 0.5s;
-}
-@keyframes fade-in-out {
-  0% {
-    background-color: #d4d4d400;
-  }
-  25% {
-    background-color: #e6e6e6;
-  }
-  50% {
-    background-color: #e6e6e6;
-  }
-  75% {
-    background-color: #e6e6e6;
-  }
-  100% {
-    background-color: #d4d4d400;
-  }
-}
-.fade {
-  animation: fade-in-out ease-in-out 0.5s;
-}
-@keyframes fade-in {
-  0% {
-    opacity: 0.5;
-  }
-  100% {
-    opacity: 1;
-  }
-}
+
 .container {
   border-bottom: 2vw solid #eeeded;
   width: 90vw;
@@ -395,7 +379,7 @@ export default {
   .playVideo {
     height: 50vw;
     width: 50vw;
-    margin-top:3vw;
+    margin-top: 3vw;
     background-size: 100% 100%;
     border: 0px solid black;
     display: flex;

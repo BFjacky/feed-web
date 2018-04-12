@@ -15,7 +15,7 @@
           <div class="main">
               <div class="content-text">{{thread.content}}</div>
               <div class="content-buttons"></div>
-              <div class="playVideo"  v-if="thread.video" @click.stop="playVideo" :style="{backgroundImage:`url(${thread.video.sourceUrl}${videoVframe})`}">
+              <div class="playVideo"  v-if="thread.video" @click.stop="playVideo" :style="singleVideoStyle">
                 <div class="play-button"></div>
               </div>
               <div class="imgs-part">
@@ -36,10 +36,10 @@
         </div>
         <div class="comment-show"  v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="100">
             <div class="content-box-title">热门评论({{hotComments.length}})</div>
-              <comment-box v-for="comment in hotComments" :comment="comment" @replyComment="replyComment" type="first"></comment-box>
+              <comment-box v-for="comment in hotComments" :comment="comment" :key="comment.id" @replyComment="replyComment" type="first"></comment-box>
             <div class="divide-line"></div>
             <div class="content-box-title">最新评论({{comments.length}})</div>
-              <comment-box v-for="comment in comments" :comment="comment"  @replyComment="replyComment" type="first"></comment-box>
+              <comment-box v-for="comment in comments" :comment="comment"  :key="comment.id" @replyComment="replyComment" type="first"></comment-box>
             <div class="divide-line"></div>
         </div>
          <post-bar v-on:sendButton="sendAcomment" :replyFor="replyFor"></post-bar>
@@ -84,6 +84,31 @@ export default {
         };
       }
     }
+    //获得video 封面图片宽高
+    if (this.thread.video) {
+      const img = new Image();
+      img.src = `${this.thread.video.sourceUrl}${this.videoVframe}`;
+      if (img.complete) {
+        const height = 65 * img.height / img.width + "vw";
+        const width = "65vw";
+        this.singleVideoStyle = {
+          height: height,
+          width: width,
+          backgroundImage: `url(${img.src})`
+        };
+      } else {
+        img.onload = () => {
+          const height = 65 * img.height / img.width + "vw";
+          const width = "65vw";
+          this.singleVideoStyle = {
+            height: height,
+            width: width,
+            backgroundImage: `url(${img.src})`
+          };
+          img.onload = null; //避免重复加载
+        };
+      }
+    }
   },
   components: {
     Toast,
@@ -108,6 +133,7 @@ export default {
       replyFor: "",
       sending: false,
       singleImgStyle: {},
+      singleVideoStyle: {},
       videoVframe: ""
     };
   },
@@ -512,133 +538,6 @@ export default {
     text-align: left;
     line-height: 10vw;
     padding-left: 10px;
-  }
-  .content-box {
-    padding-top: 3vw;
-    border-top: 1px solid rgb(233, 233, 233);
-    display: flex;
-    width: 100%;
-    padding-left: 10px;
-    padding: 3vw;
-    .left {
-      width: 15vw;
-      height: 15vw;
-      border-radius: 50%;
-      background-size: 100% 100%;
-    }
-    .right {
-      width: 75vw;
-      display: flex;
-      flex-direction: column;
-      padding-left: 10px;
-      div {
-        border: 0px solid black;
-        box-sizing: border-box;
-      }
-      .header {
-        margin-top: 5px;
-        width: 75vw;
-        height: 10vw;
-        display: flex;
-        justify-content: space-between;
-        .header-left {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          .name {
-            height: 5vw;
-            text-align: left;
-          }
-          .time {
-            margin-top: 1vw;
-            height: 5vw;
-            font-size: 3vw;
-            text-align: left;
-            color: #b9b9b9;
-          }
-        }
-        .header-right {
-          display: flex;
-          margin-right: 3vw;
-          margin-top: 1vw;
-          .praise {
-            background-image: url("../../assets/like.png");
-            background-size: 100% 100%;
-            width: 5vw;
-            height: 5vw;
-          }
-          .praise-after {
-            background-image: url("../../assets/like-after.png");
-            background-size: 100% 100%;
-            width: 5vw;
-            height: 5vw;
-          }
-          .number {
-            width: 5vw;
-            height: 5vw;
-            margin-left: 2vw;
-            font-size: 4vw;
-            line-height: 5vw;
-            color: rgb(167, 165, 165);
-          }
-        }
-        .praise {
-          background-size: 100% 100%;
-        }
-      }
-      .main {
-        width: 75vw;
-        margin-top: 2vw;
-        text-align: left;
-        font-size: 3.5vw;
-      }
-      .imgs-part {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        margin-top: calc(2vw*16/9);
-        .img {
-          height: 28vw;
-          width: 28vw;
-          margin-left: 1vw;
-          margin-bottom: 1vw;
-        }
-      }
-      .footer {
-        width: 75vw;
-        margin-top: 3vw;
-        background-color: rgb(230, 230, 230);
-        flex-direction: column;
-        border-radius: 5vw;
-        padding: 10px;
-        .footer-comment {
-          width: 71vw;
-          margin-top: 5px;
-          border: 0px solid black;
-          font-size: 3.5vw;
-          text-align: left;
-          overflow-y: hidden;
-          max-height: 40vh;
-          .name {
-            height: 5vw;
-            line-height: 5vw;
-            float: left;
-            flex-shrink: 0;
-            color: #3594ca;
-          }
-          .content {
-            line-height: 5vw;
-            flex-grow: 1;
-            word-wrap: break-word;
-            text-align: left;
-          }
-        }
-        .open-button {
-          margin-top: 10px;
-          font-size: 3vw;
-        }
-      }
-    }
   }
 }
 </style>

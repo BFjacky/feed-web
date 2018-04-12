@@ -4,7 +4,9 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import lodash from './lodash'
-import config from "./components/helper/config"
+import config from "./components/helper/config";
+import events from "./components/helper/events";
+
 import { InfiniteScroll } from 'mint-ui';
 import VueSocketio from 'vue-socket.io';
 
@@ -27,7 +29,7 @@ new Vue({
   template: '<App/>',
   sockets: {
     connect: function () {
-      console.log('socket connected');
+      events.$emit("socketConnected");
     },
     res: function (val) {
     }

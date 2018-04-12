@@ -1,5 +1,5 @@
 <template>
-  <div class="content-box" @click.stop="replyComment">
+  <div class="content-box" @click.stop="replyComment" :class="clickAnimation">
     <div class="left" v-bind:style="{backgroundImage:`url(${comment.avatarUrl})`}"></div>
       <div class="right">
         <div class="header">
@@ -32,16 +32,22 @@ import axios from "axios";
 import config from "../../helper/config";
 import helper from "../../helper/helper";
 import events from "../../helper/events";
+import common from "../../helper/common.css";
 import { Toast } from "mint-ui";
 export default {
   props: ["comment", "type"],
   data: function() {
     return {
-      praiseLock: false
+      praiseLock: false,
+      clickAnimation: ""
     };
   },
   methods: {
     replyComment: function() {
+      this.clickAnimation = "clickFade";
+      setTimeout(() => {
+        this.clickAnimation = "";
+      }, 300);
       this.$emit("replyComment", this.comment);
     },
     goCommentDetailPage: function() {

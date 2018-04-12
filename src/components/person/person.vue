@@ -54,11 +54,11 @@ export default {
     });
     config.user.fetching = false;
     this.prepared = true;
-    if (!userGet.data || !userGet.data._id) {
-      window.location.href = config.url.oauthUrl;
-      //未能获取到用户信息，location
-      return;
-    }
+    // if (!userGet.data || !userGet.data._id) {
+    //   window.location.href = config.url.oauthUrl;
+    //   //未能获取到用户信息，location
+    //   return;
+    // }
     const {
       avatarUrl,
       nickName,
@@ -70,7 +70,10 @@ export default {
       shields
     } = userGet.data;
     this.avatarUrl = avatarUrl;
-    this.nickName = nickName;
+    nickName === undefined
+      ? (this.nickName = "点我登陆")
+      : (this.nickName = nickName);
+
     this.gender = gender;
     config.user.focus = focus;
     config.user.followers = followers;
@@ -79,7 +82,9 @@ export default {
     config.user._id = _id;
     config.user.pass = pass;
     //web-socket 通过 之前的http请求获得了该用户的用户信息后,发送一条socket消息;
-    this.$socket.emit("init", _id);
+    events.$on("socketConnected", () => {
+      this.$socket.emit("init", _id);
+    });
   },
   activated: async function() {
     //查看 客户端 是否已经获得了用户信息
@@ -109,7 +114,7 @@ export default {
   data: function() {
     return {
       avatarUrl: "",
-      nickName: "点我登陆",
+      nickName: "",
       gender: -1,
       prepared: false,
       followers: [],

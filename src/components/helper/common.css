@@ -1,0 +1,20 @@
+@keyframes clickFade{
+    0%{
+        background-color: #ffffff;
+    }
+    25%{
+
+    }
+    50%{
+        background-color: #e2e2e2;
+    }
+    75%{
+
+    }
+    100%{
+        background-color: #ffffff;
+    }
+}
+.clickFade{
+    animation: clickFade 0.3s forwards ease-in-out;
+}

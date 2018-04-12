@@ -7,7 +7,7 @@
       <div class="imgs-area">
         <img-view-box v-for="img in imgs" :img="img" :key="index" v-on:uploadImg="uploadHandler" v-on:deleteImg="deleteHandler" v-on:viewImage="viewImageHandler"></img-view-box>
       </div>
-      <video-view-box :video="video" v-on:uploaded="uploadVideoHandler"></video-view-box>
+      <video-view-box :video="video" v-on:uploaded="uploadVideoHandler" @deleteVideo="deleteVideoHandler"></video-view-box>
       <div class="bottom-bar">
           <div class="functions">
             <div class="function-button photo-button" @click="addImage"></div>
@@ -81,6 +81,7 @@ export default {
       }
 
       this.refreInput = false;
+      await helper.wait(10);
       this.refreInput = true;
     },
     chooseVideo: async function() {
@@ -132,6 +133,11 @@ export default {
       this.imgs = [];
       await wait(10);
       this.imgs = imgs;
+    },
+    deleteVideoHandler: function() {
+      this.video = undefined;
+      this.videoUploaded = false;
+      this.finalVideo = undefined;
     },
     confirmToSend: async function() {
       if (this.hasSent) {
@@ -232,7 +238,6 @@ export default {
             }
           })
           .catch(() => {
-            console.log(123);
             window.history.forward(1);
           });
       });
