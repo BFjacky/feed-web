@@ -1,5 +1,5 @@
 <template>
-    <div class="playVideo"  v-if="video" @click.stop="playVideo" :style="singleVideoStyle">
+    <div class="playVideo" @click.stop="playVideo" :style="singleVideoStyle" v-if="video">
       <spinner :type="3" class="spinPosition" v-show="!hasUploaded"></spinner>
       <div class="play-button" v-show="hasUploaded"></div>
        <div class="delete-button" @click.stop="deleteVideo"></div>
@@ -21,12 +21,15 @@ export default {
   components: {
     spinner: Spinner
   },
+
   methods: {
     playVideo: function() {
       events.$emit("displayVideo", this.video.sourceUrl);
     },
     deleteVideo: function() {
       this.$emit("deleteVideo");
+      this.hasUploaded = false;
+      this.singleVideoStyle = {};
     }
   },
   watch: {
@@ -47,8 +50,8 @@ export default {
         const img = new Image();
         img.src = `${this.video.sourceUrl}${config.videoVframe}`;
         if (img.complete) {
-          const height = 65 * img.height / img.width + "vw";
-          const width = "65vw";
+          const height = 45 * img.height / img.width + "vw";
+          const width = "45vw";
           this.singleVideoStyle = {
             height: height,
             width: width,
@@ -56,8 +59,8 @@ export default {
           };
         } else {
           img.onload = () => {
-            const height = 65 * img.height / img.width + "vw";
-            const width = "65vw";
+            const height = 45 * img.height / img.width + "vw";
+            const width = "45vw";
             this.singleVideoStyle = {
               height: height,
               width: width,
@@ -94,7 +97,7 @@ div {
   }
   .delete-button {
     position: absolute;
-    left: 59.5vw;
+    left: 39.5vw;
     top: 0vw;
     width: 5vw;
     height: 5vw;
