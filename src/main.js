@@ -10,7 +10,7 @@ import events from "./components/helper/events";
 import { InfiniteScroll } from 'mint-ui';
 import VueSocketio from 'vue-socket.io';
 
-Vue.use(VueSocketio,`${config.url.socketUrl}`);
+Vue.use(VueSocketio, `${config.url.socketUrl}`);
 Vue.use(lodash)
 Vue.use(InfiniteScroll)
 // import ElementUI from 'element-ui';
@@ -28,10 +28,25 @@ new Vue({
   components: { App },
   template: '<App/>',
   sockets: {
+    disconnect: function () {
+      console.log(`断开连接`)
+      // this.$socket.io.readyState = 'closed'
+      // this.$socket.io.reconnect()
+    },
+    reconnecting: function () {
+      console.log('正在重连')
+    },
+    error: function () {
+      console.log(`出现错误`)
+    },
     connect: function () {
-      events.$emit("socketConnected");
+      console.log('连接成功')
+      events.$emit('socketConnected')
     },
     res: function (val) {
-    }
+    },
+    // praiseThread: function (val) {
+
+    // }
   }
 })

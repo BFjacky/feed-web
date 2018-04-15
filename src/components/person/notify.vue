@@ -21,6 +21,7 @@
           <div class="content-box">{{notify.sourceContent}}</div>
         </div>
       </div>
+      <praise-info-bar class="praise-box" v-for="notify in praiseNotifies" :notify ="notify" :key="notify.key"></praise-info-bar>
       <div style="color: #888888;text-align: center;width: 100vw;padding:3vw 0">没有更多了...</div>
     </div>
     <div class="header">已读通知</div>
@@ -56,6 +57,7 @@ import axios from "axios";
 import helper from "../helper/helper";
 import config from "../helper/config";
 import store from "../helper/store";
+import praiseInfoBar from "./components/praiseInfoBar";
 import { Spinner } from "mint-ui";
 export default {
   activated: async function() {
@@ -91,14 +93,23 @@ export default {
         notifies: this.notifies
       }
     });
+
+    //获得点赞的通知(即:所有有新的点赞状态点赞)
+    this.praiseNotifies = store.notify.praiseThreads.concat(
+      store.notify.praiseComments
+    );
+    this.praiseNotifies = helper.parseDate(this.praiseNotifies);
+    console.log(`get in notify page and find the solution`,this.praiseNotifies)
   },
   components: {
-    spinner: Spinner
+    spinner: Spinner,
+    praiseInfoBar
   },
   data: function() {
     return {
       notifies: [],
       oldNotifies: [],
+      praiseNotifies: [],
       choosedNotify: "",
       clickingAni: [],
       busy: false,
@@ -210,9 +221,14 @@ export default {
   // box-shadow: 0 2px 1px 1px rgb(204, 204, 204);
 }
 .notifies-container {
+  display: flex;
+  flex-wrap: wrap;
+  overflow-x: hidden;
   width: 100vw;
-  overflow: auto;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+}
+.praise-box{
 }
 .notify-box {
   border-bottom: 1px solid rgb(211, 211, 211);

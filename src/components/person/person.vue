@@ -100,7 +100,7 @@ export default {
       });
     }
     this.notifies = store.notify.notifies;
-
+    this.followers = config.user.followers;
     await checkPrepared();
 
     //接收服务器推送的 notify 消息
@@ -109,7 +109,36 @@ export default {
       this.notifies = store.notify.notifies;
       events.$emit("newNotifies", store.notify.notifies);
     };
-    this.followers = config.user.followers;
+    //接收服务器推送的 praise 消息
+    this.$options.sockets.praiseThread = thread => {
+      let flag = false;
+      for (let oldThread of store.notify.praiseThreads) {
+        if (oldThread._id == thread._id) {
+          oldThread = thread;
+          flag = true;
+          break;
+        }
+      }
+      if (!flag) {
+        store.notify.praiseThreads.push(thread);
+      }
+      events.$emit("newNotifies", store.notify.praiseThreads);
+    };
+    //接收服务器推送的 praise 消息
+    this.$options.sockets.praiseComment = comment => {
+      let flag = false;
+      for (let oldComment of store.notify.praiseComments) {
+        if (oldComment._id == comment._id) {
+          oldComment = comment;
+          flag = true;
+          break;
+        }
+      }
+      if (!flag) {
+        store.notify.praiseComments.push(comment);
+      }
+      events.$emit("newNotifies", store.notify.praiseComments);
+    };
   },
   data: function() {
     return {

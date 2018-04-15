@@ -32,6 +32,8 @@ export default {
     },
     notify: {
         notifies: [],
+        praiseThreads:[],
+        praiseComments:[],
     },
     video: {
         displaying: false,
