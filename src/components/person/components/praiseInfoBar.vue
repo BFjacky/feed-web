@@ -2,11 +2,13 @@
   <div class="praiseBox">
     <div class="left">
       <div class="name-top">
-          <div class="name-text" v-for="praiseinfo in notify.praiseInfo">{{praiseinfo.nickName}},</div>
-          <div class="remind-text">&nbsp&nbsp&nbsp&nbsp赞了你的动态</div>
+          <div class="name-text" v-for="(notReadPraiseinfo,index) in notify.notReadPraiseInfo" v-if="index<5">{{notReadPraiseinfo.nickName}}&nbsp&nbsp</div>
+          <div class="remind-text" v-if="notify.notReadPraiseInfo.length>5">等多人赞了你的动态</div>
+          <div class="remind-text" v-if="notify.notReadPraiseInfo.length<=5">&nbsp&nbsp赞了你的动态</div>
       </div>
       <div class="avatar-mid">
-        <div class="avatar" v-for="(praiseinfo,index) in notify.praiseInfo" v-bind:style="{backgroundImage:`url(${praiseinfo.avatarUrl})`}"></div>
+        <div class="avatar" v-for="(notReadPraiseinfo,index) in notify.notReadPraiseInfo" v-bind:style="{backgroundImage:`url(${notReadPraiseinfo.avatarUrl})`}" v-if="index<5"></div>
+        <div class="more-avatar" v-if="notify.notReadPraiseInfo.length>5"></div>      
       </div>
       <div class="time-bototm"></div>
     </div>
@@ -21,9 +23,7 @@ export default {
   data: function() {
     return {};
   },
-  created: function() {
-    console.log(`praiseInfoBar send a thread`, this.notify);
-  }
+  created: function() {}
 };
 </script>
 <style lang="less" scoped>
@@ -48,8 +48,8 @@ div {
       .name-text {
         color: #47a4c9;
       }
-      .remind-text{
-        color:#414141;
+      .remind-text {
+        color: #414141;
       }
     }
     .avatar-mid {
@@ -62,22 +62,33 @@ div {
         border-radius: 50%;
         background-size: 100% 100%;
       }
+      .more-avatar {
+        width: 10vw;
+        height: 10vw;
+        border-radius: 50%;
+        background-size: 90% 90%;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-image: url("../../../assets/more.png");
+        background-color: #d1d1d1;
+      }
     }
   }
   .right {
     .thread-text {
+      border: 0px solid red;
+      overflow-y: auto;
+      text-align: left;
+      color: #b3b3b3;
+      font-size: 4vw;
+      line-height: 4vw;
+      max-height: 30vw;
+      width: 20vw;
     }
+    border: 0px solid black;
     display: flex;
     justify-content: center;
     align-items: center;
-    text-align: center;
-    color: #b3b3b3;
-    font-size: 4vw;
-    line-height: 4vw;
-    max-height: 30vw;
-    width: 20vw;
-    overflow: auto;
-    text-overflow: ellipsis;
   }
 }
 </style>

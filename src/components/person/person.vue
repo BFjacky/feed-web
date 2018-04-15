@@ -18,7 +18,7 @@
       <div class="item button" @click="item2Click">
         <div class="icon icon2"></div>
         <div class="text">通知</div>
-        <div class="number-text" v-show="notifies.length>0">{{notifies.length>99?'···':notifies.length}}</div>
+        <div class="number-text" v-show="(notifies.length+praiseNotifies.length)>0">{{(notifies.length+praiseNotifies.length)>99?'···':(notifies.length+praiseNotifies.length)}}</div>
       </div>
       <div class="item button" @click="item3Click">
         <div class="icon icon3"></div>
@@ -85,8 +85,7 @@ export default {
     events.$on("socketConnected", () => {
       this.$socket.emit("init", _id);
     });
-  },
-  activated: async function() {
+
     //查看 客户端 是否已经获得了用户信息
     const _this = this;
     async function checkPrepared() {
@@ -122,6 +121,9 @@ export default {
       if (!flag) {
         store.notify.praiseThreads.push(thread);
       }
+      this.praiseNotifies = store.notify.praiseThreads.concat(
+        store.notify.praiseComments
+      );
       events.$emit("newNotifies", store.notify.praiseThreads);
     };
     //接收服务器推送的 praise 消息
@@ -137,8 +139,17 @@ export default {
       if (!flag) {
         store.notify.praiseComments.push(comment);
       }
+      this.praiseNotifies = store.notify.praiseThreads.concat(
+        store.notify.praiseComments
+      );
+
       events.$emit("newNotifies", store.notify.praiseComments);
     };
+  },
+  activated: async function() {
+    this.praiseNotifies = store.notify.praiseThreads.concat(
+      store.notify.praiseComments
+    );
   },
   data: function() {
     return {
@@ -147,7 +158,8 @@ export default {
       gender: -1,
       prepared: false,
       followers: [],
-      notifies: []
+      notifies: [],
+      praiseNotifies: []
     };
   },
   methods: {

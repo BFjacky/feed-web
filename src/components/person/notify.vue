@@ -1,6 +1,6 @@
 <template>
   <div class="container" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="100">
-    <div class="header">未读通知({{notifies.length}})</div>
+    <div class="header">未读通知({{notifies.length+praiseNotifies.length}})</div>
     <div class="notifies-container">
       <div class="notify-box" v-for="(notify,index) in notifies" @click="clickNotifyBox(notify,index)" v-bind:class="clickingAni[index]">
         <div class="left">
@@ -21,7 +21,7 @@
           <div class="content-box">{{notify.sourceContent}}</div>
         </div>
       </div>
-      <praise-info-bar class="praise-box" v-for="notify in praiseNotifies" :notify ="notify" :key="notify.key"></praise-info-bar>
+      <praise-info-bar class="praise-box" v-for="notify in praiseNotifies" :notify ="notify" :key="notify.key" @click="clickPraiseNotifyBox(notify)"></praise-info-bar>
       <div style="color: #888888;text-align: center;width: 100vw;padding:3vw 0">没有更多了...</div>
     </div>
     <div class="header">已读通知</div>
@@ -98,8 +98,20 @@ export default {
     this.praiseNotifies = store.notify.praiseThreads.concat(
       store.notify.praiseComments
     );
-    this.praiseNotifies = helper.parseDate(this.praiseNotifies);
-    console.log(`get in notify page and find the solution`,this.praiseNotifies)
+    const uselessThreads = store.notify.praiseThreads;
+    const uselessComments = store.notify.praiseComments;
+    store.notify.praiseThreads = [];
+    store.notify.praiseComments = [];
+    //将所有的thread.praiseInfo设置为已读
+    const readPraiseInfo = await axios({
+      method: "post",
+      url: `${config.url.feedUrl}/user/readPraise`,
+      withCredentials: true,
+      data: {
+        threads: uselessThreads,
+        comments: uselessComments
+      }
+    });
   },
   components: {
     spinner: Spinner,
@@ -128,6 +140,9 @@ export default {
           }
         }
       });
+    },
+    clickPraiseNotifyBox:function(notify){
+
     },
     loadMore: async function() {
       if (this.nomore) {
@@ -161,8 +176,6 @@ export default {
         }
       });
       thread = threadData.data.thread;
-
-      console.log("跳转钱获得了thread了吧:", thread);
       //  获得点击的目标thread;
       this.$router.push({
         name: "commentPage",
@@ -228,7 +241,7 @@ export default {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
-.praise-box{
+.praise-box {
 }
 .notify-box {
   border-bottom: 1px solid rgb(211, 211, 211);
