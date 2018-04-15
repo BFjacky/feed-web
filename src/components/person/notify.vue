@@ -8,12 +8,14 @@
             <div class="avatar" v-bind:style="{backgroundImage:`url(${notify.commentInfo.avatarUrl})`}"></div>
             <div class="title">
               <div class="name">{{notify.commentInfo.nickName}}</div>
-              <div class="text"> 回复了你</div>
+              <div class="text" v-if="notify.praise"> 赞了你</div>              
+              <div class="text" v-if="notify.comment"> 回复了你</div>
+              <div class="text" v-if="notify.focus"> 关注了你</div>
             </div>
           </div>
           <div class="main">
-            <div class="img" v-if="notify.imgs.length!==0" :style="{backgroundImage:`url(${notify.imgs[0].url})`}" @click.stop="previewImage(notify.imgs[0].url)"></div>
-            <div class="content">{{notify.commentInfo.content}}</div>
+            <div class="img" v-if="notify.comment&&notify.imgs.length!==0" :style="{backgroundImage:`url(${notify.imgs[0].url})`}" @click.stop="previewImage(notify.imgs[0].url)"></div>
+            <div class="content" v-if="notify.comment">{{notify.commentInfo.content}}</div>
           </div>
           <div class="footer">{{notify.createdAt}}</div>
         </div>
@@ -32,12 +34,14 @@
             <div class="avatar" v-bind:style="{backgroundImage:`url(${notify.commentInfo.avatarUrl})`}"></div>
             <div class="title">
               <div class="name">{{notify.commentInfo.nickName}}</div>
-              <div class="text"> 回复了你</div>
+              <div class="text" v-if="notify.praise"> 赞了你</div>    
+              <div class="text"  v-if="notify.comment"> 回复了你</div>
+              <div class="text" v-if="notify.focus"> 关注了你</div>
             </div>
           </div>
           <div class="main">
-            <div class="img" v-if="notify.imgs.length!==0" :style="{backgroundImage:`url(${notify.imgs[0].url})`}" @click.stop="previewImage(notify.imgs[0].url)"></div>
-            <div class="content">{{notify.commentInfo.content}}</div>
+            <div class="img" v-if="notify.comment&&notify.imgs.length!==0" :style="{backgroundImage:`url(${notify.imgs[0].url})`}" @click.stop="previewImage(notify.imgs[0].url)"></div>
+            <div class="content"  v-if="notify.comment">{{notify.commentInfo.content}}</div>
           </div>
           <div class="footer">{{notify.createdAt}}</div>
         </div>
@@ -93,25 +97,6 @@ export default {
         notifies: this.notifies
       }
     });
-
-    //获得点赞的通知(即:所有有新的点赞状态点赞)
-    this.praiseNotifies = store.notify.praiseThreads.concat(
-      store.notify.praiseComments
-    );
-    const uselessThreads = store.notify.praiseThreads;
-    const uselessComments = store.notify.praiseComments;
-    store.notify.praiseThreads = [];
-    store.notify.praiseComments = [];
-    //将所有的thread.praiseInfo设置为已读
-    const readPraiseInfo = await axios({
-      method: "post",
-      url: `${config.url.feedUrl}/user/readPraise`,
-      withCredentials: true,
-      data: {
-        threads: uselessThreads,
-        comments: uselessComments
-      }
-    });
   },
   components: {
     spinner: Spinner,
@@ -131,6 +116,18 @@ export default {
   methods: {
     clickNotifyBox: function(notify, index) {
       this.choosedNotify = notify;
+      if (notify.focus) {
+        helper.popup([{ text: "关注此用户" }]).then(async item => {
+          if (item) {
+            switch (item.text) {
+              case "关注此用户":
+                await this.focusThisUser();
+                break;
+            }
+          }
+        });
+        return;
+      }
       helper.popup([{ text: "查看此条状态" }]).then(async item => {
         if (item) {
           switch (item.text) {
@@ -141,9 +138,7 @@ export default {
         }
       });
     },
-    clickPraiseNotifyBox:function(notify){
-
-    },
+    clickPraiseNotifyBox: function(notify) {},
     loadMore: async function() {
       if (this.nomore) {
         return;
@@ -164,6 +159,21 @@ export default {
       }
       this.oldNotifies = this.oldNotifies.concat(oldNotifies);
       this.busy = false;
+    },
+    focusThisUser: async function() {
+      const res = await axios({
+        url: `${config.url.feedUrl}/user/focus`,
+        method: "post",
+        withCredentials: true,
+        data: {
+          uid: this.choosedNotify.commentInfo.uid
+        }
+      });
+      //更新本地的
+      const { focus } = res.data;
+      if (focus !== undefined) {
+        config.user.focus = focus;
+      }
     },
     gotoCommentPage: async function() {
       let thread;
@@ -306,7 +316,7 @@ export default {
       font-size: 2vw;
       line-height: 4vw;
       max-height: 31vw;
-      max-width: 20vw;
+      width: 20vw;
       overflow: auto;
       text-overflow: ellipsis;
     }

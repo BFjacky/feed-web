@@ -18,7 +18,7 @@
       <div class="item button" @click="item2Click">
         <div class="icon icon2"></div>
         <div class="text">通知</div>
-        <div class="number-text" v-show="(notifies.length+praiseNotifies.length)>0">{{(notifies.length+praiseNotifies.length)>99?'···':(notifies.length+praiseNotifies.length)}}</div>
+        <div class="number-text" v-show="notifies.length>0">{{notifies.length>99?'···':notifies.length}}</div>
       </div>
       <div class="item button" @click="item3Click">
         <div class="icon icon3"></div>
@@ -98,58 +98,19 @@ export default {
         }, 100);
       });
     }
-    this.notifies = store.notify.notifies;
-    this.followers = config.user.followers;
     await checkPrepared();
 
     //接收服务器推送的 notify 消息
     this.$options.sockets.res = data => {
       store.notify.notifies = data;
       this.notifies = store.notify.notifies;
+      console.log(`look:::::::`, this.notifies);
       events.$emit("newNotifies", store.notify.notifies);
-    };
-    //接收服务器推送的 praise 消息
-    this.$options.sockets.praiseThread = thread => {
-      let flag = false;
-      for (let oldThread of store.notify.praiseThreads) {
-        if (oldThread._id == thread._id) {
-          oldThread = thread;
-          flag = true;
-          break;
-        }
-      }
-      if (!flag) {
-        store.notify.praiseThreads.push(thread);
-      }
-      this.praiseNotifies = store.notify.praiseThreads.concat(
-        store.notify.praiseComments
-      );
-      events.$emit("newNotifies", store.notify.praiseThreads);
-    };
-    //接收服务器推送的 praise 消息
-    this.$options.sockets.praiseComment = comment => {
-      let flag = false;
-      for (let oldComment of store.notify.praiseComments) {
-        if (oldComment._id == comment._id) {
-          oldComment = comment;
-          flag = true;
-          break;
-        }
-      }
-      if (!flag) {
-        store.notify.praiseComments.push(comment);
-      }
-      this.praiseNotifies = store.notify.praiseThreads.concat(
-        store.notify.praiseComments
-      );
-
-      events.$emit("newNotifies", store.notify.praiseComments);
     };
   },
   activated: async function() {
-    this.praiseNotifies = store.notify.praiseThreads.concat(
-      store.notify.praiseComments
-    );
+    this.notifies = store.notify.notifies;
+    this.followers = config.user.followers;
   },
   data: function() {
     return {
