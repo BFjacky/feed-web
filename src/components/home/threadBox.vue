@@ -215,9 +215,13 @@ export default {
 
       let items = [];
       if (this.myself) {
-        items = [{ text: "删除这条动态" }];
+        items = [{ text: "删除这条动态" }, { text: "查看点赞的用户" }];
       } else {
-        items = [{ text: this.item1Text }, { text: "屏蔽此人的动态" }];
+        items = [
+          { text: this.item1Text },
+          { text: "屏蔽此人的动态" },
+          { text: "查看点赞的用户" }
+        ];
       }
       helper.popup(items).then(async item => {
         if (item) {
@@ -234,9 +238,14 @@ export default {
             case "取消关注此用户":
               await this.focusThis();
               break;
+            case "查看点赞的用户":
+              break;
           }
         }
       });
+    },
+    gotoPraiseInfoPage: async function(){
+
     },
     focusThis: async function() {
       if (this.item1Text === "关注此用户") {
