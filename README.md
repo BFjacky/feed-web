@@ -42,6 +42,18 @@
 
 > &#x26A0; Tips：应用将会运行在 [http://localhost:8080](http://localhost:8080)
 
+## 使用cnpm或淘宝镜像安装
+
+因部分资源下载缓慢，推荐使用淘宝镜像
+```bash
+npm --registry https://registry.npm.taobao.org install
+```
+或者使用cnpm安装
+```bash
+npm --registry https://registry.npm.taobao.org install cnpm -g
+cnpm install
+```
+
 ## 相关技术栈
 
   + Vue.js
