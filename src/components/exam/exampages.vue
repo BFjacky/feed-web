@@ -26,7 +26,7 @@ export default {
       this.rightNumber++;
     });
     examEvents.$on("overAnswer", async () => {
-      if (this.rightNumber >= 6) {
+      if (this.rightNumber >= 3) {
         //更新本地config.user.pass 为true
         config.user.pass = true;
         MessageBox({
@@ -49,7 +49,7 @@ export default {
           title: "遗憾",
           message: `做对了${
             this.rightNumber
-          }个题目,做对6个即可通过，不要灰心，加油!`,
+          }个题目,做对3个即可通过，不要灰心，加油!`,
           showCancelButton: true,
           confirmButtonText: "再来一次",
           cancelButtonText: "不来了"
@@ -71,7 +71,7 @@ export default {
   methods: {
     initQuestions: async function() {
       //初始化问题
-      const tempQuestions = Questions(10);
+      const tempQuestions = Questions(5);
       const newQuestions = this.$lodash.cloneDeep(tempQuestions);
       //将答对的题目数量置为0
       this.rightNumber = 0;
