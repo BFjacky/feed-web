@@ -1,6 +1,6 @@
 export default {
     url: {
-        oauthUrl: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx9fd6bbc89436a5ee&redirect_uri=https%3a%2f%2fneau-lib.xiaonei.io%2ffeed%2f&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect',
+        oauthUrl: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx9fd6bbc89436a5ee&redirect_uri=https%3a%2f%2fneau-lib.xiaonei.io%2ffeed%2foauth%2f&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect',
         feedUrl: 'https://neau-lib.xiaonei.io/feed',
         socketUrl: "wss://neau-lib.xiaonei.io",
         appId: "wx9fd6bbc89436a5ee",
