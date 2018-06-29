@@ -104,7 +104,7 @@ cnpm install
   + 自己生成一个events hub，来监听不同地方发出的不同事件
   + 自己编写store.js来保存不同组件的状态
 
-> &#x26A0; Tips：欢迎在我的 [GitHub Issue](https://github.com/BlueSky1997AL/neau-card/issues) 页沟通交流并提出您的宝贵建议，您的建议是我成长的动力来源 &#x1F603;
+> &#x26A0; Tips：欢迎在我的 Issue 页沟通交流并提出您的宝贵建议，您的建议是我成长的动力来源 &#x1F603;
 
 ## 开发模式跨域解决方案
 
