@@ -132,6 +132,12 @@ export default {
   bottom: 0;
   left: 42vw;
   z-index: 2000;
+  @media (min-width: 768px) {
+    width: 120px;
+    height: 120px;
+    left: 50%;
+    transform: translateX(-60px);
+  }
 }
 .item-chosen {
   color: #32a8fc;

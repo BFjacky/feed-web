@@ -5,9 +5,13 @@
 **试用项目首先要关注微信测试号** 
 ![测试号](assets/测试号.png)
 
-**项目预览地址：&#x1F449;** [https://neau-lib.xiaonei.io/feed/#/](https://neau-lib.xiaonei.io/feed/#/) 或 扫描二维码
+**项目预览地址：&#x1F449;** [https://neau-lib.xiaonei.io/feed/#/](https://neau-lib.xiaonei.io/feed/#/) 或 **微信** 扫描二维码
+
+**温馨提示...本项目的使用场景仅为微信浏览器，未适配桌面端**
 
 ![二维码](assets/feed.png)
+
+
 
 &#x1F625;鉴于校园内同学之间信息沟通不方便，尤其在二手交易和失物招领等地方，同学没有一个交流的平台
 &#x1F4A1;于是我借鉴像微博，即刻这样的信息流平台独立开发了属于东北农业大学信息交流平台-->校友圈
