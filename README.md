@@ -113,7 +113,7 @@ cnpm install
 
 > &#x26A0; Tips：在生产环境中，将已编译好的文件合并入后端系统中时不会出现跨域问题，因为前端请求路由与后端路由处于同一域名和端口下。此处的跨域问题仅出现在开发过程中(生产环境请注释掉这段代码)
  ```js
-  //libBackend/config/config.default.js
+  //feed/config/config.default.js
   config.cors = {
     allowMethods: 'POST,GET',
     credentials: true,
